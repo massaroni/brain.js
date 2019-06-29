@@ -526,7 +526,7 @@ class NeuralNetwork {
     ({ data, status, endTime } = this.prepTraining(data, options));
     
     if (this.trainOpts.parallel) {
-      return trainParallel(rawData, this, this.trainOpts);
+      return trainParallel(rawData, this, this.getTrainOptsJSON());
     }
 
     return new Promise((resolve, reject) => {
