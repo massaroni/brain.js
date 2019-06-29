@@ -1,5 +1,8 @@
 import mergeNets from './utilities/merge-nets';
 import partition from './utilities/partition';
+import NeuralNetwork from './neural-network';
+const workerFarm = require('worker-farm');
+const workers    = workerFarm(require.resolve('./parallel-trainer-worker'));
 
 /**
  * Ensemble training, via simple parameter averaging.
@@ -29,37 +32,58 @@ export default async function trainParallel(data, net, trainOptions) {
 
   while (epochs < maxEpochs && error >= errorThresh) {
     let promises = [];
-    let peers = [];
 
     for (let t = 0; t < threadCount; t++) {
-      let peer = new NetCtor();
-      peer.fromJSON(globalWeights);
-      peers.push(peer);
-
       if (pOptions.syncMode === true) {
-        promises.push(Promise.resolve(peer.train(partitions[t], peerTrainOptions)));
+        let result = runTrainingSync(globalWeights, partitions[t], peerTrainOptions);
+        promises.push(Promise.resolve(result));
       } else {
-        promises.push(peer.trainAsync(partitions[t], peerTrainOptions));
+        promises.push(runTrainingWorker('NeuralNetwork', globalWeights, partitions[t], peerTrainOptions));
       }
     }
 
-    const statuses = await Promise.all(promises);
+    const results = await Promise.all(promises);
     let worstError = 0;
+    let trainedNets = [];
     for (let t = threadCount - 1; t >= 0; t--) {
-      const peer = peers[t];
+      const trained = results[t].trained;
+      const status = results[t].status;
+      trainedNets.push(trained);
       const partitionIdx = (t === 0 ? threadCount : t) - 1;
-      const result = peer.test(partitions[partitionIdx][0]);
+      const result = trained.test(partitions[partitionIdx][0]);
       worstError = Math.max(result.error, worstError);
-      iterations += statuses[t].iterations;
+      iterations += status.iterations;
     }
     error = worstError;
     epochs++;
 
-    globalWeights = mergeNets(...peers).toJSON();
+    globalWeights = mergeNets(...trainedNets).toJSON();
   }
 
   net.fromJSON(globalWeights);
   const endMs = Date.now();
   const elapsedMs = endMs - startMs;
   return {error, iterations, epochs, elapsedMs};
+}
+
+function runTrainingSync(netJSON, trainingData, trainOpts) {
+  const trained = new NeuralNetwork();
+  trained.fromJSON(netJSON);
+  const status = trained.train(trainingData, trainOpts);
+  return {status, trained};
+}
+
+function runTrainingWorker(netType = 'NeuralNetwork', netJSON, trainingData, trainOpts) {
+  return new Promise((resolve, reject) => {
+    workers({netType, netJSON, trainingData, trainOpts}, (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+
+      const trained = new NeuralNetwork();
+      trained.fromJSON(results.trainedNetJSON);
+
+      resolve({trained, status: results.status});
+    });
+  });
 }

@@ -84,7 +84,8 @@
   "license": "MIT",
   "dependencies": {
     "gpu.js": "^1.10.4",
-    "thaw.js": "^2.0.0"
+    "thaw.js": "^2.0.0",
+    "worker-farm": "^1.7.0"
   },
   "typings": "./index.d.ts",
   "collective": {
