@@ -7,6 +7,7 @@ import randos from './utilities/randos';
 import range from './utilities/range';
 import toArray from './utilities/to-array';
 import zeros from './utilities/zeros';
+import trainParallel from './parallel-trainer';
 
 /**
  * @param {object} options
@@ -24,6 +25,7 @@ export default class NeuralNetwork {
       callback: null, // a periodic call back that can be triggered while training
       callbackPeriod: 10, // the number of iterations through the training data between callback calls
       timeout: Infinity, // the max number of milliseconds to train for
+      parallel: null, // multithreaded training
     };
   }
 
@@ -494,9 +496,13 @@ export default class NeuralNetwork {
    * @rejects {{trainError: string, status: {error: number, iterations: number}}
    */
   trainAsync(data, options = {}) {
-    let status;
-    let endTime
-    ;({ data, status, endTime } = this._prepTraining(data, options));
+    const rawData = data;
+    let status, endTime;
+    ({ data, status, endTime } = this._prepTraining(data, options));
+    
+    if (this.trainOpts.parallel) {
+      return trainParallel(rawData, this, this.trainOpts);
+    }
 
     return new Promise((resolve, reject) => {
       try {
