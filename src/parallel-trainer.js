@@ -1,4 +1,3 @@
-import mergeNets from './utilities/merge-nets';
 import partition from './utilities/partition';
 import NeuralNetwork from './neural-network';
 const workerFarm = require('worker-farm');
@@ -62,7 +61,7 @@ export default async function trainParallel(data, net, trainOptions = {}) {
       log('iterations: ' + iterations + ', error: ' + error + ', epochs: ' + epochs);
     }
 
-    globalWeights = mergeNets(...trainedNets).toJSON();
+    globalWeights = trainedNets[0].avg(...trainedNets.slice(1)).toJSON();
   }
 
   net.fromJSON(globalWeights);

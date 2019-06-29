@@ -9,6 +9,7 @@ import zeros from './utilities/zeros';
 import LookupTable from './utilities/lookup-table';
 import { arrayToFloat32Array } from './utilities/cast';
 import trainParallel from './parallel-trainer';
+import avgNets from './utilities/avg-nets';
 
 /**
  * @param {object} options
@@ -503,6 +504,19 @@ export default class NeuralNetwork {
         reject({trainError, status});
       }
     });
+  }
+
+  /**
+   * Merge these nets via parameter averaging.
+   * 
+   * @param  {...any} nets other NeuralNetwork or NeuralNetworkGPU nets to average with this one
+   */
+  avg(...nets) {
+    if (!nets || !nets.length) {
+      return this;
+    }
+
+    return avgNets(...[this].concat(nets));
   }
 
   /**
