@@ -8,6 +8,7 @@ import toArray from './utilities/to-array';
 import zeros from './utilities/zeros';
 import LookupTable from './utilities/lookup-table';
 import { arrayToFloat32Array } from './utilities/cast';
+import trainParallel from './parallel-trainer';
 
 /**
  * @param {object} options
@@ -29,6 +30,7 @@ export default class NeuralNetwork {
       beta1: 0.9,
       beta2: 0.999,
       epsilon: 1e-8,
+      parallel: null,
     };
   }
 
@@ -479,8 +481,13 @@ export default class NeuralNetwork {
    * @rejects {{trainError: string, status: {error: number, iterations: number}}
    */
   trainAsync(data, options = {}) {
+    const rawData = data;
     let status, endTime;
     ({ data, status, endTime } = this.prepTraining(data, options));
+    
+    if (this.trainOpts.parallel) {
+      return trainParallel(rawData, this, this.trainOpts);
+    }
 
     return new Promise((resolve, reject) => {
       try {

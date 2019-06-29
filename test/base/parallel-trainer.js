@@ -31,5 +31,20 @@ describe('Parallel Trainer', () => {
       checkPerformance(net, trainingData);
     });
 
+
+    it('can converge via ensemble training with trainAsync()', async function () {
+      const trainingData = [
+        {input: [0, 1], output: [1]},
+        {input: [0, 0], output: [0]},
+        {input: [1, 0], output: [1]},
+        {input: [1, 1], output: [0]}
+      ];
+  
+      const net = new NeuralNetwork();
+      const status = await net.trainAsync(trainingData, {parallel: { threads: 2, syncMode: true }});
+      assert.ok(status.epochs > 1);
+      checkPerformance(net, trainingData);
+    });
+
   });
 });
