@@ -1,6 +1,6 @@
 import assert from 'assert';
 import NeuralNetwork from '../../src/neural-network';
-import ParallelTrainer from '../../src/parallel-trainer';
+import trainParallel from '../../src/parallel-trainer';
 
 describe('Parallel Trainer', () => {
   describe('NeuralNetwork', () => {
@@ -26,9 +26,8 @@ describe('Parallel Trainer', () => {
       ];
   
       const net = new NeuralNetwork();
-      const trainer = new ParallelTrainer();
-      const status = await trainer.train(trainingData, net, {parallel: { threads: 2, syncMode: true }});
-      console.log(status); // debug
+      const status = await trainParallel(trainingData, net, {parallel: { threads: 2, syncMode: true }});
+      assert.ok(status.epochs > 1);
       checkPerformance(net, trainingData);
     });
 
