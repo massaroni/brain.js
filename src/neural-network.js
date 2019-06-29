@@ -9,6 +9,7 @@ const toArray = require('./utilities/to-array');
 const zeros = require('./utilities/zeros');
 const LookupTable = require('./utilities/lookup-table');
 const { arrayToFloat32Array } = require('./utilities/cast');
+const { trainParallel } = require('./parallel-trainer');
 
 /**
  * @param {object} options
@@ -30,6 +31,7 @@ class NeuralNetwork {
       beta1: 0.9,
       beta2: 0.999,
       epsilon: 1e-8,
+      parallel: null,
     };
   }
 
@@ -519,8 +521,13 @@ class NeuralNetwork {
    * @rejects {{trainError: string, status: {error: number, iterations: number}}
    */
   trainAsync(data, options = {}) {
+    const rawData = data;
     let status, endTime;
     ({ data, status, endTime } = this.prepTraining(data, options));
+    
+    if (this.trainOpts.parallel) {
+      return trainParallel(rawData, this, this.trainOpts);
+    }
 
     return new Promise((resolve, reject) => {
       try {
