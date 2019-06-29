@@ -1,8 +1,8 @@
 import assert from 'assert';
 import NeuralNetwork from '../../src/neural-network';
-import mergeNets from '../../src/utilities/merge-nets';
+import avgNets from '../../src/utilities/avg-nets';
 
-describe('merge-nets', () => {
+describe('avg-nets', () => {
 
   describe('NeuralNetwork', () => {
 
@@ -216,10 +216,13 @@ describe('merge-nets', () => {
       const c = new NeuralNetwork();
       c.fromJSON(jsonC);
 
-      const actual = mergeNets(a, b, c);
+      const actual = avgNets(a, b, c);
       const jsonActual = actual.toJSON();
 
       assert.deepEqual(jsonExpected, jsonActual);
+
+      const actual2 = a.avg(b, c);
+      assert.deepEqual(jsonExpected, actual2.toJSON());
     });
 
     it('averages the weights of two nets', () => {
@@ -427,7 +430,7 @@ describe('merge-nets', () => {
       const b = new NeuralNetwork();
       b.fromJSON(jsonB);
 
-      const c = mergeNets(a, b);
+      const c = avgNets(a, b);
       const jsonC = c.toJSON();
       assert.deepEqual(jsonC, jsonExpected);
     });

@@ -10,6 +10,7 @@ const zeros = require('./utilities/zeros');
 const LookupTable = require('./utilities/lookup-table');
 const { arrayToFloat32Array } = require('./utilities/cast');
 const { trainParallel } = require('./parallel-trainer');
+const { avgNets } = require('./utilities/avg-nets');
 
 /**
  * @param {object} options
@@ -543,6 +544,19 @@ class NeuralNetwork {
         reject({trainError, status});
       }
     });
+  }
+
+  /**
+   * Merge these nets via parameter averaging.
+   * 
+   * @param  {...any} nets other NeuralNetwork or NeuralNetworkGPU nets to average with this one
+   */
+  avg(...nets) {
+    if (!nets || !nets.length) {
+      return this;
+    }
+
+    return avgNets(...[this].concat(nets));
   }
 
   /**

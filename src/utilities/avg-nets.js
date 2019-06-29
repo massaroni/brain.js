@@ -1,6 +1,10 @@
 import NeuralNetwork from '../neural-network';
 
-export default function mergeNets(...nets) {
+/**
+ * Parameter averaging, supports NeuralNetwork and NeuralNetworkGPU.
+ * @param  {...any} nets 
+ */
+export default function avgNets(...nets) {
   if (!nets || !nets.length) {
     return;
   }
