@@ -525,8 +525,10 @@ class NeuralNetwork {
     let status, endTime;
     ({ data, status, endTime } = this.prepTraining(data, options));
     
-    if (this.trainOpts.parallel) {
-      return trainParallel(rawData, this, this.getTrainOptsJSON());
+    const trainOpts = this.getTrainOptsJSON();
+    if (trainOpts.parallel) {
+      trainOpts.log = this.trainOpts.log;
+      return trainParallel(rawData, this, trainOpts);
     }
 
     return new Promise((resolve, reject) => {
