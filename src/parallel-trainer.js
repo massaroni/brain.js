@@ -16,7 +16,7 @@ export default async function trainParallel(data, net, trainOptions = {}) {
   const partitionSize = Math.max(Math.ceil(pOptions.partitionSize || 1), minPartitionSize);
   const partitions = partition(data, threadCount, partitionSize);
   const NetCtor = Object.getPrototypeOf(net).constructor;
-  const maxEpochs = pOptions.maxEpochs || 1000;
+  const maxEpochs = pOptions.epochs || 1000;
   const errorThresh = trainOptions.errorThresh || NetCtor.trainDefaults.errorThresh;
   
   let peerTrainOptions = Object.assign({}, trainOptions);
