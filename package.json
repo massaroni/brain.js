@@ -7,7 +7,8 @@
   },
   "dependencies": {
     "gpu.js": "^2.0.0-rc.25",
-    "thaw.js": "^2.0.0"
+    "thaw.js": "^2.0.0",
+    "worker-farm": "^1.7.0"
   },
   "description": "Neural networks in JavaScript",
   "devDependencies": {
