@@ -8,6 +8,7 @@ import range from './utilities/range';
 import toArray from './utilities/to-array';
 import zeros from './utilities/zeros';
 import trainParallel from './parallel-trainer';
+import avgNets from './utilities/avg-nets';
 
 /**
  * @param {object} options
@@ -519,6 +520,19 @@ export default class NeuralNetwork {
         reject(new Error({ trainError, status }));
       }
     });
+  }
+
+  /**
+   * Merge these nets via parameter averaging.
+   * 
+   * @param  {...any} nets other NeuralNetwork or NeuralNetworkGPU nets to average with this one
+   */
+  avg(...nets) {
+    if (!nets || !nets.length) {
+      return this;
+    }
+
+    return avgNets(...[this].concat(nets));
   }
 
   /**
