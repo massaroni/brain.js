@@ -7,8 +7,10 @@ const workers    = workerFarm(require.resolve('./parallel-trainer-worker'));
 /**
  * Ensemble training, via simple parameter averaging.
  */
-export default async function trainParallel(data, net, trainOptions) {
+export default async function trainParallel(data, net, trainOptions = {}) {
   const startMs = Date.now();
+  const log = (trainOptions.log === true ? console.log : trainOptions.log) || (() => {});
+  const logPeriod = trainOptions.logPeriod || 1;
   const pOptions = trainOptions.parallel || {};
   const threadCount = pOptions.threads || 1;
   const minPartitionSize = Math.ceil(data.length / threadCount);
@@ -56,6 +58,9 @@ export default async function trainParallel(data, net, trainOptions) {
     }
     error = worstError;
     epochs++;
+    if (epochs % logPeriod === 0) {
+      log('iterations: ' + iterations + ', error: ' + error + ', epochs: ' + epochs);
+    }
 
     globalWeights = mergeNets(...trainedNets).toJSON();
   }
