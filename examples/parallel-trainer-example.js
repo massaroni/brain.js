@@ -9,4 +9,8 @@ const xorTrainingData = [
 
 const net = new brain.NeuralNetwork();
 
-net.trainAsync(xorTrainingData, {log: true, logPeriod: 3, parallel: {threads: 3}}).then(console.log);
+net.trainAsync(xorTrainingData, {
+  log: (...args) => {console.log('progress: ', ...args)},
+  logPeriod: 3,
+  parallel: {threads: 3}
+}).then(console.log);
