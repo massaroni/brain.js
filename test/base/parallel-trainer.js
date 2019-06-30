@@ -1,8 +1,52 @@
 import assert from 'assert';
 import NeuralNetwork from '../../src/neural-network';
-import trainParallel from '../../src/parallel-trainer';
+import {trainParallel, unpackTrainOpts} from '../../src/parallel-trainer';
 
 describe('Parallel Trainer', () => {
+
+  describe('training options', () => {
+  
+    it('can parse simple threads options', () => {
+      const net = new NeuralNetwork();
+      const trainingData = ['a','b','c','d','e','f'];
+      const actual = unpackTrainOpts({parallel: {threads: 3}}, net, trainingData);
+
+      const expectedThreads = [
+        {type: 'NeuralNetwork', partition: ['a','b']},
+        {type: 'NeuralNetwork', partition: ['c','d']},
+        {type: 'NeuralNetwork', partition: ['e','f']},
+      ];
+
+      assert.deepEqual(expectedThreads, actual);
+    });
+
+
+    it('can parse complex threads options', () => {
+      const net = new NeuralNetwork();
+      const trainingData = ['a','b','c','d','e','f'];
+      const actual = unpackTrainOpts({parallel:{
+        threads: {
+          NeuralNetwork: {
+            threads: 2,
+            trainingDataSize: 4,
+            partitionSize: 3
+          },
+          NeuralNetworkGPU: 1
+        }
+      }}, net, trainingData);
+
+      const expectedThreads = [
+        {type: 'NeuralNetwork', partition: ['a','b','c']},
+        {type: 'NeuralNetwork', partition: ['b','c','d']},
+        {type: 'NeuralNetworkGPU', partition: ['e','f']},
+      ];
+
+      assert.deepEqual(expectedThreads, actual);
+    });
+    
+  });
+
+
   describe('NeuralNetwork', () => {
 
     const checkPerformance = (net, trainingData) => {
