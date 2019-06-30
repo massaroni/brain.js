@@ -1,17 +1,23 @@
 export default function partition(array, partitions = 1, partitionSize = 1) {
   const stdSize = Math.floor(array.length / partitions);
-  if (partitionSize < stdSize) {
+  let step = stdSize;
+  if (partitionSize <= stdSize) {
     partitionSize = stdSize;
+  } else {
+    step = (partitionSize - stdSize);
+    if (array.length / partitions > stdSize) {
+      step += 1;
+    }
   }
-  const step = partitionSize - (partitionSize - stdSize);
-
+  
   let partitioned = [];
   let from = 0;
   for (let p = 0; p < partitions - 1; p++) {
     partitioned.push(array.slice(from, Math.min(array.length, from + partitionSize)));
     from += step;
   }
-  partitioned.push(array.slice(from, array.length));
+  let tailIdx = Math.min(array.length - partitionSize, from + partitionSize);
+  partitioned.push(array.slice(tailIdx));
   
   return partitioned;
 }
