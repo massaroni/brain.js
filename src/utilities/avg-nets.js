@@ -53,7 +53,8 @@ export default function avgNets(...nets) {
   }
   
   refNet.layers = mLayers;
-  const merged = new NeuralNetwork();
+  const netCtor = Object.getPrototypeOf(nets[0]).constructor;
+  const merged = new netCtor();
   merged.fromJSON(refNet);
   return merged;
 }

@@ -93,7 +93,8 @@ function avgNets() {
   }
 
   refNet.layers = mLayers;
-  var merged = new _neuralNetwork2.default();
+  var netCtor = Object.getPrototypeOf(nets[0]).constructor;
+  var merged = new netCtor();
   merged.fromJSON(refNet);
   return merged;
 }
