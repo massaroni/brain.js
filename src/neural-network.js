@@ -7,7 +7,7 @@ import randos from './utilities/randos';
 import range from './utilities/range';
 import toArray from './utilities/to-array';
 import zeros from './utilities/zeros';
-import trainParallel from './parallel-trainer';
+import { trainParallel } from './parallel-trainer';
 import avgNets from './utilities/avg-nets';
 
 /**
