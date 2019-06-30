@@ -8,7 +8,7 @@ import toArray from './utilities/to-array';
 import zeros from './utilities/zeros';
 import LookupTable from './utilities/lookup-table';
 import { arrayToFloat32Array } from './utilities/cast';
-import trainParallel from './parallel-trainer';
+import { trainParallel } from './parallel-trainer';
 import avgNets from './utilities/avg-nets';
 
 /**
