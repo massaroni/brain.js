@@ -302,15 +302,129 @@ var p1 = net.trainAsync(data, options)
 var p2 = net2.trainAsync(data, options)
 
 Promise.all([p1, p2])
-  .then(values => {
-    var res = values[0]
-    var res2 = values[1]
-    console.log(
-      `net trained in ${res.iterations} and net2 trained in ${res2.iterations}`
-    )
-    // do something super cool with my 2 trained networks
-  })
-  .catch(handleError)
+.then(values => {
+var res = values[0]
+var res2 = values[1]
+console.log(
+`net trained in ${res.iterations} and net2 trained in ${res2.iterations}`
+)
+// do something super cool with my 2 trained networks
+})
+.catch(handleError)
+```
+
+### Multithreaded Training
+`trainAsync()` in parallel mode, can train a single net on multiple threads.  This should speed up training for large nets, large training sets, or both.
+
+Train a NeuralNetwork on 3 cpu threads.
+```javascript
+  const net = new brain.NeuralNetwork();
+  net
+    .trainAsync(data, {
+      parallel: {
+        threads: 3,
+        partitionSize: 1500, // optional. send a partition of 1500 items from the training set to each thread.  Raise this number to get some overlap in the training data partitions.
+        epochs: 20000, // optional. limit each thread to 20,000 training runs
+      },
+      // ... and the usual training options
+    })
+    .then(res => {
+      // do something with my trained network
+    })
+    .catch(handleError);
+```
+
+Train a NeuralNetwork on 6 cpu threads and 2 GPU threads.
+```javascript
+  const net = new brain.NeuralNetwork();
+  net
+    .trainAsync(data, {
+      parallel: {
+        threads: {
+          NeuralNetwork: 6,
+          NeuralNetworkGPU: 2
+        }
+      },
+      // ... and the usual training options
+    })
+    .then(res => {
+      // do something with my trained network
+    })
+    .catch(handleError);
+```
+
+Train a single NeuralNetwork on 6 cpu threads and 2 GPU threads, and send 10x more training data to the GPUs because they can run through it faster.
+```javascript
+  const net = new brain.NeuralNetwork();
+  net
+    .trainAsync(data, {
+      parallel: {
+        threads: {
+          NeuralNetwork: {
+            threads: 6,
+            trainingDataSize: 2200
+          },
+          NeuralNetworkGPU: {
+            threads: 2,
+            trainingDataSize: 22000
+          }
+        }
+      },
+      // ... and the usual training options
+    })
+    .then(res => {
+      // do something with my trained network
+    })
+    .catch(handleError);
+```
+* Note that at this time, multithreaded training is limited to the NeuralNetwork and NeuralNetworkGPU types on NodeJS.
+
+### Cross Validation
+[Cross Validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)) can provide a less fragile way of training on larger data sets.  The brain.js api provides Cross Validation in this example:
+```js
+const crossValidate = new brain.CrossValidate(brain.NeuralNetwork, networkOptions);
+crossValidate.train(data, trainingOptions, k); //note k (or KFolds) is optional
+const json = crossValidate.toJSON(); // all stats in json as well as neural networks
+const net = crossValidate.toNeuralNetwork(); // get top performing net out of `crossValidate`
+
+
+// optionally later
+const json = crossValidate.toJSON();
+const net = crossValidate.fromJSON(json);
+```
+
+Use `CrossValidate` with these classes:
+* `brain.NeuralNetwork`
+* `brain.RNNTimeStep`
+* `brain.LSTMTimeStep`
+* `brain.GRUTimeStep`
+
+An example of using cross validate can be found in [examples/cross-validate.js](examples/cross-validate.js)
+
+### Train Stream
+Streams are a very powerful tool in node for massive data spread across processes and are provided via the brain.js api in the following way:
+```js
+const net = new brain.NeuralNetwork();
+const trainStream = new brain.TrainStream({
+  neuralNetwork: net,
+  floodCallback: function() {
+    flood(trainStream, data);
+  },
+  doneTrainingCallback: function(stats) {
+    // network is done training!  What next?
+  }
+});
+
+// kick it off
+readInputs(trainStream, data);
+
+function readInputs(stream, data) {
+  for (let i = 0; i < data.length; i++) {
+    stream.write(data[i]);
+  }
+  // let it know we've reached the end of the inputs
+  stream.endInputs();
+}
 ```
 
 # Methods
