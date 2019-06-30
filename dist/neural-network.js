@@ -44,7 +44,15 @@ var _lookupTable2 = _interopRequireDefault(_lookupTable);
 
 var _cast = require('./utilities/cast');
 
+var _parallelTrainer = require('./parallel-trainer');
+
+var _avgNets = require('./utilities/avg-nets');
+
+var _avgNets2 = _interopRequireDefault(_avgNets);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -69,7 +77,8 @@ var NeuralNetwork = function () {
         praxis: null,
         beta1: 0.9,
         beta2: 0.999,
-        epsilon: 1e-8
+        epsilon: 1e-8,
+        parallel: null
       };
     }
   }, {
@@ -584,6 +593,7 @@ var NeuralNetwork = function () {
 
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+      var rawData = data;
       var status = void 0,
           endTime = void 0;
 
@@ -593,6 +603,12 @@ var NeuralNetwork = function () {
       status = _prepTraining2.status;
       endTime = _prepTraining2.endTime;
 
+
+      var trainOpts = this.getTrainOptsJSON();
+      if (trainOpts.parallel) {
+        trainOpts.log = this.trainOpts.log;
+        return (0, _parallelTrainer.trainParallel)(rawData, this, trainOpts);
+      }
 
       return new Promise(function (resolve, reject) {
         try {
@@ -610,6 +626,26 @@ var NeuralNetwork = function () {
           reject({ trainError: trainError, status: status });
         }
       });
+    }
+
+    /**
+     * Merge these nets via parameter averaging.
+     * 
+     * @param  {...any} nets other NeuralNetwork or NeuralNetworkGPU nets to average with this one
+     */
+
+  }, {
+    key: 'avg',
+    value: function avg() {
+      for (var _len = arguments.length, nets = Array(_len), _key = 0; _key < _len; _key++) {
+        nets[_key] = arguments[_key];
+      }
+
+      if (!nets || !nets.length) {
+        return this;
+      }
+
+      return _avgNets2.default.apply(undefined, _toConsumableArray([this].concat(nets)));
     }
 
     /**
@@ -1136,9 +1172,11 @@ var NeuralNetwork = function () {
           var nodes = Object.keys(layer);
           this.sizes[i] = nodes.length;
           for (var j in nodes) {
-            var node = nodes[j];
-            this.biases[i][j] = layer[node].bias;
-            this.weights[i][j] = (0, _toArray2.default)(layer[node].weights);
+            if (nodes.hasOwnProperty(j)) {
+              var node = nodes[j];
+              this.biases[i][j] = layer[node].bias;
+              this.weights[i][j] = (0, _toArray2.default)(layer[node].weights);
+            }
           }
         }
       }
