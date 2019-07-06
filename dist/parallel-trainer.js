@@ -3,10 +3,154 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.trainParallel = undefined;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-exports.trainParallel = trainParallel;
+/**
+ * Ensemble training, via simple parameter averaging.
+ */
+var trainParallel = exports.trainParallel = function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, net) {
+    var trainOptions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+    var startMs, log, logPeriod, parallel, NetCtor, maxEpochs, errorThresh, threads, peerTrainOptions, globalWeights, error, epochs, iterations, _trainedNets$, promises, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, thread, _result, results, worstError, trainedNets, threadCount, t, trained, status, partitionIdx, result, endMs, elapsedMs;
+
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            startMs = Date.now();
+
+            log = (trainOptions.log === true ? console.log : trainOptions.log) || function () {};
+
+            logPeriod = trainOptions.logPeriod || 1;
+            parallel = trainOptions.parallel || {};
+            NetCtor = Object.getPrototypeOf(net).constructor;
+            maxEpochs = parallel.epochs || 1000;
+            errorThresh = trainOptions.errorThresh || NetCtor.trainDefaults.errorThresh;
+            threads = unpackTrainOpts(trainOptions, net, data);
+            peerTrainOptions = Object.assign({}, trainOptions);
+
+            delete peerTrainOptions.parallel;
+            delete peerTrainOptions.callback;
+            delete peerTrainOptions.log;
+
+            net.train([data[0]], { errorThresh: 0.9, iterations: 1 }); // initialize weights
+            globalWeights = net.toJSON();
+            error = 1;
+            epochs = 0;
+            iterations = 0;
+
+          case 17:
+            if (!(epochs < maxEpochs && error >= errorThresh)) {
+              _context.next = 51;
+              break;
+            }
+
+            promises = [];
+            _iteratorNormalCompletion = true;
+            _didIteratorError = false;
+            _iteratorError = undefined;
+            _context.prev = 22;
+
+
+            for (_iterator = threads[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              thread = _step.value;
+
+              if (parallel.syncMode === true) {
+                _result = runTrainingSync(thread.type, globalWeights, thread.partition, peerTrainOptions);
+
+                promises.push(Promise.resolve(_result));
+              } else {
+                promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, peerTrainOptions));
+              }
+            }
+
+            _context.next = 30;
+            break;
+
+          case 26:
+            _context.prev = 26;
+            _context.t0 = _context['catch'](22);
+            _didIteratorError = true;
+            _iteratorError = _context.t0;
+
+          case 30:
+            _context.prev = 30;
+            _context.prev = 31;
+
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+
+          case 33:
+            _context.prev = 33;
+
+            if (!_didIteratorError) {
+              _context.next = 36;
+              break;
+            }
+
+            throw _iteratorError;
+
+          case 36:
+            return _context.finish(33);
+
+          case 37:
+            return _context.finish(30);
+
+          case 38:
+            _context.next = 40;
+            return Promise.all(promises);
+
+          case 40:
+            results = _context.sent;
+            worstError = 0;
+            trainedNets = [];
+            threadCount = threads.length;
+
+            for (t = threadCount - 1; t >= 0; t--) {
+              trained = results[t].trained;
+              status = results[t].status;
+
+              trainedNets.push(trained);
+              partitionIdx = (t === 0 ? threadCount : t) - 1;
+              result = trained.test(threads[partitionIdx].partition[0]);
+
+              worstError = Math.max(result.error, worstError);
+              iterations += status.iterations;
+            }
+            error = worstError;
+            epochs++;
+            if (epochs % logPeriod === 0) {
+              log('iterations: ' + iterations + ', error: ' + error + ', epochs: ' + epochs);
+            }
+
+            globalWeights = (_trainedNets$ = trainedNets[0]).avg.apply(_trainedNets$, _toConsumableArray(trainedNets.slice(1))).toJSON();
+            _context.next = 17;
+            break;
+
+          case 51:
+
+            net.fromJSON(globalWeights);
+            endMs = Date.now();
+            elapsedMs = endMs - startMs;
+            return _context.abrupt('return', { error: error, iterations: iterations, epochs: epochs, elapsedMs: elapsedMs });
+
+          case 55:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, this, [[22, 26, 30, 38], [31,, 33, 37]]);
+  }));
+
+  return function trainParallel(_x2, _x3) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
 exports.unpackTrainOpts = unpackTrainOpts;
 
 var _partition = require('./utilities/partition');
@@ -17,100 +161,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 var workerFarm = require('worker-farm');
-var workers = workerFarm(require.resolve('./parallel-trainer-worker'));
-
-/**
- * Ensemble training, via simple parameter averaging.
- */
-async function trainParallel(data, net) {
-  var trainOptions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-  var startMs = Date.now();
-  var log = (trainOptions.log === true ? console.log : trainOptions.log) || function () {};
-  var logPeriod = trainOptions.logPeriod || 1;
-  var parallel = trainOptions.parallel || {};
-  var NetCtor = Object.getPrototypeOf(net).constructor;
-  var maxEpochs = parallel.epochs || 1000;
-  var errorThresh = trainOptions.errorThresh || NetCtor.trainDefaults.errorThresh;
-  var threads = unpackTrainOpts(trainOptions, net, data);
-
-  var peerTrainOptions = Object.assign({}, trainOptions);
-  delete peerTrainOptions.parallel;
-  delete peerTrainOptions.callback;
-  delete peerTrainOptions.log;
-
-  net.train([data[0]], { errorThresh: 0.9, iterations: 1 }); // initialize weights
-  var globalWeights = net.toJSON();
-
-  var error = 1;
-  var epochs = 0;
-  var iterations = 0;
-
-  while (epochs < maxEpochs && error >= errorThresh) {
-    var _trainedNets$;
-
-    var promises = [];
-
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = threads[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var thread = _step.value;
-
-        if (parallel.syncMode === true) {
-          var _result = runTrainingSync(thread.type, globalWeights, thread.partition, peerTrainOptions);
-          promises.push(Promise.resolve(_result));
-        } else {
-          promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, peerTrainOptions));
-        }
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-
-    var results = await Promise.all(promises);
-    var worstError = 0;
-    var trainedNets = [];
-    var threadCount = threads.length;
-    for (var t = threadCount - 1; t >= 0; t--) {
-      var trained = results[t].trained;
-      var status = results[t].status;
-      trainedNets.push(trained);
-      var partitionIdx = (t === 0 ? threadCount : t) - 1;
-      var result = trained.test(threads[partitionIdx].partition[0]);
-      worstError = Math.max(result.error, worstError);
-      iterations += status.iterations;
-    }
-    error = worstError;
-    epochs++;
-    if (epochs % logPeriod === 0) {
-      log('iterations: ' + iterations + ', error: ' + error + ', epochs: ' + epochs);
-    }
-
-    globalWeights = (_trainedNets$ = trainedNets[0]).avg.apply(_trainedNets$, _toConsumableArray(trainedNets.slice(1))).toJSON();
-  }
-
-  net.fromJSON(globalWeights);
-  var endMs = Date.now();
-  var elapsedMs = endMs - startMs;
-  return { error: error, iterations: iterations, epochs: epochs, elapsedMs: elapsedMs };
-}
-
-function unpackTrainOpts(trainOptions, net, data) {
+var workers = workerFarm(require.resolve('./parallel-trainer-worker'));function unpackTrainOpts(trainOptions, net, data) {
   var parallel = trainOptions.parallel || {};
   var threadsOpts = parallel.threads;
   if (!threadsOpts || Number.isInteger(threadsOpts)) {
@@ -240,4 +294,3 @@ function runTrainingWorker(netType, netJSON, trainingData, trainOpts) {
     });
   });
 }
-//# sourceMappingURL=parallel-trainer.js.map

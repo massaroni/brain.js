@@ -42,6 +42,12 @@ var _zeros = require('./utilities/zeros');
 
 var _zeros2 = _interopRequireDefault(_zeros);
 
+var _parallelTrainer = require('./parallel-trainer');
+
+var _avgNets = require('./utilities/avg-nets');
+
+var _avgNets2 = _interopRequireDefault(_avgNets);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -110,7 +116,8 @@ var NeuralNetwork = function () {
         momentum: 0.1, // multiply's against the specified "change" then adds to learning rate for change
         callback: null, // a periodic call back that can be triggered while training
         callbackPeriod: 10, // the number of iterations through the training data between callback calls
-        timeout: Infinity // the max number of milliseconds to train for
+        timeout: Infinity, // the max number of milliseconds to train for
+        parallel: null // multithreaded training
       };
     }
   }, {
@@ -572,14 +579,22 @@ var NeuralNetwork = function () {
 
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      var status = void 0;
-      var endTime = void 0;
+      var rawData = data;
+      var status = void 0,
+          endTime = void 0;
+
       var _prepTraining3 = this._prepTraining(data, options);
 
       data = _prepTraining3.data;
       status = _prepTraining3.status;
       endTime = _prepTraining3.endTime;
 
+
+      var trainOpts = this.getTrainOptsJSON();
+      if (trainOpts.parallel) {
+        trainOpts.log = this.trainOpts.log;
+        return (0, _parallelTrainer.trainParallel)(rawData, this, trainOpts);
+      }
 
       return new Promise(function (resolve, reject) {
         try {
@@ -597,6 +612,26 @@ var NeuralNetwork = function () {
           reject(new Error({ trainError: trainError, status: status }));
         }
       });
+    }
+
+    /**
+     * Merge these nets via parameter averaging.
+     * 
+     * @param  {...any} nets other NeuralNetwork or NeuralNetworkGPU nets to average with this one
+     */
+
+  }, {
+    key: 'avg',
+    value: function avg() {
+      for (var _len = arguments.length, nets = Array(_len), _key = 0; _key < _len; _key++) {
+        nets[_key] = arguments[_key];
+      }
+
+      if (!nets || !nets.length) {
+        return this;
+      }
+
+      return _avgNets2.default.apply(undefined, _toConsumableArray([this].concat(nets)));
     }
 
     /**

@@ -13,4 +13,3 @@ module.exports = function (job, callback) {
     callback(e.toString());
   }
 };
-//# sourceMappingURL=parallel-trainer-worker.js.map

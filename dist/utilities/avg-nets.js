@@ -124,4 +124,3 @@ function equalsShallow() {
 
   return true;
 }
-//# sourceMappingURL=avg-nets.js.map

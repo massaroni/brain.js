@@ -30,4 +30,3 @@ function partition(array) {
 
   return partitioned;
 }
-//# sourceMappingURL=partition.js.map
