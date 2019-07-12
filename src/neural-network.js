@@ -1,20 +1,20 @@
-import Thaw from 'thaw.js';
-import lookup from './lookup';
-import TrainStream from './train-stream';
-import max from './utilities/max';
-import mse from './utilities/mse';
-import randos from './utilities/randos';
-import range from './utilities/range';
-import toArray from './utilities/to-array';
-import zeros from './utilities/zeros';
-import { trainParallel } from './parallel-trainer';
-import avgNets from './utilities/avg-nets';
+const Thaw = require('thaw.js');
+const lookup = require('./lookup');
+const TrainStream = require('./train-stream');
+const max = require('./utilities/max');
+const mse = require('./utilities/mse');
+const randos = require('./utilities/randos');
+const range = require('./utilities/range');
+const toArray = require('./utilities/to-array');
+const zeros = require('./utilities/zeros');
+const { trainParallel } = require('./parallel-trainer');
+const avgNets = require('./utilities/avg-nets');
 
 /**
  * @param {object} options
  * @constructor
  */
-export default class NeuralNetwork {
+class NeuralNetwork {
   static get trainDefaults() {
     return {
       iterations: 20000, // the maximum times to iterate the training data
@@ -987,3 +987,5 @@ export default class NeuralNetwork {
     return this.trainStream;
   }
 }
+
+module.exports = NeuralNetwork;

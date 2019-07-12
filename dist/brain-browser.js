@@ -119,12 +119,6 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   return newRequire;
 })({"4I3O":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.activate = activate;
-exports.measure = measure;
 /**
  * Leaky Relu Activation, aka Leaky Rectified Linear Unit Activation
  * @description https://en.wikipedia.org/wiki/Rectifier_(neural_networks)
@@ -146,14 +140,13 @@ function activate(weight) {
 function measure(weight, error) {
   return weight > 0 ? error : 0.01 * error;
 }
+
+module.exports = {
+  activate: activate,
+  measure: measure
+};
 },{}],"kBu/":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.activate = activate;
-exports.measure = measure;
 /**
  * Relu Activation, aka Rectified Linear Unit Activation
  * @description https://en.wikipedia.org/wiki/Rectifier_(neural_networks)
@@ -179,14 +172,13 @@ function measure(weight, delta) {
 
   return delta;
 }
+
+module.exports = {
+  activate: activate,
+  measure: measure
+};
 },{}],"thFH":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.activate = activate;
-exports.measure = measure;
 /**
  * sigmoid activation
  * @param value
@@ -207,14 +199,13 @@ function activate(value) {
 function measure(weight, error) {
   return weight * (1 - weight) * error;
 }
+
+module.exports = {
+  activate: activate,
+  measure: measure
+};
 },{}],"v3/M":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.tanh = tanh;
-exports.tanhDerivative = tanhDerivative;
 /**
  *
  * @param weight
@@ -235,60 +226,30 @@ function tanh(weight) {
 function tanhDerivative(weight, error) {
   return (1 - weight * weight) * error;
 }
+
+module.exports = {
+  tanh: tanh,
+  tanhDerivative: tanhDerivative
+};
 },{}],"l4U/":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.tanh = exports.sigmoid = exports.relu = exports.leakyRelu = undefined;
+var leakyRelu = require('./leaky-relu');
 
-var _leakyRelu = require('./leaky-relu');
+var relu = require('./relu');
 
-var leakyRelu = _interopRequireWildcard(_leakyRelu);
+var sigmoid = require('./sigmoid');
 
-var _relu = require('./relu');
+var tanh = require('./tanh');
 
-var relu = _interopRequireWildcard(_relu);
-
-var _sigmoid = require('./sigmoid');
-
-var sigmoid = _interopRequireWildcard(_sigmoid);
-
-var _tanh = require('./tanh');
-
-var tanh = _interopRequireWildcard(_tanh);
-
-function _interopRequireWildcard(obj) {
-  if (obj && obj.__esModule) {
-    return obj;
-  } else {
-    var newObj = {};
-
-    if (obj != null) {
-      for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
-      }
-    }
-
-    newObj.default = obj;
-    return newObj;
-  }
-}
-
-exports.leakyRelu = leakyRelu;
-exports.relu = relu;
-exports.sigmoid = sigmoid;
-exports.tanh = tanh;
+module.exports = {
+  leakyRelu: leakyRelu,
+  relu: relu,
+  sigmoid: sigmoid,
+  tanh: tanh
+};
 },{"./leaky-relu":"4I3O","./relu":"kBu/","./sigmoid":"thFH","./tanh":"v3/M"}],"+wYj":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.testPartition = testPartition;
-exports.shuffleArray = shuffleArray;
-exports.default = crossValidate;
 /**
  *
  * @param {NeuralNetwork|constructor} Classifier
@@ -429,6 +390,12 @@ function crossValidate(Classifier, data, opts, trainOpts, k) {
     misclasses: misclasses
   };
 }
+
+module.exports = {
+  testPartition: testPartition,
+  shuffleArray: shuffleArray,
+  crossValidate: crossValidate
+};
 },{}],"/T23":[function(require,module,exports) {
 'use strict';
 
@@ -23927,15 +23894,7 @@ module.exports = {
 },{"./gpu":"1esj","./alias":"209B","./utils":"9h1E","./input":"ryqg","./texture":"5wk/","./backend/function-builder":"HOQD","./backend/function-node":"oNAw","./backend/cpu/function-node":"JBVu","./backend/cpu/kernel":"A4bq","./backend/headless-gl/kernel":"5Ni1","./backend/web-gl/function-node":"TrAu","./backend/web-gl/kernel":"uiFz","./backend/web-gl2/function-node":"IZrg","./backend/web-gl2/kernel":"sSW8","./backend/gl/kernel":"8fdV","./backend/kernel":"JYjN"}],"L30b":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.setup = setup;
-exports.teardown = teardown;
-exports.makeKernel = makeKernel;
-exports.kernelInput = kernelInput;
-
-var _gpu = require('gpu.js');
+var GPU = require('gpu.js').GPU;
 
 var gpuInstance = null;
 
@@ -23949,7 +23908,7 @@ function teardown() {
 
 function makeKernel(fn, settings) {
   if (gpuInstance === null) {
-    setup(new _gpu.GPU({
+    setup(new GPU({
       mode: 'cpu'
     }));
   }
@@ -23962,79 +23921,51 @@ function makeKernel(fn, settings) {
 }
 
 function kernelInput(input, size) {
-  return _gpu.GPU.input(input, size);
+  return GPU.input(input, size);
 }
+
+module.exports = {
+  setup: setup,
+  teardown: teardown,
+  makeKernel: makeKernel,
+  kernelInput: kernelInput
+};
 },{"gpu.js":"Ft/B"}],"M4LY":[function(require,module,exports) {
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = zeros;
-
-function zeros(size) {
+module.exports = function zeros(size) {
   return new Float32Array(size);
-}
+};
 },{}],"C4Cz":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = zeros2D;
+var zeros = require('./zeros');
 
-var _zeros = require('./zeros');
-
-var _zeros2 = _interopRequireDefault(_zeros);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
-function zeros2D(width, height) {
+module.exports = function zeros2D(width, height) {
   var result = new Array(height);
 
   for (var y = 0; y < height; y++) {
-    result[y] = (0, _zeros2.default)(width);
+    result[y] = zeros(width);
   }
 
   return result;
-}
+};
 },{"./zeros":"M4LY"}],"0AN3":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = zeros3D;
+var zeros2D = require('./zeros-2d');
 
-var _zeros2d = require('./zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
-function zeros3D(width, height, depth) {
+module.exports = function zeros3D(width, height, depth) {
   var result = new Array(depth);
 
   for (var z = 0; z < depth; z++) {
-    result[z] = (0, _zeros2d2.default)(width, height);
+    result[z] = zeros2D(width, height);
   }
 
   return result;
-}
+};
 },{"./zeros-2d":"C4Cz"}],"kIeX":[function(require,module,exports) {
 'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -24054,25 +23985,15 @@ var _createClass = function () {
   };
 }();
 
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-var _zeros3d = require('../utilities/zeros-3d');
-
-var _zeros3d2 = _interopRequireDefault(_zeros3d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
+
+var zeros2D = require('../utilities/zeros-2d');
+
+var zeros3D = require('../utilities/zeros-3d');
 
 var Base = function () {
   _createClass(Base, null, [{
@@ -24209,9 +24130,9 @@ var Base = function () {
       this.weights = this.praxis.run(this, previousLayer, nextLayer, learningRate); // TODO: put into a kernel
 
       if (this.depth > 1) {
-        this.deltas = (0, _zeros3d2.default)(this.width, this.height, this.depth);
+        this.deltas = zeros3D(this.width, this.height, this.depth);
       } else {
-        this.deltas = (0, _zeros2d2.default)(this.width, this.height);
+        this.deltas = zeros2D(this.width, this.height);
       }
     }
   }, {
@@ -24248,28 +24169,13 @@ var Base = function () {
   return Base;
 }();
 
-exports.default = Base;
+module.exports = Base;
 },{"../utilities/zeros-2d":"C4Cz","../utilities/zeros-3d":"0AN3"}],"pX1U":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Operator = exports.Modifier = exports.Model = exports.Filter = exports.Internal = exports.Activation = undefined;
-
-var _base = require('./base');
-
-var _base2 = _interopRequireDefault(_base);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -24301,7 +24207,9 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
-var Activation = exports.Activation = function (_Base) {
+var Base = require('./base');
+
+var Activation = function (_Base) {
   _inherits(Activation, _Base);
 
   function Activation() {
@@ -24311,13 +24219,13 @@ var Activation = exports.Activation = function (_Base) {
   }
 
   return Activation;
-}(_base2.default);
+}(Base);
 
-var Internal = exports.Internal = function Internal() {
+var Internal = function Internal() {
   _classCallCheck(this, Internal);
 };
 
-var Filter = exports.Filter = function (_Base2) {
+var Filter = function (_Base2) {
   _inherits(Filter, _Base2);
 
   function Filter() {
@@ -24327,9 +24235,9 @@ var Filter = exports.Filter = function (_Base2) {
   }
 
   return Filter;
-}(_base2.default);
+}(Base);
 
-var Model = exports.Model = function (_Base3) {
+var Model = function (_Base3) {
   _inherits(Model, _Base3);
 
   function Model() {
@@ -24339,9 +24247,9 @@ var Model = exports.Model = function (_Base3) {
   }
 
   return Model;
-}(_base2.default);
+}(Base);
 
-var Modifier = exports.Modifier = function (_Base4) {
+var Modifier = function (_Base4) {
   _inherits(Modifier, _Base4);
 
   function Modifier() {
@@ -24351,9 +24259,9 @@ var Modifier = exports.Modifier = function (_Base4) {
   }
 
   return Modifier;
-}(_base2.default);
+}(Base);
 
-var Operator = exports.Operator = function (_Base5) {
+var Operator = function (_Base5) {
   _inherits(Operator, _Base5);
 
   function Operator() {
@@ -24363,17 +24271,22 @@ var Operator = exports.Operator = function (_Base5) {
   }
 
   return Operator;
-}(_base2.default);
+}(Base);
+
+module.exports = {
+  Activation: Activation,
+  Internal: Internal,
+  Filter: Filter,
+  Model: Model,
+  Modifier: Modifier,
+  Operator: Operator
+};
 },{"./base":"kIeX"}],"q7CK":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -24418,22 +24331,6 @@ var _get = function get(object, property, receiver) {
   }
 };
 
-exports.predict = predict;
-
-var _kernel = require('../utilities/kernel');
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-var _types = require('./types');
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -24464,6 +24361,12 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var zeros2D = require('../utilities/zeros-2d');
+
+var Operator = require('./types').Operator;
+
 function predict(inputWeights1, inputWeights2) {
   return inputWeights1[this.thread.y][this.thread.x] + inputWeights2[this.thread.y][this.thread.x];
 }
@@ -24483,8 +24386,8 @@ var Add = function (_Operator) {
 
     _this.validate();
 
-    _this.weights = (0, _zeros2d2.default)(_this.width, _this.height);
-    _this.deltas = (0, _zeros2d2.default)(_this.width, _this.height);
+    _this.weights = zeros2D(_this.width, _this.height);
+    _this.deltas = zeros2D(_this.width, _this.height);
     return _this;
   }
 
@@ -24504,7 +24407,7 @@ var Add = function (_Operator) {
   }, {
     key: 'setupKernels',
     value: function setupKernels() {
-      this.predictKernel = (0, _kernel.makeKernel)(predict, {
+      this.predictKernel = makeKernel(predict, {
         output: [this.width, this.height]
       });
     }
@@ -24523,17 +24426,14 @@ var Add = function (_Operator) {
   }]);
 
   return Add;
-}(_types.Operator);
+}(Operator);
 
-exports.default = Add;
+module.exports = {
+  Add: Add,
+  predict: predict
+};
 },{"../utilities/kernel":"L30b","../utilities/zeros-2d":"C4Cz","./types":"pX1U"}],"iz6h":[function(require,module,exports) {
 'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.setStride = setStride;
-exports.setPadding = setPadding;
 
 function setStride(layer, settings) {
   var defaults = layer.constructor.defaults;
@@ -24576,119 +24476,71 @@ function setPadding(layer, settings) {
     }
   }
 }
+
+module.exports = {
+  setStride: setStride,
+  setPadding: setPadding
+};
 },{}],"TX07":[function(require,module,exports) {
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = randomWeight;
-
-function randomWeight() {
+module.exports = function randomWeight() {
   return Math.random() * 0.4 - 0.2;
-}
+};
 },{}],"S8tM":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = randos;
+var randomWeight = require('./random-weight');
 
-var _randomWeight = require('./random-weight');
-
-var _randomWeight2 = _interopRequireDefault(_randomWeight);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
-function randos(size) {
+module.exports = function randos(size) {
   var array = new Float32Array(size);
 
   for (var i = 0; i < size; i++) {
-    array[i] = (0, _randomWeight2.default)();
+    array[i] = randomWeight();
   }
 
   return array;
-}
+};
 },{"./random-weight":"TX07"}],"pcuE":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = randos2D;
+var randos = require('./randos');
 
-var _randos = require('./randos');
-
-var _randos2 = _interopRequireDefault(_randos);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
-function randos2D(width, height) {
+module.exports = function randos2D(width, height) {
   var result = new Array(height);
 
   for (var y = 0; y < height; y++) {
-    result[y] = (0, _randos2.default)(width);
+    result[y] = randos(width);
   }
 
   return result;
-}
+};
 },{"./randos":"S8tM"}],"9TSf":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = randos3D;
+var rondos2D = require('./randos-2d');
 
-var _randos2d = require('./randos-2d');
-
-var _randos2d2 = _interopRequireDefault(_randos2d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
-function randos3D(width, height, depth) {
+module.exports = function randos3D(width, height, depth) {
   var result = new Array(depth);
 
   for (var z = 0; z < depth; z++) {
-    result[z] = (0, _randos2d2.default)(width, height);
+    result[z] = rondos2D(width, height);
   }
 
   return result;
-}
+};
 },{"./randos-2d":"pcuE"}],"Whlg":[function(require,module,exports) {
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = values;
-
-function values(size, value) {
+module.exports = function values(size, value) {
   return new Float32Array(size).fill(value);
-}
+};
 },{}],"xL0H":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -24707,39 +24559,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-exports.predict = predict;
-exports.compareFilterDeltas = compareFilterDeltas;
-exports.compareInputDeltas = compareInputDeltas;
-exports.compareBiases = compareBiases;
-
-var _kernel = require('../utilities/kernel');
-
-var _layerSetup = require('../utilities/layer-setup');
-
-var _types = require('./types');
-
-var _randos = require('../utilities/randos');
-
-var _randos2 = _interopRequireDefault(_randos);
-
-var _randos3d = require('../utilities/randos-3d');
-
-var _randos3d2 = _interopRequireDefault(_randos3d);
-
-var _zeros3d = require('../utilities/zeros-3d');
-
-var _zeros3d2 = _interopRequireDefault(_zeros3d);
-
-var _values = require('../utilities/values');
-
-var _values2 = _interopRequireDefault(_values);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -24770,6 +24589,22 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var _require = require('../utilities/layer-setup'),
+    setStride = _require.setStride,
+    setPadding = _require.setPadding;
+
+var Filter = require('./types').Filter;
+
+var randos = require('../utilities/randos');
+
+var randos3D = require('../utilities/randos-3d');
+
+var zeros3D = require('../utilities/zeros-3d');
+
+var values = require('../utilities/values');
 
 function predict(inputs, filters, biases) {
   var startFilterX = this.constants.paddingX - this.thread.x * this.constants.strideX;
@@ -24869,23 +24704,23 @@ var Convolution = function (_Filter) {
     _this.stride = null;
     _this.strideX = null;
     _this.strideY = null;
-    (0, _layerSetup.setStride)(_this, settings);
+    setStride(_this, settings);
     _this.padding = null;
     _this.paddingX = null;
     _this.paddingY = null;
-    (0, _layerSetup.setPadding)(_this, settings);
+    setPadding(_this, settings);
     _this.filterCount = settings.filterCount;
     _this.filterWidth = settings.filterWidth;
     _this.filterHeight = settings.filterHeight;
     _this.width = Math.floor((inputLayer.width + _this.paddingX * 2 - _this.filterWidth) / _this.strideX + 1);
     _this.height = Math.floor((inputLayer.height + _this.paddingY * 2 - _this.filterHeight) / _this.strideY + 1);
     _this.depth = _this.filterCount;
-    _this.weights = (0, _randos3d2.default)(_this.width, _this.height, _this.depth);
-    _this.deltas = (0, _zeros3d2.default)(_this.width, _this.height, _this.depth);
-    _this.biases = (0, _values2.default)(_this.depth, _this.bias);
-    _this.biasDeltas = (0, _randos2.default)(_this.depth);
-    _this.filters = (0, _randos3d2.default)(_this.filterWidth, _this.filterHeight, _this.filterCount);
-    _this.filterDeltas = (0, _zeros3d2.default)(_this.filterWidth, _this.filterHeight, _this.filterCount);
+    _this.weights = randos3D(_this.width, _this.height, _this.depth);
+    _this.deltas = zeros3D(_this.width, _this.height, _this.depth);
+    _this.biases = values(_this.depth, _this.bias);
+    _this.biasDeltas = randos(_this.depth);
+    _this.filters = randos3D(_this.filterWidth, _this.filterHeight, _this.filterCount);
+    _this.filterDeltas = zeros3D(_this.filterWidth, _this.filterHeight, _this.filterCount);
     _this.learnFilters = null;
     _this.learnInputs = null;
     _this.inputLayer = inputLayer;
@@ -24898,7 +24733,7 @@ var Convolution = function (_Filter) {
   _createClass(Convolution, [{
     key: 'setupKernels',
     value: function setupKernels() {
-      this.predictKernel = (0, _kernel.makeKernel)(predict, {
+      this.predictKernel = makeKernel(predict, {
         constants: {
           inputWidth: this.inputLayer.width,
           inputHeight: this.inputLayer.height,
@@ -24912,7 +24747,7 @@ var Convolution = function (_Filter) {
         },
         output: [this.width, this.height, this.depth]
       });
-      this.compareFilterDeltasKernel = (0, _kernel.makeKernel)(compareFilterDeltas, {
+      this.compareFilterDeltasKernel = makeKernel(compareFilterDeltas, {
         constants: {
           deltasWidth: this.width,
           deltasHeight: this.height,
@@ -24929,13 +24764,13 @@ var Convolution = function (_Filter) {
         },
         output: [this.width, this.height, this.depth]
       });
-      this.compareInputDeltasKernel = (0, _kernel.makeKernel)(compareInputDeltas, {
+      this.compareInputDeltasKernel = makeKernel(compareInputDeltas, {
         constants: {
           filterCount: this.filterCount
         },
         output: [this.inputLayer.width, this.inputLayer.height, this.inputLayer.depth]
       });
-      this.compareBiasesKernel = (0, _kernel.makeKernel)(compareBiases, {
+      this.compareBiasesKernel = makeKernel(compareBiases, {
         output: [1, 1, this.depth],
         constants: {
           deltaWidth: this.width,
@@ -24961,24 +24796,26 @@ var Convolution = function (_Filter) {
     value: function learn(previousLayer, nextLayer, learningRate) {
       // TODO: handle filters
       this.weights = this.praxis.run(this, previousLayer, nextLayer, learningRate);
-      this.deltas = (0, _zeros3d2.default)(this.width, this.height, this.depth);
+      this.deltas = zeros3D(this.width, this.height, this.depth);
     }
   }]);
 
   return Convolution;
-}(_types.Filter);
+}(Filter);
 
-exports.default = Convolution;
+module.exports = {
+  Convolution: Convolution,
+  predict: predict,
+  compareFilterDeltas: compareFilterDeltas,
+  compareInputDeltas: compareInputDeltas,
+  compareBiases: compareBiases
+};
 },{"../utilities/kernel":"L30b","../utilities/layer-setup":"iz6h","./types":"pX1U","../utilities/randos":"S8tM","../utilities/randos-3d":"9TSf","../utilities/zeros-3d":"0AN3","../utilities/values":"Whlg"}],"YwJF":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -24997,13 +24834,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-exports.trainingPredict = trainingPredict;
-exports.predict = predict;
-
-var _types = require('./types');
-
-var _kernel = require('../utilities/kernel');
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -25033,7 +24863,11 @@ function _inherits(subClass, superClass) {
     }
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-} // TODO: implement random in glsl in gpu.js
+}
+
+var Filter = require('./types').Filter;
+
+var makeKernel = require('../utilities/kernel').makeKernel; // TODO: implement random in glsl in gpu.js
 
 
 function trainingPredict(inputs) {
@@ -25080,11 +24914,11 @@ var Dropout = function (_Filter) {
     key: 'setupKernels',
     value: function setupKernels() {
       if (this.isTraining) {
-        this.predictKernel = (0, _kernel.makeKernel)(trainingPredict, {
+        this.predictKernel = makeKernel(trainingPredict, {
           output: [this.width, this.height, this.depth]
         });
       } else {
-        this.predictKernel = (0, _kernel.makeKernel)(predict, {
+        this.predictKernel = makeKernel(predict, {
           output: [this.width, this.height, this.depth]
         });
       }
@@ -25102,19 +24936,19 @@ var Dropout = function (_Filter) {
   }]);
 
   return Dropout;
-}(_types.Filter);
+}(Filter);
 
-exports.default = Dropout;
+module.exports = {
+  Dropout: Dropout,
+  trainingPredict: trainingPredict,
+  predict: predict
+};
 },{"./types":"pX1U","../utilities/kernel":"L30b"}],"Aqg2":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _get = function get(object, property, receiver) {
   if (object === null) object = Function.prototype;
@@ -25159,48 +24993,6 @@ var _createClass = function () {
   };
 }();
 
-exports.predict = predict;
-exports.predict3D = predict3D;
-exports.compareInputDeltas = compareInputDeltas;
-exports.compareInputDeltas3D = compareInputDeltas3D;
-exports.compareBiases = compareBiases;
-exports.compareFilterDeltas = compareFilterDeltas;
-exports.compareFilterDeltas3D = compareFilterDeltas3D;
-
-var _types = require('./types');
-
-var _kernel = require('../utilities/kernel');
-
-var _values = require('../utilities/values');
-
-var _values2 = _interopRequireDefault(_values);
-
-var _randos2d = require('../utilities/randos-2d');
-
-var _randos2d2 = _interopRequireDefault(_randos2d);
-
-var _randos3d = require('../utilities/randos-3d');
-
-var _randos3d2 = _interopRequireDefault(_randos3d);
-
-var _zeros = require('../utilities/zeros');
-
-var _zeros2 = _interopRequireDefault(_zeros);
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-var _zeros3d = require('../utilities/zeros-3d');
-
-var _zeros3d2 = _interopRequireDefault(_zeros3d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -25230,6 +25022,22 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var Filter = require('./types').Filter;
+
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var values = require('../utilities/values');
+
+var randos2D = require('../utilities/randos-2d');
+
+var randos3D = require('../utilities/randos-3d');
+
+var zeros = require('../utilities/zeros');
+
+var zeros2D = require('../utilities/zeros-2d');
+
+var zeros3D = require('../utilities/zeros-3d');
 
 function predict(inputs, filters, biases) {
   var output = 0;
@@ -25323,17 +25131,17 @@ var FullyConnected = function (_Filter) {
     _this.compareInputDeltasKernel = null;
     _this.compareBiasesKernel = null;
     var connectionCount = inputLayer.width * inputLayer.height * inputLayer.depth;
-    _this.biases = (0, _values2.default)(_this.height, _this.bias);
-    _this.biasDeltas = (0, _zeros2.default)(_this.height);
-    _this.filters = (0, _randos2d2.default)(connectionCount, _this.height);
-    _this.filterDeltas = (0, _zeros2d2.default)(connectionCount, _this.height);
+    _this.biases = values(_this.height, _this.bias);
+    _this.biasDeltas = zeros(_this.height);
+    _this.filters = randos2D(connectionCount, _this.height);
+    _this.filterDeltas = zeros2D(connectionCount, _this.height);
 
     if (_this.depth > 1) {
-      _this.weights = (0, _randos3d2.default)(_this.width, _this.height);
-      _this.deltas = (0, _zeros3d2.default)(_this.width, _this.height);
+      _this.weights = randos3D(_this.width, _this.height);
+      _this.deltas = zeros3D(_this.width, _this.height);
     } else if (_this.height > 1) {
-      _this.weights = (0, _randos2d2.default)(_this.width, _this.height);
-      _this.deltas = (0, _zeros2d2.default)(_this.width, _this.height);
+      _this.weights = randos2D(_this.width, _this.height);
+      _this.deltas = zeros2D(_this.width, _this.height);
     }
 
     return _this;
@@ -25353,7 +25161,7 @@ var FullyConnected = function (_Filter) {
       var connectionCount = inputLayer.width * inputLayer.height * inputLayer.depth;
 
       if (inputLayer.depth > 1) {
-        this.predictKernel = (0, _kernel.makeKernel)(predict3D, {
+        this.predictKernel = makeKernel(predict3D, {
           output: [this.width, this.height],
           constants: {
             inputHeight: inputLayer.height,
@@ -25361,34 +25169,34 @@ var FullyConnected = function (_Filter) {
             inputDepth: inputLayer.depth
           }
         });
-        this.compareFilterDeltasKernel = (0, _kernel.makeKernel)(compareFilterDeltas3D, {
+        this.compareFilterDeltasKernel = makeKernel(compareFilterDeltas3D, {
           output: [connectionCount, this.height],
           constants: {
             inputWidth: inputLayer.width,
             inputHeight: inputLayer.height
           }
         });
-        this.compareInputDeltasKernel = (0, _kernel.makeKernel)(compareInputDeltas3D, {
+        this.compareInputDeltasKernel = makeKernel(compareInputDeltas3D, {
           output: [inputLayer.width, inputLayer.height, inputLayer.depth],
           constants: {
             filterCount: this.height
           }
         });
       } else {
-        this.predictKernel = (0, _kernel.makeKernel)(predict, {
+        this.predictKernel = makeKernel(predict, {
           output: [this.width, this.height],
           constants: {
             inputHeight: inputLayer.height,
             inputWidth: inputLayer.width
           }
         });
-        this.compareFilterDeltasKernel = (0, _kernel.makeKernel)(compareFilterDeltas, {
+        this.compareFilterDeltasKernel = makeKernel(compareFilterDeltas, {
           output: [connectionCount, this.height],
           constants: {
             inputWidth: inputLayer.width
           }
         });
-        this.compareInputDeltasKernel = (0, _kernel.makeKernel)(compareInputDeltas, {
+        this.compareInputDeltasKernel = makeKernel(compareInputDeltas, {
           output: [inputLayer.width, inputLayer.height],
           constants: {
             filterCount: this.height
@@ -25396,7 +25204,7 @@ var FullyConnected = function (_Filter) {
         });
       }
 
-      this.compareBiasesKernel = (0, _kernel.makeKernel)(compareBiases, {
+      this.compareBiasesKernel = makeKernel(compareBiases, {
         output: [this.width, this.height]
       });
     }
@@ -25417,19 +25225,24 @@ var FullyConnected = function (_Filter) {
   }]);
 
   return FullyConnected;
-}(_types.Filter);
+}(Filter);
 
-exports.default = FullyConnected;
+module.exports = {
+  FullyConnected: FullyConnected,
+  predict: predict,
+  predict3D: predict3D,
+  compareInputDeltas: compareInputDeltas,
+  compareInputDeltas3D: compareInputDeltas3D,
+  compareBiases: compareBiases,
+  compareFilterDeltas: compareFilterDeltas,
+  compareFilterDeltas3D: compareFilterDeltas3D
+};
 },{"./types":"pX1U","../utilities/kernel":"L30b","../utilities/values":"Whlg","../utilities/randos-2d":"pcuE","../utilities/randos-3d":"9TSf","../utilities/zeros":"M4LY","../utilities/zeros-2d":"C4Cz","../utilities/zeros-3d":"0AN3"}],"qUrb":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -25448,20 +25261,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _types = require('./types');
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-var _kernel = require('../utilities/kernel');
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -25493,6 +25292,12 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var Model = require('./types').Model;
+
+var zeros2D = require('../utilities/zeros-2d');
+
+var kernelInput = require('../utilities/kernel').kernelInput;
+
 var Input = function (_Model) {
   _inherits(Input, _Model);
 
@@ -25508,7 +25313,7 @@ var Input = function (_Model) {
     _this.validate();
 
     _this.weights = null;
-    _this.deltas = (0, _zeros2d2.default)(_this.width, _this.height);
+    _this.deltas = zeros2D(_this.width, _this.height);
     return _this;
   }
 
@@ -25519,7 +25324,7 @@ var Input = function (_Model) {
     key: 'predict',
     value: function predict(inputs) {
       if (inputs.length === this.height * this.width) {
-        this.weights = (0, _kernel.kernelInput)(inputs, [this.width, this.height]);
+        this.weights = kernelInput(inputs, [this.width, this.height]);
       } else if (inputs.length === this.height && inputs[0].length === this.width) {
         this.weights = inputs;
       } else {
@@ -25544,7 +25349,7 @@ var Input = function (_Model) {
   }, {
     key: 'learn',
     value: function learn() {
-      this.deltas = (0, _zeros2d2.default)(this.width, this.height);
+      this.deltas = zeros2D(this.width, this.height);
     }
   }, {
     key: 'toJSON',
@@ -25567,19 +25372,15 @@ var Input = function (_Model) {
   }]);
 
   return Input;
-}(_types.Model);
+}(Model);
 
-exports.default = Input;
+module.exports = Input;
 },{"./types":"pX1U","../utilities/zeros-2d":"C4Cz","../utilities/kernel":"L30b"}],"JZX2":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -25598,15 +25399,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-exports.predict = predict;
-exports.compare = compare;
-
-var _types = require('./types');
-
-var _kernel = require('../utilities/kernel');
-
-var _leakyRelu = require('../activation/leaky-relu');
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -25638,12 +25430,21 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var Activation = require('./types').Activation;
+
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var lra = require('../activation/leaky-relu');
+
+var activate = lra.activate;
+var measure = lra.measure;
+
 function predict(inputs) {
-  return (0, _leakyRelu.activate)(inputs[this.thread.y][this.thread.x]);
+  return activate(inputs[this.thread.y][this.thread.x]);
 }
 
 function compare(weights, deltas) {
-  return (0, _leakyRelu.measure)(weights[this.thread.y][this.thread.x], deltas[this.thread.y][this.thread.x]);
+  return measure(weights[this.thread.y][this.thread.x], deltas[this.thread.y][this.thread.x]);
 }
 
 var LeakyRelu = function (_Activation) {
@@ -25670,11 +25471,11 @@ var LeakyRelu = function (_Activation) {
   _createClass(LeakyRelu, [{
     key: 'setupKernels',
     value: function setupKernels() {
-      this.predictKernel = (0, _kernel.makeKernel)(predict, {
-        functions: [_leakyRelu.activate]
+      this.predictKernel = makeKernel(predict, {
+        functions: [activate]
       });
-      this.compareKernel = (0, _kernel.makeKernel)(compare, {
-        functions: [_leakyRelu.measure]
+      this.compareKernel = makeKernel(compare, {
+        functions: [measure]
       });
     }
   }, {
@@ -25690,19 +25491,19 @@ var LeakyRelu = function (_Activation) {
   }]);
 
   return LeakyRelu;
-}(_types.Activation);
+}(Activation);
 
-exports.default = LeakyRelu;
+module.exports = {
+  LeakyRelu: LeakyRelu,
+  predict: predict,
+  compare: compare
+};
 },{"./types":"pX1U","../utilities/kernel":"L30b","../activation/leaky-relu":"4I3O"}],"xJEq":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -25747,24 +25548,6 @@ var _get = function get(object, property, receiver) {
   }
 };
 
-exports.predict = predict;
-exports.compareFromX = compareFromX;
-exports.compareFromY = compareFromY;
-
-var _kernel = require('../utilities/kernel');
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-var _types = require('./types');
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -25794,6 +25577,12 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var zeros2D = require('../utilities/zeros-2d');
+
+var Operator = require('./types').Operator;
 
 function predict(weights1, weights2) {
   var sum = 0;
@@ -25842,8 +25631,8 @@ var Multiply = function (_Operator) {
 
     _this.validate();
 
-    _this.weights = (0, _zeros2d2.default)(_this.width, _this.height);
-    _this.deltas = (0, _zeros2d2.default)(_this.width, _this.height);
+    _this.weights = zeros2D(_this.width, _this.height);
+    _this.deltas = zeros2D(_this.width, _this.height);
     return _this;
   }
 
@@ -25859,19 +25648,19 @@ var Multiply = function (_Operator) {
   }, {
     key: 'setupKernels',
     value: function setupKernels() {
-      this.predictKernel = (0, _kernel.makeKernel)(predict, {
+      this.predictKernel = makeKernel(predict, {
         output: [this.width, this.height],
         constants: {
           size: this.inputLayer2.height
         }
       });
-      this.compareKernel1 = (0, _kernel.makeKernel)(compareFromX, {
+      this.compareKernel1 = makeKernel(compareFromX, {
         output: [this.inputLayer1.width, this.inputLayer1.height],
         constants: {
           size: this.inputLayer2.width
         }
       });
-      this.compareKernel2 = (0, _kernel.makeKernel)(compareFromY, {
+      this.compareKernel2 = makeKernel(compareFromY, {
         output: [this.inputLayer2.width, this.inputLayer2.height],
         constants: {
           size: this.inputLayer1.height
@@ -25902,19 +25691,20 @@ var Multiply = function (_Operator) {
   }]);
 
   return Multiply;
-}(_types.Operator);
+}(Operator);
 
-exports.default = Multiply;
+module.exports = {
+  Multiply: Multiply,
+  predict: predict,
+  compareFromX: compareFromX,
+  compareFromY: compareFromY
+};
 },{"../utilities/kernel":"L30b","../utilities/zeros-2d":"C4Cz","./types":"pX1U"}],"vjFV":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -25959,20 +25749,6 @@ var _get = function get(object, property, receiver) {
   }
 };
 
-var _kernel = require('../utilities/kernel');
-
-var _types = require('./types');
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -26002,6 +25778,12 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var Operator = require('./types').Operator;
+
+var zeros2D = require('../utilities/zeros-2d');
 
 function predict(weights, inputLayerWeights) {
   return weights[this.thread.y][this.thread.x] * inputLayerWeights[this.thread.y][this.thread.x];
@@ -26026,8 +25808,8 @@ var MultiplyElement = function (_Operator) {
 
     _this.validate();
 
-    _this.weights = (0, _zeros2d2.default)(_this.width, _this.height);
-    _this.deltas = (0, _zeros2d2.default)(_this.width, _this.height);
+    _this.weights = zeros2D(_this.width, _this.height);
+    _this.deltas = zeros2D(_this.width, _this.height);
     return _this;
   }
 
@@ -26047,10 +25829,10 @@ var MultiplyElement = function (_Operator) {
   }, {
     key: 'setupKernels',
     value: function setupKernels() {
-      this.predictKernel = (0, _kernel.makeKernel)(predict, {
+      this.predictKernel = makeKernel(predict, {
         output: [this.width, this.height]
       });
-      this.compareKernel = (0, _kernel.makeKernel)(compare, {
+      this.compareKernel = makeKernel(compare, {
         output: [this.width, this.height]
       });
     }
@@ -26067,19 +25849,15 @@ var MultiplyElement = function (_Operator) {
   }]);
 
   return MultiplyElement;
-}(_types.Operator);
+}(Operator);
 
-exports.default = MultiplyElement;
+module.exports = MultiplyElement;
 },{"../utilities/kernel":"L30b","./types":"pX1U","../utilities/zeros-2d":"C4Cz"}],"kuo+":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -26098,10 +25876,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _kernel = require('../utilities/kernel');
-
-var _types = require('./types');
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -26132,6 +25906,10 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var Modifier = require('./types').Modifier;
 
 function predict(weights) {
   return -weights[this.thread.y][this.thread.x];
@@ -26155,7 +25933,7 @@ var Negative = function (_Modifier) {
   _createClass(Negative, [{
     key: 'setupKernels',
     value: function setupKernels() {
-      this.predictKernel = (0, _kernel.makeKernel)(predict, {
+      this.predictKernel = makeKernel(predict, {
         output: [this.width, this.height]
       });
     }
@@ -26167,73 +25945,35 @@ var Negative = function (_Modifier) {
   }]);
 
   return Negative;
-}(_types.Modifier);
+}(Modifier);
 
-exports.default = Negative;
+module.exports = Negative;
 },{"../utilities/kernel":"L30b","./types":"pX1U"}],"f7P8":[function(require,module,exports) {
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = ones;
-
-function ones(size) {
+module.exports = function ones(size) {
   return new Float32Array(size).fill(1);
-}
+};
 },{}],"jZTY":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = ones2D;
+var ones = require('./ones');
 
-var _ones = require('./ones');
-
-var _ones2 = _interopRequireDefault(_ones);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
-function ones2D(width, height) {
+module.exports = function ones2D(width, height) {
   var result = new Array(height);
 
   for (var y = 0; y < height; y++) {
-    result[y] = (0, _ones2.default)(width);
+    result[y] = ones(width);
   }
 
   return result;
-}
+};
 },{"./ones":"f7P8"}],"0122":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _ones2d = require('../utilities/ones-2d');
-
-var _ones2d2 = _interopRequireDefault(_ones2d);
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-var _types = require('./types');
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -26265,6 +26005,12 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var ones2D = require('../utilities/ones-2d');
+
+var zeros2D = require('../utilities/zeros-2d');
+
+var Model = require('./types').Model;
+
 var Ones = function (_Model) {
   _inherits(Ones, _Model);
 
@@ -26275,25 +26021,21 @@ var Ones = function (_Model) {
 
     _this.validate();
 
-    _this.weights = (0, _ones2d2.default)(_this.width, _this.height);
-    _this.deltas = (0, _zeros2d2.default)(_this.width, _this.height);
+    _this.weights = ones2D(_this.width, _this.height);
+    _this.deltas = zeros2D(_this.width, _this.height);
     return _this;
   }
 
   return Ones;
-}(_types.Model);
+}(Model);
 
-exports.default = Ones;
+module.exports = Ones;
 },{"../utilities/ones-2d":"jZTY","../utilities/zeros-2d":"C4Cz","./types":"pX1U"}],"vNYh":[function(require,module,exports) {
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && _typeof3(Symbol.iterator) === "symbol" ? function (obj) { return _typeof3(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof3(obj); };
 
 function _typeof3(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof3 = function _typeof3(obj) { return typeof obj; }; } else { _typeof3 = function _typeof3(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof3(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
@@ -26318,30 +26060,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-exports.predict = predict;
-exports.compare = compare;
-exports.compare3D = compare3D;
-
-var _types = require('./types');
-
-var _kernel = require('../utilities/kernel');
-
-var _layerSetup = require('../utilities/layer-setup');
-
-var _zeros3d = require('../utilities/zeros-3d');
-
-var _zeros3d2 = _interopRequireDefault(_zeros3d);
-
-var _randos3d = require('../utilities/randos-3d');
-
-var _randos3d2 = _interopRequireDefault(_randos3d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -26372,6 +26090,18 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var Filter = require('./types').Filter;
+
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var _require = require('../utilities/layer-setup'),
+    setPadding = _require.setPadding,
+    setStride = _require.setStride;
+
+var zeros3D = require('../utilities/zeros-3d');
+
+var randos3D = require('../utilities/randos-3d');
 
 function setSwitchY(value) {
   return value;
@@ -26474,11 +26204,11 @@ var Pool = function (_Filter) {
     _this.stride = null;
     _this.strideX = null;
     _this.strideY = null;
-    (0, _layerSetup.setStride)(_this, settings);
+    setStride(_this, settings);
     _this.padding = null;
     _this.paddingX = null;
     _this.paddingY = null;
-    (0, _layerSetup.setPadding)(_this, settings);
+    setPadding(_this, settings);
     _this.filterCount = settings.filterCount;
     _this.filterWidth = settings.filterWidth;
     _this.filterHeight = settings.filterHeight;
@@ -26486,10 +26216,10 @@ var Pool = function (_Filter) {
     _this.height = Math.floor((inputLayer.height + _this.paddingY * 2 - _this.filterHeight) / _this.strideY + 1); // TODO: handle 1 depth?
 
     _this.depth = _this.filterCount;
-    _this.weights = (0, _randos3d2.default)(_this.width, _this.height, _this.depth);
-    _this.deltas = (0, _zeros3d2.default)(_this.width, _this.height, _this.depth);
-    _this.filters = (0, _randos3d2.default)(_this.filterWidth, _this.filterHeight, _this.filterCount);
-    _this.filterDeltas = (0, _zeros3d2.default)(_this.filterWidth, _this.filterHeight, _this.filterCount);
+    _this.weights = randos3D(_this.width, _this.height, _this.depth);
+    _this.deltas = zeros3D(_this.width, _this.height, _this.depth);
+    _this.filters = randos3D(_this.filterWidth, _this.filterHeight, _this.filterCount);
+    _this.filterDeltas = zeros3D(_this.filterWidth, _this.filterHeight, _this.filterCount);
     _this.learnFilters = null;
     _this.learnInputs = null;
     _this.inputLayer = inputLayer;
@@ -26502,7 +26232,7 @@ var Pool = function (_Filter) {
   _createClass(Pool, [{
     key: 'setupKernels',
     value: function setupKernels() {
-      this.predictKernel = (0, _kernel.makeKernel)(predict, {
+      this.predictKernel = makeKernel(predict, {
         output: [this.width, this.height, this.depth],
         map: {
           switchX: setSwitchX,
@@ -26517,7 +26247,7 @@ var Pool = function (_Filter) {
           filterWidth: this.filterWidth
         }
       });
-      this.compareKernel = (0, _kernel.makeKernel)(compare, {
+      this.compareKernel = makeKernel(compare, {
         output: [this.inputLayer.width, this.inputLayer.height, this.inputLayer.depth],
         constants: {
           outputWidth: this.width,
@@ -26557,19 +26287,20 @@ var Pool = function (_Filter) {
   }]);
 
   return Pool;
-}(_types.Filter);
+}(Filter);
 
-exports.default = Pool;
+module.exports = {
+  Pool: Pool,
+  predict: predict,
+  compare: compare,
+  compare3D: compare3D
+};
 },{"./types":"pX1U","../utilities/kernel":"L30b","../utilities/layer-setup":"iz6h","../utilities/zeros-3d":"0AN3","../utilities/randos-3d":"9TSf"}],"yQCp":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -26588,22 +26319,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _types = require('./types');
-
-var _randos2d = require('../utilities/randos-2d');
-
-var _randos2d2 = _interopRequireDefault(_randos2d);
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -26635,6 +26350,12 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var Model = require('./types').Model;
+
+var randos2D = require('../utilities/randos-2d');
+
+var zeros2D = require('../utilities/zeros-2d');
+
 var Random = function (_Model) {
   _inherits(Random, _Model);
 
@@ -26645,8 +26366,8 @@ var Random = function (_Model) {
 
     _this.validate();
 
-    _this.weights = (0, _randos2d2.default)(_this.width, _this.height);
-    _this.deltas = (0, _zeros2d2.default)(_this.width, _this.height);
+    _this.weights = randos2D(_this.width, _this.height);
+    _this.deltas = zeros2D(_this.width, _this.height);
     return _this;
   }
 
@@ -26661,9 +26382,9 @@ var Random = function (_Model) {
   }]);
 
   return Random;
-}(_types.Model);
+}(Model);
 
-exports.default = Random;
+module.exports = Random;
 },{"./types":"pX1U","../utilities/randos-2d":"pcuE","../utilities/zeros-2d":"C4Cz"}],"viPg":[function(require,module,exports) {
 'use strict';
 
@@ -26689,16 +26410,6 @@ var _createClass = function () {
   };
 }();
 
-var _base = require('./base');
-
-var _base2 = _interopRequireDefault(_base);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -26728,6 +26439,8 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var Base = require('./base');
 
 var Regression = function (_Base) {
   _inherits(Regression, _Base);
@@ -26754,21 +26467,20 @@ var Regression = function (_Base) {
   }]);
 
   return Regression;
-}(_base2.default);
+}(Base);
 
 function learn(inputs, targets) {
   return inputs[this.thread.x] - targets[this.thread.x];
 } // TODO: handle `loss += 0.5*dy*dy;` total and sum in learn
+
+
+module.exports = Regression;
 },{"./base":"kIeX"}],"BjPp":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -26787,31 +26499,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-exports.predict = predict;
-exports.compare = compare;
-exports.predict3D = predict3D;
-exports.compare3D = compare3D;
-
-var _types = require('./types');
-
-var _kernel = require('../utilities/kernel');
-
-var _relu = require('../activation/relu');
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-var _zeros3d = require('../utilities/zeros-3d');
-
-var _zeros3d2 = _interopRequireDefault(_zeros3d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -26843,20 +26530,32 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var Activation = require('./types').Activation;
+
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var _require = require('../activation/relu'),
+    activate = _require.activate,
+    measure = _require.measure;
+
+var zeros2D = require('../utilities/zeros-2d');
+
+var zeros3D = require('../utilities/zeros-3d');
+
 function predict(inputs) {
-  return (0, _relu.activate)(inputs[this.thread.y][this.thread.x]);
+  return activate(inputs[this.thread.y][this.thread.x]);
 }
 
 function compare(weights, deltas) {
-  return (0, _relu.measure)(weights[this.thread.y][this.thread.x], deltas[this.thread.y][this.thread.x]);
+  return measure(weights[this.thread.y][this.thread.x], deltas[this.thread.y][this.thread.x]);
 }
 
 function predict3D(inputs) {
-  return (0, _relu.activate)(inputs[this.thread.z][this.thread.y][this.thread.x]);
+  return activate(inputs[this.thread.z][this.thread.y][this.thread.x]);
 }
 
 function compare3D(weights, deltas) {
-  return (0, _relu.measure)(weights[this.thread.z][this.thread.y][this.thread.x], deltas[this.thread.z][this.thread.y][this.thread.x]);
+  return measure(weights[this.thread.z][this.thread.y][this.thread.x], deltas[this.thread.z][this.thread.y][this.thread.x]);
 }
 
 var Relu = function (_Activation) {
@@ -26878,12 +26577,12 @@ var Relu = function (_Activation) {
 
     if (depth > 1) {
       _this.depth = depth;
-      _this.weights = (0, _zeros3d2.default)(width, height, depth);
-      _this.deltas = (0, _zeros3d2.default)(width, height, depth);
+      _this.weights = zeros3D(width, height, depth);
+      _this.deltas = zeros3D(width, height, depth);
     } else {
       _this.depth = 1;
-      _this.weights = (0, _zeros2d2.default)(width, height);
-      _this.deltas = (0, _zeros2d2.default)(width, height);
+      _this.weights = zeros2D(width, height);
+      _this.deltas = zeros2D(width, height);
     }
 
     return _this;
@@ -26898,22 +26597,22 @@ var Relu = function (_Activation) {
           depth = _inputLayer.depth;
 
       if (this.depth > 1) {
-        this.predictKernel = (0, _kernel.makeKernel)(predict3D, {
+        this.predictKernel = makeKernel(predict3D, {
           output: [width, height, depth],
-          functions: [_relu.activate]
+          functions: [activate]
         });
-        this.compareKernel = (0, _kernel.makeKernel)(compare3D, {
+        this.compareKernel = makeKernel(compare3D, {
           output: [width, height, depth],
-          functions: [_relu.measure]
+          functions: [measure]
         });
       } else {
-        this.predictKernel = (0, _kernel.makeKernel)(predict, {
+        this.predictKernel = makeKernel(predict, {
           output: [width, height],
-          functions: [_relu.activate]
+          functions: [activate]
         });
-        this.compareKernel = (0, _kernel.makeKernel)(compare, {
+        this.compareKernel = makeKernel(compare, {
           output: [width, height],
-          functions: [_relu.measure]
+          functions: [measure]
         });
       }
     }
@@ -26930,19 +26629,21 @@ var Relu = function (_Activation) {
   }]);
 
   return Relu;
-}(_types.Activation);
+}(Activation);
 
-exports.default = Relu;
+module.exports = {
+  Relu: Relu,
+  predict: predict,
+  compare: compare,
+  predict3D: predict3D,
+  compare3D: compare3D
+};
 },{"./types":"pX1U","../utilities/kernel":"L30b","../activation/relu":"kBu/","../utilities/zeros-2d":"C4Cz","../utilities/zeros-3d":"0AN3"}],"ED1E":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -26961,25 +26662,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-exports.predict = predict;
-exports.compare = compare;
-
-var _types = require('./types');
-
-var _kernel = require('../utilities/kernel');
-
-var _sigmoid = require('../activation/sigmoid');
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -27011,14 +26693,24 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var Activation = require('./types').Activation;
+
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var _require = require('../activation/sigmoid'),
+    activate = _require.activate,
+    measure = _require.measure;
+
+var zeros2D = require('../utilities/zeros-2d');
+
 function predict(inputs) {
-  return (0, _sigmoid.activate)(inputs[this.thread.y][this.thread.x]);
+  return activate(inputs[this.thread.y][this.thread.x]);
 }
 
 function compare(weights, deltas) {
   var weight = weights[this.thread.y][this.thread.x];
   var delta = deltas[this.thread.y][this.thread.x];
-  return (0, _sigmoid.measure)(weight, delta);
+  return measure(weight, delta);
 }
 
 var Sigmoid = function (_Activation) {
@@ -27037,21 +26729,21 @@ var Sigmoid = function (_Activation) {
 
     _this.validate();
 
-    _this.weights = (0, _zeros2d2.default)(_this.width, _this.height);
-    _this.deltas = (0, _zeros2d2.default)(_this.width, _this.height);
+    _this.weights = zeros2D(_this.width, _this.height);
+    _this.deltas = zeros2D(_this.width, _this.height);
     return _this;
   }
 
   _createClass(Sigmoid, [{
     key: 'setupKernels',
     value: function setupKernels() {
-      this.predictKernel = (0, _kernel.makeKernel)(predict, {
+      this.predictKernel = makeKernel(predict, {
         output: [this.width, this.height],
-        functions: [_sigmoid.activate]
+        functions: [activate]
       });
-      this.compareKernel = (0, _kernel.makeKernel)(compare, {
+      this.compareKernel = makeKernel(compare, {
         output: [this.width, this.height],
-        functions: [_sigmoid.measure]
+        functions: [measure]
       });
     }
   }, {
@@ -27067,19 +26759,19 @@ var Sigmoid = function (_Activation) {
   }]);
 
   return Sigmoid;
-}(_types.Activation);
+}(Activation);
 
-exports.default = Sigmoid;
+module.exports = {
+  Sigmoid: Sigmoid,
+  predict: predict,
+  compare: compare
+};
 },{"./types":"pX1U","../utilities/kernel":"L30b","../activation/sigmoid":"thFH","../utilities/zeros-2d":"C4Cz"}],"nfIB":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -27098,57 +26790,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-exports.getMaxValue = getMaxValue;
-exports.getMaxValue2D = getMaxValue2D;
-exports.getMaxValue3D = getMaxValue3D;
-exports.getSum = getSum;
-exports.getSum2D = getSum2D;
-exports.getSum3D = getSum3D;
-exports.getExponentials = getExponentials;
-exports.getExponentials2D = getExponentials2D;
-exports.getExponentials3D = getExponentials3D;
-exports.predict = predict;
-exports.predict2D = predict2D;
-exports.predict3D = predict3D;
-exports.compare = compare;
-exports.compare2D = compare2D;
-exports.compare3D = compare3D;
-exports.loss = loss;
-
-var _kernel = require('../utilities/kernel');
-
-var _types = require('./types');
-
-var _randos = require('../utilities/randos');
-
-var _randos2 = _interopRequireDefault(_randos);
-
-var _randos2d = require('../utilities/randos-2d');
-
-var _randos2d2 = _interopRequireDefault(_randos2d);
-
-var _randos3d = require('../utilities/randos-3d');
-
-var _randos3d2 = _interopRequireDefault(_randos3d);
-
-var _zeros = require('../utilities/zeros');
-
-var _zeros2 = _interopRequireDefault(_zeros);
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-var _zeros3d = require('../utilities/zeros-3d');
-
-var _zeros3d2 = _interopRequireDefault(_zeros3d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -27179,6 +26820,22 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var makeKernel = require('../utilities/kernel');
+
+var Filter = require('./types').Filter;
+
+var randos = require('../utilities/randos');
+
+var randos2D = require('../utilities/randos-2d');
+
+var randos3D = require('../utilities/randos-3d');
+
+var zeros = require('../utilities/zeros');
+
+var zeros2D = require('../utilities/zeros-2d');
+
+var zeros3D = require('../utilities/zeros-3d');
 
 function getMaxValue(inputs) {
   var maxInput = -Infinity;
@@ -27345,15 +27002,15 @@ var SoftMax = function (_Filter) {
 
     if (_this.height > 1) {
       if (_this.depth > 1) {
-        _this.weights = (0, _randos3d2.default)(_this.width, _this.height, _this.depth);
-        _this.deltas = (0, _zeros3d2.default)(_this.width, _this.height, _this.depth);
+        _this.weights = randos3D(_this.width, _this.height, _this.depth);
+        _this.deltas = zeros3D(_this.width, _this.height, _this.depth);
       } else {
-        _this.weights = (0, _randos2d2.default)(_this.width, _this.height);
-        _this.deltas = (0, _zeros2d2.default)(_this.width, _this.height);
+        _this.weights = randos2D(_this.width, _this.height);
+        _this.deltas = zeros2D(_this.width, _this.height);
       }
     } else {
-      _this.weights = (0, _randos2.default)(_this.width);
-      _this.deltas = (0, _zeros2.default)(_this.width);
+      _this.weights = randos(_this.width);
+      _this.deltas = zeros(_this.width);
     }
 
     return _this;
@@ -27367,10 +27024,10 @@ var SoftMax = function (_Filter) {
           depth = this.depth;
 
       if (depth > 1) {
-        this.getExponentialsKernel = (0, _kernel.makeKernel)(getExponentials3D, {
+        this.getExponentialsKernel = makeKernel(getExponentials3D, {
           output: [width, height, depth]
         });
-        this.getMaxValueKernel = (0, _kernel.makeKernel)(getMaxValue3D, {
+        this.getMaxValueKernel = makeKernel(getMaxValue3D, {
           output: [1, 1, 1],
           constants: {
             inputWidth: width,
@@ -27378,7 +27035,7 @@ var SoftMax = function (_Filter) {
             inputDepth: depth
           }
         });
-        this.getSumKernel = (0, _kernel.makeKernel)(getSum3D, {
+        this.getSumKernel = makeKernel(getSum3D, {
           output: [1, 1, 1],
           constants: {
             inputWidth: width,
@@ -27386,34 +27043,34 @@ var SoftMax = function (_Filter) {
             inputDepth: depth
           }
         });
-        this.predictKernel = (0, _kernel.makeKernel)(predict3D, {
+        this.predictKernel = makeKernel(predict3D, {
           output: [width, height, depth]
         });
-        this.compareKernel = (0, _kernel.makeKernel)(compare3D, {
+        this.compareKernel = makeKernel(compare3D, {
           output: [width, height, depth]
         });
       } else {
-        this.getExponentialsKernel = (0, _kernel.makeKernel)(getExponentials, {
+        this.getExponentialsKernel = makeKernel(getExponentials, {
           output: [width, height]
         });
-        this.getMaxValueKernel = (0, _kernel.makeKernel)(getMaxValue2D, {
+        this.getMaxValueKernel = makeKernel(getMaxValue2D, {
           output: [1, 1],
           constants: {
             inputWidth: width,
             inputHeight: height
           }
         });
-        this.getSumKernel = (0, _kernel.makeKernel)(getSum2D, {
+        this.getSumKernel = makeKernel(getSum2D, {
           output: [1, 1],
           constants: {
             inputWidth: width,
             inputHeight: height
           }
         });
-        this.predictKernel = (0, _kernel.makeKernel)(predict2D, {
+        this.predictKernel = makeKernel(predict2D, {
           output: [width, height]
         });
-        this.compareKernel = (0, _kernel.makeKernel)(compare2D, {
+        this.compareKernel = makeKernel(compare2D, {
           output: [width, height]
         });
       }
@@ -27436,9 +27093,27 @@ var SoftMax = function (_Filter) {
   }]);
 
   return SoftMax;
-}(_types.Filter);
+}(Filter);
 
-exports.default = SoftMax;
+module.exports = {
+  SoftMax: SoftMax,
+  getMaxValue: getMaxValue,
+  getMaxValue2D: getMaxValue2D,
+  getMaxValue3D: getMaxValue3D,
+  getSum: getSum,
+  getSum2D: getSum2D,
+  getSum3D: getSum3D,
+  getExponentials: getExponentials,
+  getExponentials2D: getExponentials2D,
+  getExponentials3D: getExponentials3D,
+  predict: predict,
+  predict2D: predict2D,
+  predict3D: predict3D,
+  compare: compare,
+  compare2D: compare2D,
+  compare3D: compare3D,
+  loss: loss
+};
 },{"../utilities/kernel":"L30b","./types":"pX1U","../utilities/randos":"S8tM","../utilities/randos-2d":"pcuE","../utilities/randos-3d":"9TSf","../utilities/zeros":"M4LY","../utilities/zeros-2d":"C4Cz","../utilities/zeros-3d":"0AN3"}],"qIAv":[function(require,module,exports) {
 'use strict';
 
@@ -27464,16 +27139,6 @@ var _createClass = function () {
   };
 }();
 
-var _base = require('./base');
-
-var _base2 = _interopRequireDefault(_base);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -27503,6 +27168,8 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var Base = require('./base');
 
 var Regression = function (_Base) {
   _inherits(Regression, _Base);
@@ -27526,7 +27193,7 @@ var Regression = function (_Base) {
   }]);
 
   return Regression;
-}(_base2.default);
+}(Base);
 
 function learn(target) {// if(y === i) { continue; }
   // var ydiff = -yscore + x.w[i] + margin;
@@ -27537,16 +27204,14 @@ function learn(target) {// if(y === i) { continue; }
   //   loss += ydiff;
   // }
 }
+
+module.exports = Regression;
 },{"./base":"kIeX"}],"YNtu":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -27565,25 +27230,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-exports.predict = predict;
-exports.compare = compare;
-
-var _types = require('./types');
-
-var _kernel = require('../utilities/kernel');
-
-var _tanh = require('../activation/tanh');
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -27615,12 +27261,20 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var Activation = require('./types').Activation;
+
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var tanhDerivative = require('../activation/tanh').tanhDerivative;
+
+var zeros2D = require('../utilities/zeros-2d');
+
 function predict(inputs) {
   return Math.tanh(inputs[this.thread.y][this.thread.x]);
 }
 
 function compare(weights, errors) {
-  return (0, _tanh.tanhDerivative)(weights[this.thread.y][this.thread.x], errors[this.thread.y][this.thread.x]);
+  return tanhDerivative(weights[this.thread.y][this.thread.x], errors[this.thread.y][this.thread.x]);
 }
 
 var Tanh = function (_Activation) {
@@ -27642,20 +27296,20 @@ var Tanh = function (_Activation) {
 
     _this.validate();
 
-    _this.weights = (0, _zeros2d2.default)(_this.width, _this.height);
-    _this.deltas = (0, _zeros2d2.default)(_this.width, _this.height);
+    _this.weights = zeros2D(_this.width, _this.height);
+    _this.deltas = zeros2D(_this.width, _this.height);
     return _this;
   }
 
   _createClass(Tanh, [{
     key: 'setupKernels',
     value: function setupKernels() {
-      this.predictKernel = (0, _kernel.makeKernel)(predict, {
+      this.predictKernel = makeKernel(predict, {
         output: [this.width, this.height]
       });
-      this.compareKernel = (0, _kernel.makeKernel)(compare, {
+      this.compareKernel = makeKernel(compare, {
         output: [this.width, this.height],
-        functions: [_tanh.tanhDerivative]
+        functions: [tanhDerivative]
       });
     }
   }, {
@@ -27671,19 +27325,19 @@ var Tanh = function (_Activation) {
   }]);
 
   return Tanh;
-}(_types.Activation);
+}(Activation);
 
-exports.default = Tanh;
+module.exports = {
+  Tanh: Tanh,
+  predict: predict,
+  compare: compare
+};
 },{"./types":"pX1U","../utilities/kernel":"L30b","../activation/tanh":"v3/M","../utilities/zeros-2d":"C4Cz"}],"xXoy":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -27702,28 +27356,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _kernel = require('../utilities/kernel');
-
-var _zeros = require('../utilities/zeros');
-
-var _zeros2 = _interopRequireDefault(_zeros);
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-var _zeros3d = require('../utilities/zeros-3d');
-
-var _zeros3d2 = _interopRequireDefault(_zeros3d);
-
-var _types = require('./types');
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -27754,6 +27386,16 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var zeros = require('../utilities/zeros');
+
+var zeros2D = require('../utilities/zeros-2d');
+
+var zeros3D = require('../utilities/zeros-3d');
+
+var Filter = require('./types').Filter;
 
 function compare1D(weights, targetValues) {
   return weights[this.thread.y][this.thread.x] - targetValues[this.thread.x];
@@ -27779,17 +27421,17 @@ var Target = function (_Filter) {
     _this.validate();
 
     if (_this.depth > 1) {
-      _this.weights = (0, _zeros3d2.default)(_this.width, _this.height, _this.depth);
-      _this.deltas = (0, _zeros3d2.default)(_this.width, _this.height, _this.depth);
-      _this.errors = (0, _zeros3d2.default)(_this.width, _this.height, _this.depth);
+      _this.weights = zeros3D(_this.width, _this.height, _this.depth);
+      _this.deltas = zeros3D(_this.width, _this.height, _this.depth);
+      _this.errors = zeros3D(_this.width, _this.height, _this.depth);
     } else if (_this.height > 1) {
-      _this.weights = (0, _zeros2d2.default)(_this.width, _this.height);
-      _this.deltas = (0, _zeros2d2.default)(_this.width, _this.height);
-      _this.errors = (0, _zeros2d2.default)(_this.width, _this.height);
+      _this.weights = zeros2D(_this.width, _this.height);
+      _this.deltas = zeros2D(_this.width, _this.height);
+      _this.errors = zeros2D(_this.width, _this.height);
     } else {
-      _this.weights = (0, _zeros2.default)(_this.width);
-      _this.deltas = (0, _zeros2.default)(_this.width);
-      _this.errors = (0, _zeros2.default)(_this.width);
+      _this.weights = zeros(_this.width);
+      _this.deltas = zeros(_this.width);
+      _this.errors = zeros(_this.width);
     }
 
     return _this;
@@ -27799,7 +27441,7 @@ var Target = function (_Filter) {
     key: 'setupKernels',
     value: function setupKernels() {
       var compareFn = this.width === 1 ? compare1D : compare2D;
-      this.compareKernel = (0, _kernel.makeKernel)(compareFn, {
+      this.compareKernel = makeKernel(compareFn, {
         output: [this.width, this.height]
       });
     }
@@ -27821,19 +27463,15 @@ var Target = function (_Filter) {
   }]);
 
   return Target;
-}(_types.Filter);
+}(Filter);
 
-exports.default = Target;
+module.exports = Target;
 },{"../utilities/kernel":"L30b","../utilities/zeros":"M4LY","../utilities/zeros-2d":"C4Cz","../utilities/zeros-3d":"0AN3","./types":"pX1U"}],"NJz4":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -27852,10 +27490,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _types = require('./types');
-
-var _kernel = require('../utilities/kernel');
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -27886,6 +27520,10 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var Modifier = require('./types').Modifier;
+
+var makeKernel = require('../utilities/kernel').makeKernel;
 
 function transpose(array) {
   return array[this.thread.x][this.thread.y];
@@ -27911,10 +27549,10 @@ var Transpose = function (_Modifier) {
   _createClass(Transpose, [{
     key: 'setupKernels',
     value: function setupKernels() {
-      this.predictKernel = (0, _kernel.makeKernel)(transpose, {
+      this.predictKernel = makeKernel(transpose, {
         output: [this.height, this.width]
       });
-      this.compareKernel = (0, _kernel.makeKernel)(transpose, {
+      this.compareKernel = makeKernel(transpose, {
         output: [this.width, this.height]
       });
     }
@@ -27931,19 +27569,15 @@ var Transpose = function (_Modifier) {
   }]);
 
   return Transpose;
-}(_types.Modifier);
+}(Modifier);
 
-exports.default = Transpose;
+module.exports = Transpose;
 },{"./types":"pX1U","../utilities/kernel":"L30b"}],"EO/P":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -27962,18 +27596,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-var _types = require('./types');
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -28005,6 +27627,10 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var zeros2D = require('../utilities/zeros-2d');
+
+var Model = require('./types').Model;
+
 var Zeros = function (_Model) {
   _inherits(Zeros, _Model);
 
@@ -28015,8 +27641,8 @@ var Zeros = function (_Model) {
 
     _this.validate();
 
-    _this.weights = (0, _zeros2d2.default)(_this.width, _this.height);
-    _this.deltas = (0, _zeros2d2.default)(_this.width, _this.height);
+    _this.weights = zeros2D(_this.width, _this.height);
+    _this.deltas = zeros2D(_this.width, _this.height);
     return _this;
   }
 
@@ -28031,250 +27657,197 @@ var Zeros = function (_Model) {
   }]);
 
   return Zeros;
-}(_types.Model);
+}(Model);
 
-exports.default = Zeros;
+module.exports = Zeros;
 },{"../utilities/zeros-2d":"C4Cz","./types":"pX1U"}],"X3lc":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.zeros = exports.Zeros = exports.transpose = exports.Transpose = exports.target = exports.Target = exports.tanh = exports.Tanh = exports.svm = exports.SVM = exports.softMax = exports.SoftMax = exports.sigmoid = exports.Sigmoid = exports.relu = exports.Relu = exports.regression = exports.Regression = exports.random = exports.Random = exports.pool = exports.Pool = exports.ones = exports.Ones = exports.negative = exports.Negative = exports.multiplyElement = exports.MultiplyElement = exports.multiply = exports.Multiply = exports.leakyRelu = exports.LeakyRelu = exports.input = exports.Input = exports.fullyConnected = exports.FullyConnected = exports.dropout = exports.Dropout = exports.convolution = exports.Convolution = exports.Base = exports.add = exports.Add = undefined;
+var Add = require('./add').Add;
 
-var _add = require('./add');
+var Base = require('./base');
 
-var _add2 = _interopRequireDefault(_add);
+var Convolution = require('./convolution').Convolution;
 
-var _base = require('./base');
+var Dropout = require('./dropout').Dropout; // import feedForward from './feed-forward'
 
-var _base2 = _interopRequireDefault(_base);
 
-var _convolution = require('./convolution');
+var FullyConnected = require('./fully-connected').FullyConnected; // import gru from './gru'
 
-var _convolution2 = _interopRequireDefault(_convolution);
 
-var _dropout = require('./dropout');
+var Input = require('./input');
 
-var _dropout2 = _interopRequireDefault(_dropout);
+var LeakyRelu = require('./leaky-relu').LeakyRelu; // import lstm from './lstm'
 
-var _fullyConnected = require('./fully-connected');
 
-var _fullyConnected2 = _interopRequireDefault(_fullyConnected);
+var Multiply = require('./multiply').Multiply;
 
-var _input = require('./input');
+var MultiplyElement = require('./multiply-element');
 
-var _input2 = _interopRequireDefault(_input);
+var Negative = require('./negative');
 
-var _leakyRelu = require('./leaky-relu');
+var Ones = require('./ones'); // import output from './output'
 
-var _leakyRelu2 = _interopRequireDefault(_leakyRelu);
 
-var _multiply = require('./multiply');
+var Pool = require('./pool').Pool;
 
-var _multiply2 = _interopRequireDefault(_multiply);
+var Random = require('./random'); // import recurrent from './recurrent'
 
-var _multiplyElement = require('./multiply-element');
 
-var _multiplyElement2 = _interopRequireDefault(_multiplyElement);
+var Regression = require('./regression');
 
-var _negative = require('./negative');
+var Relu = require('./relu').Relu;
 
-var _negative2 = _interopRequireDefault(_negative);
+var Sigmoid = require('./sigmoid').Sigmoid;
 
-var _ones = require('./ones');
+var SoftMax = require('./soft-max').SoftMax;
 
-var _ones2 = _interopRequireDefault(_ones);
+var SVM = require('./svm');
 
-var _pool = require('./pool');
+var Tanh = require('./tanh').Tanh;
 
-var _pool2 = _interopRequireDefault(_pool);
+var Target = require('./target');
 
-var _random = require('./random');
+var Transpose = require('./transpose');
 
-var _random2 = _interopRequireDefault(_random);
-
-var _regression = require('./regression');
-
-var _regression2 = _interopRequireDefault(_regression);
-
-var _relu = require('./relu');
-
-var _relu2 = _interopRequireDefault(_relu);
-
-var _sigmoid = require('./sigmoid');
-
-var _sigmoid2 = _interopRequireDefault(_sigmoid);
-
-var _softMax = require('./soft-max');
-
-var _softMax2 = _interopRequireDefault(_softMax);
-
-var _svm = require('./svm');
-
-var _svm2 = _interopRequireDefault(_svm);
-
-var _tanh = require('./tanh');
-
-var _tanh2 = _interopRequireDefault(_tanh);
-
-var _target = require('./target');
-
-var _target2 = _interopRequireDefault(_target);
-
-var _transpose = require('./transpose');
-
-var _transpose2 = _interopRequireDefault(_transpose);
-
-var _zeros = require('./zeros');
-
-var _zeros2 = _interopRequireDefault(_zeros);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-} // import feedForward from './feed-forward'
-
+var Zeros = require('./zeros');
 
 function add(inputLayer1, inputLayer2) {
-  return new _add2.default(inputLayer1, inputLayer2);
-} // import recurrent from './recurrent'
-// import output from './output'
-// import lstm from './lstm'
-// import gru from './gru'
-
+  return new Add(inputLayer1, inputLayer2);
+}
 
 function convolution(settings, inputLayer) {
-  return new _convolution2.default(settings, inputLayer);
+  return new Convolution(settings, inputLayer);
 }
 
 function dropout(settings, inputLayer) {
-  return new _dropout2.default(settings, inputLayer);
+  return new Dropout(settings, inputLayer);
 }
 
 function fullyConnected(settings, inputLayer) {
-  return new _fullyConnected2.default(settings, inputLayer);
+  return new FullyConnected(settings, inputLayer);
 }
 
 function input(settings) {
-  return new _input2.default(settings);
+  return new Input(settings);
 }
 
 function leakyRelu(inputLayer) {
-  return new _leakyRelu2.default(inputLayer);
+  return new LeakyRelu(inputLayer);
 }
 
 function multiply(inputLayer1, inputLayer2) {
-  return new _multiply2.default(inputLayer1, inputLayer2);
+  return new Multiply(inputLayer1, inputLayer2);
 }
 
 function multiplyElement(inputLayer1, inputLayer2) {
-  return new _multiplyElement2.default(inputLayer1, inputLayer2);
+  return new MultiplyElement(inputLayer1, inputLayer2);
 }
 
 function negative(settings, inputLayer) {
-  return new _negative2.default(settings, inputLayer);
+  return new Negative(settings, inputLayer);
 }
 
 function ones(settings) {
-  return new _ones2.default(settings);
+  return new Ones(settings);
 }
 
 function pool(settings, inputLayer) {
-  return new _pool2.default(settings, inputLayer);
+  return new Pool(settings, inputLayer);
 }
 
 function random(settings) {
-  return new _random2.default(settings);
+  return new Random(settings);
 }
 
 function regression(settings, inputLayer) {
-  return new _regression2.default(settings, inputLayer);
+  return new Regression(settings, inputLayer);
 }
 
 function relu(inputLayer) {
-  return new _relu2.default(inputLayer);
+  return new Relu(inputLayer);
 }
 
 function sigmoid(inputLayer) {
-  return new _sigmoid2.default(inputLayer);
+  return new Sigmoid(inputLayer);
 }
 
 function softMax(settings, inputLayer) {
-  return new _softMax2.default(settings, inputLayer);
+  return new SoftMax(settings, inputLayer);
 }
 
 function svm(settings, inputLayer) {
-  return new _svm2.default(settings, inputLayer);
+  return new SVM(settings, inputLayer);
 }
 
 function tanh(inputLayer) {
-  return new _tanh2.default(inputLayer);
+  return new Tanh(inputLayer);
 }
 
 function target(settings, inputLayer) {
-  return new _target2.default(settings, inputLayer);
+  return new Target(settings, inputLayer);
 }
 
 function transpose(inputLayer) {
-  return new _transpose2.default(inputLayer);
+  return new Transpose(inputLayer);
 }
 
 function zeros(settings) {
-  return new _zeros2.default(settings);
+  return new Zeros(settings);
 }
 
-exports.Add = _add2.default;
-exports.add = add;
-exports.Base = _base2.default;
-exports.Convolution = _convolution2.default;
-exports.convolution = convolution;
-exports.Dropout = _dropout2.default;
-exports.dropout = dropout;
-exports.FullyConnected = _fullyConnected2.default;
-exports.fullyConnected = fullyConnected;
-exports.Input = _input2.default;
-exports.input = input;
-exports.LeakyRelu = _leakyRelu2.default;
-exports.leakyRelu = leakyRelu;
-exports.Multiply = _multiply2.default;
-exports.multiply = multiply;
-exports.MultiplyElement = _multiplyElement2.default;
-exports.multiplyElement = multiplyElement;
-exports.Negative = _negative2.default;
-exports.negative = negative;
-exports.Ones = _ones2.default;
-exports.ones = ones;
-exports.Pool = _pool2.default;
-exports.pool = pool;
-exports.Random = _random2.default;
-exports.random = random;
-exports.Regression = _regression2.default;
-exports.regression = regression;
-exports.Relu = _relu2.default;
-exports.relu = relu;
-exports.Sigmoid = _sigmoid2.default;
-exports.sigmoid = sigmoid;
-exports.SoftMax = _softMax2.default;
-exports.softMax = softMax;
-exports.SVM = _svm2.default;
-exports.svm = svm;
-exports.Tanh = _tanh2.default;
-exports.tanh = tanh;
-exports.Target = _target2.default;
-exports.target = target;
-exports.Transpose = _transpose2.default;
-exports.transpose = transpose;
-exports.Zeros = _zeros2.default;
-exports.zeros = zeros;
+module.exports = {
+  Add: Add,
+  add: add,
+  Base: Base,
+  Convolution: Convolution,
+  convolution: convolution,
+  Dropout: Dropout,
+  dropout: dropout,
+  // feedForward,
+  FullyConnected: FullyConnected,
+  fullyConnected: fullyConnected,
+  // gru,
+  Input: Input,
+  input: input,
+  LeakyRelu: LeakyRelu,
+  leakyRelu: leakyRelu,
+  // lstm,
+  Multiply: Multiply,
+  multiply: multiply,
+  MultiplyElement: MultiplyElement,
+  multiplyElement: multiplyElement,
+  Negative: Negative,
+  negative: negative,
+  Ones: Ones,
+  ones: ones,
+  // output,
+  Pool: Pool,
+  pool: pool,
+  Random: Random,
+  random: random,
+  // recurrent,
+  Regression: Regression,
+  regression: regression,
+  Relu: Relu,
+  relu: relu,
+  Sigmoid: Sigmoid,
+  sigmoid: sigmoid,
+  SoftMax: SoftMax,
+  softMax: softMax,
+  SVM: SVM,
+  svm: svm,
+  Tanh: Tanh,
+  tanh: tanh,
+  Target: Target,
+  target: target,
+  Transpose: Transpose,
+  transpose: transpose,
+  Zeros: Zeros,
+  zeros: zeros
+};
 },{"./add":"q7CK","./base":"kIeX","./convolution":"xL0H","./dropout":"YwJF","./fully-connected":"Aqg2","./input":"qUrb","./leaky-relu":"JZX2","./multiply":"xJEq","./multiply-element":"vjFV","./negative":"kuo+","./ones":"0122","./pool":"vNYh","./random":"yQCp","./regression":"viPg","./relu":"BjPp","./sigmoid":"ED1E","./soft-max":"nfIB","./svm":"qIAv","./tanh":"YNtu","./target":"xXoy","./transpose":"NJz4","./zeros":"EO/P"}],"dfGl":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = likely;
 /**
  *
  * @param {*} input
@@ -28282,7 +27855,7 @@ exports.default = likely;
  * @returns {*}
  */
 
-function likely(input, net) {
+module.exports = function likely(input, net) {
   var output = net.run(input);
   var maxProp = null;
   var maxValue = -1;
@@ -28295,13 +27868,9 @@ function likely(input, net) {
     }
   });
   return maxProp;
-}
+};
 },{}],"Q1a6":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -28421,14 +27990,9 @@ var lookup = function () {
   return lookup;
 }();
 
-exports.default = lookup;
+module.exports = lookup;
 },{}],"OMKX":[function(require,module,exports) {
 'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.MRmsProp = exports.getMomentum = undefined;
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -28448,26 +28012,15 @@ var _createClass = function () {
   };
 }();
 
-exports.clipByValue = clipByValue;
-exports.isClippedByValue = isClippedByValue;
-
-var _kernel = require('../utilities/kernel');
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
+
+var makeKernel = require('../utilities/kernel').makeKernel;
+
+var zeros2D = require('../utilities/zeros-2d');
 
 function getMomentum(delta, decay, previousMomentum) {
   return previousMomentum * decay + (1 - decay) * delta * delta;
@@ -28533,7 +28086,7 @@ var MomentumRootMeanSquaredPropagation = function () {
     this.layer = layer;
     this.width = layer.width;
     this.height = layer.height;
-    this.momentums = (0, _zeros2d2.default)(layer.width, layer.height);
+    this.momentums = zeros2D(layer.width, layer.height);
     Object.assign(this, this.constructor.defaults, settings);
     this.setupKernels();
   }
@@ -28548,7 +28101,7 @@ var MomentumRootMeanSquaredPropagation = function () {
   }, {
     key: 'setupKernels',
     value: function setupKernels() {
-      this.kernel = (0, _kernel.makeKernel)(momentumRootMeanSquaredPropagation, {
+      this.kernel = makeKernel(momentumRootMeanSquaredPropagation, {
         output: [this.width, this.height],
         constants: {
           clipValue: this.clipValue,
@@ -28573,46 +28126,37 @@ var MomentumRootMeanSquaredPropagation = function () {
  */
 
 
-exports.default = MomentumRootMeanSquaredPropagation;
 var MRmsProp = MomentumRootMeanSquaredPropagation;
-exports.getMomentum = getMomentum;
-exports.MRmsProp = MRmsProp;
+module.exports = {
+  MomentumRootMeanSquaredPropagation: MomentumRootMeanSquaredPropagation,
+  getMomentum: getMomentum,
+  MRmsProp: MRmsProp,
+  clipByValue: clipByValue,
+  isClippedByValue: isClippedByValue
+};
 },{"../utilities/kernel":"L30b","../utilities/zeros-2d":"C4Cz"}],"4P9L":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.mRmsProp = exports.MRmsProp = exports.momentumRootMeanSquaredPropagation = exports.MomentumRootMeanSquaredPropagation = undefined;
+var mrmsp = require('./momentum-root-mean-squared-propagation');
 
-var _momentumRootMeanSquaredPropagation = require('./momentum-root-mean-squared-propagation');
-
-var _momentumRootMeanSquaredPropagation2 = _interopRequireDefault(_momentumRootMeanSquaredPropagation);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
+var MomentumRootMeanSquaredPropagation = mrmsp.MomentumRootMeanSquaredPropagation;
+var MRmsProp = mrmsp.MRmsProp;
 
 function momentumRootMeanSquaredPropagation(layer, settings) {
-  return new _momentumRootMeanSquaredPropagation2.default(layer, settings);
+  return new MomentumRootMeanSquaredPropagation(layer, settings);
 }
 
 var mRmsProp = momentumRootMeanSquaredPropagation;
-exports.MomentumRootMeanSquaredPropagation = _momentumRootMeanSquaredPropagation2.default;
-exports.momentumRootMeanSquaredPropagation = momentumRootMeanSquaredPropagation;
-exports.MRmsProp = _momentumRootMeanSquaredPropagation.MRmsProp;
-exports.mRmsProp = mRmsProp;
+module.exports = {
+  MomentumRootMeanSquaredPropagation: MomentumRootMeanSquaredPropagation,
+  momentumRootMeanSquaredPropagation: momentumRootMeanSquaredPropagation,
+  MRmsProp: MRmsProp,
+  mRmsProp: mRmsProp
+};
 },{"./momentum-root-mean-squared-propagation":"OMKX"}],"3u/j":[function(require,module,exports) {
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = mse2d;
-
-function mse2d(errors) {
+module.exports = function mse2d(errors) {
   // mean squared error 2d
   var sum = 0;
   var length = errors.length * errors[0].length;
@@ -28624,18 +28168,13 @@ function mse2d(errors) {
   }
 
   return sum / length;
-}
+};
 },{}],"NEs+":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = layerFromJSON;
-
 var layer = require('../layer');
 
-function layerFromJSON(jsonLayer) {
+module.exports = function layerFromJSON(jsonLayer) {
   if (!layer.hasOwnProperty(jsonLayer.type)) return null;
   var Layer = layer[jsonLayer.type]; // eslint-disable-next-line
 
@@ -28646,16 +28185,11 @@ function layerFromJSON(jsonLayer) {
     }
   });
   return realLayer;
-}
+};
 },{"../layer":"X3lc"}],"WO5N":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = traverseLayersFrom;
-
-function traverseLayersFrom(layer, cb) {
+module.exports = function traverseLayersFrom(layer, cb) {
   if (layer.hasOwnProperty('inputLayer')) {
     traverseLayersFrom(layer.inputLayer, cb);
   } else {
@@ -28669,31 +28203,18 @@ function traverseLayersFrom(layer, cb) {
   }
 
   cb(layer);
-}
+};
 },{}],"4Z71":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = flattenLayers;
+var traverseLayersFrom = require('./traverse-layers-from');
 
-var _traverseLayersFrom = require('./traverse-layers-from');
-
-var _traverseLayersFrom2 = _interopRequireDefault(_traverseLayersFrom);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
-function flattenLayers(layers) {
+module.exports = function flattenLayers(layers) {
   var result = layers.slice(0);
 
   var _loop = function _loop(i) {
     var offset = 0;
-    (0, _traverseLayersFrom2.default)(result[i], function (layer) {
+    traverseLayersFrom(result[i], function (layer) {
       if (result.indexOf(layer) === -1) {
         result.splice(i + offset, 0, layer);
         offset++;
@@ -28706,13 +28227,9 @@ function flattenLayers(layers) {
   }
 
   return result;
-}
+};
 },{"./traverse-layers-from":"WO5N"}],"eqC7":[function(require,module,exports) {
 'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -28730,51 +28247,7 @@ var _createClass = function () {
     if (staticProps) defineProperties(Constructor, staticProps);
     return Constructor;
   };
-}(); // import TrainStream from './train-stream'
-
-
-var _lookup = require('./lookup');
-
-var _lookup2 = _interopRequireDefault(_lookup);
-
-var _mse2d = require('./utilities/mse-2d');
-
-var _mse2d2 = _interopRequireDefault(_mse2d);
-
-var _layerFromJson = require('./utilities/layer-from-json');
-
-var _layerFromJson2 = _interopRequireDefault(_layerFromJson);
-
-var _praxis2 = require('./praxis');
-
-var _praxis = _interopRequireWildcard(_praxis2);
-
-var _flattenLayers = require('./utilities/flatten-layers');
-
-var _flattenLayers2 = _interopRequireDefault(_flattenLayers);
-
-function _interopRequireWildcard(obj) {
-  if (obj && obj.__esModule) {
-    return obj;
-  } else {
-    var newObj = {};
-
-    if (obj != null) {
-      for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
-      }
-    }
-
-    newObj.default = obj;
-    return newObj;
-  }
-}
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
+}();
 
 function _toConsumableArray(arr) {
   if (Array.isArray(arr)) {
@@ -28793,6 +28266,17 @@ function _classCallCheck(instance, Constructor) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
+
+var lookup = require('./lookup'); // import TrainStream from './train-stream'
+
+
+var mse2d = require('./utilities/mse-2d');
+
+var layerFromJSON = require('./utilities/layer-from-json');
+
+var _praxis = require('./praxis');
+
+var flattenLayers = require('./utilities/flatten-layers');
 
 var FeedForward = function () {
   _createClass(FeedForward, [{
@@ -28951,7 +28435,7 @@ var FeedForward = function () {
       layers.push(this._inputLayer);
       layers.push.apply(layers, _toConsumableArray(hiddenLayers));
       layers.push(this._outputLayer);
-      this.layers = (0, _flattenLayers2.default)(layers);
+      this.layers = flattenLayers(layers);
     }
   }, {
     key: '_connectHiddenLayers',
@@ -28995,13 +28479,13 @@ var FeedForward = function () {
     key: 'run',
     value: function run(input) {
       if (this.inputLookup) {
-        input = _lookup2.default.toArray(this.inputLookup, input);
+        input = lookup.toArray(this.inputLookup, input);
       }
 
       var output = this.runInput(input);
 
       if (this.outputLookup) {
-        output = _lookup2.default.toHash(this.outputLookup, output);
+        output = lookup.toHash(this.outputLookup, output);
       }
 
       return output;
@@ -29145,7 +28629,7 @@ var FeedForward = function () {
       this._adjustWeights();
 
       if (logErrorRate) {
-        return (0, _mse2d2.default)(this._outputLayer.errors.hasOwnProperty('toArray') ? this._outputLayer.errors.toArray() : this._outputLayer.errors);
+        return mse2d(this._outputLayer.errors.hasOwnProperty('toArray') ? this._outputLayer.errors.toArray() : this._outputLayer.errors);
       }
 
       return null;
@@ -29191,14 +28675,13 @@ var FeedForward = function () {
 
       if (!Array.isArray(datum) && !(datum instanceof Float32Array)) {
         if (!this.inputLookup) {
-          this.inputLookup = _lookup2.default.buildLookup(data.map(function (value) {
+          this.inputLookup = lookup.buildLookup(data.map(function (value) {
             return value.input;
           }));
         }
 
         data = data.map(function (datumParam) {
-          var array = _lookup2.default.toArray(_this2.inputLookup, datumParam.input);
-
+          var array = lookup.toArray(_this2.inputLookup, datumParam.input);
           return Object.assign({}, datumParam, {
             input: array
           });
@@ -29207,14 +28690,13 @@ var FeedForward = function () {
 
       if (!Array.isArray(data[0].output)) {
         if (!this.outputLookup) {
-          this.outputLookup = _lookup2.default.buildLookup(data.map(function (value) {
+          this.outputLookup = lookup.buildLookup(data.map(function (value) {
             return value.output;
           }));
         }
 
         data = data.map(function (datumParam) {
-          var array = _lookup2.default.toArray(_this2.outputLookup, datumParam.output);
-
+          var array = lookup.toArray(_this2.outputLookup, datumParam.output);
           return Object.assign({}, datumParam, {
             output: array
           });
@@ -29299,7 +28781,7 @@ var FeedForward = function () {
     value: function fromJSON(json, getLayer) {
       var jsonLayers = json.layers;
       var layers = [];
-      var inputLayer = (0, _layerFromJson2.default)(jsonLayers[0]) || getLayer(jsonLayers[0]);
+      var inputLayer = layerFromJSON(jsonLayers[0]) || getLayer(jsonLayers[0]);
       layers.push(inputLayer);
 
       for (var i = 1; i < jsonLayers.length; i++) {
@@ -29307,7 +28789,7 @@ var FeedForward = function () {
 
         if (jsonLayer.hasOwnProperty('inputLayerIndex')) {
           var inputLayer1 = layers[jsonLayer.inputLayerIndex];
-          layers.push((0, _layerFromJson2.default)(jsonLayer, inputLayer1) || getLayer(jsonLayer, inputLayer1));
+          layers.push(layerFromJSON(jsonLayer, inputLayer1) || getLayer(jsonLayer, inputLayer1));
         } else {
           if (!jsonLayer.hasOwnProperty('inputLayer1Index')) throw new Error('inputLayer1Index not defined');
           if (!jsonLayer.hasOwnProperty('inputLayer2Index')) throw new Error('inputLayer2Index not defined');
@@ -29315,7 +28797,7 @@ var FeedForward = function () {
           var inputLayer2 = layers[jsonLayer.inputLayer2Index];
           if (_inputLayer === undefined) throw new Error('layer of index ' + jsonLayer.inputLayer1Index + ' not found');
           if (inputLayer2 === undefined) throw new Error('layer of index ' + jsonLayer.inputLayer2Index + ' not found');
-          layers.push((0, _layerFromJson2.default)(jsonLayer, inputLayer) || getLayer(jsonLayer, _inputLayer, inputLayer2));
+          layers.push(layerFromJSON(jsonLayer, inputLayer) || getLayer(jsonLayer, _inputLayer, inputLayer2));
         }
       }
 
@@ -29328,7 +28810,7 @@ var FeedForward = function () {
   return FeedForward;
 }();
 
-exports.default = FeedForward;
+module.exports = FeedForward;
 },{"./lookup":"Q1a6","./utilities/mse-2d":"3u/j","./utilities/layer-from-json":"NEs+","./praxis":"4P9L","./utilities/flatten-layers":"4Z71"}],"Mjd7":[function(require,module,exports) {
 "use strict";
 
@@ -35438,10 +34920,6 @@ var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "sym
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
 var _createClass = function () {
   function defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
@@ -35459,18 +34937,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _stream = require('stream');
-
-var _lookup = require('./lookup');
-
-var _lookup2 = _interopRequireDefault(_lookup);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -35513,6 +34979,10 @@ function _toConsumableArray(arr) {
     return Array.from(arr);
   }
 }
+
+var Writable = require('stream').Writable;
+
+var lookup = require('./lookup');
 /**
  *
  * https://gist.github.com/telekosmos/3b62a31a5c43f40849bb
@@ -35634,10 +35104,10 @@ var TrainStream = function (_Writable) {
 
       if (!this.dataFormatDetermined) {
         // create the lookup
-        this.neuralNetwork.inputLookup = _lookup2.default.lookupFromArray(this.inputKeys);
+        this.neuralNetwork.inputLookup = lookup.lookupFromArray(this.inputKeys);
 
         if (!Array.isArray(this.firstDatum.output)) {
-          this.neuralNetwork.outputLookup = _lookup2.default.lookupFromArray(this.outputKeys);
+          this.neuralNetwork.outputLookup = lookup.lookupFromArray(this.outputKeys);
         }
 
         var data = this.neuralNetwork.formatData(this.firstDatum);
@@ -35701,46 +35171,26 @@ var TrainStream = function (_Writable) {
   }]);
 
   return TrainStream;
-}(_stream.Writable);
+}(Writable);
 
-exports.default = TrainStream;
+module.exports = TrainStream;
 },{"stream":"fnRj","./lookup":"Q1a6"}],"HBY8":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = toArray;
 /**
  *
  * @param values
  * @returns {*}
  */
 
-function toArray(values) {
+module.exports = function toArray(values) {
   if (Array.isArray(values)) {
     return values;
   }
 
   return new Float32Array(Object.values(values));
-}
+};
 },{}],"UFcl":[function(require,module,exports) {
 'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = max;
-
-var _toArray = require('./to-array');
-
-var _toArray2 = _interopRequireDefault(_toArray);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _toConsumableArray(arr) {
   if (Array.isArray(arr)) {
@@ -35753,6 +35203,8 @@ function _toConsumableArray(arr) {
     return Array.from(arr);
   }
 }
+
+var toArray = require('./to-array');
 /**
  *
  * @param values
@@ -35760,18 +35212,13 @@ function _toConsumableArray(arr) {
  */
 
 
-function max(values) {
-  return Math.max.apply(Math, _toConsumableArray((0, _toArray2.default)(values)));
-}
+module.exports = function max(values) {
+  return Math.max.apply(Math, _toConsumableArray(toArray(values)));
+};
 },{"./to-array":"HBY8"}],"YGn7":[function(require,module,exports) {
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = mse;
-
-function mse(errors) {
+module.exports = function mse(errors) {
   // mean squared error
   var sum = 0;
 
@@ -35780,14 +35227,9 @@ function mse(errors) {
   }
 
   return sum / errors.length;
-}
+};
 },{}],"YhH7":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = range;
 /**
  *
  * @param start
@@ -35795,7 +35237,7 @@ exports.default = range;
  * @returns {Array}
  */
 
-function range(start, end) {
+module.exports = function range(start, end) {
   var result = [];
 
   for (; start < end; start++) {
@@ -35803,7 +35245,7 @@ function range(start, end) {
   }
 
   return result;
-}
+};
 },{}],"5E9k":[function(require,module,exports) {
 "use strict";
 
@@ -37273,10 +36715,6 @@ function equalsShallow() {
 },{"../neural-network":"8epZ"}],"8epZ":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
 var _createClass = function () {
   function defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
@@ -37295,54 +36733,6 @@ var _createClass = function () {
   };
 }();
 
-var _thaw = require('thaw.js');
-
-var _thaw2 = _interopRequireDefault(_thaw);
-
-var _lookup = require('./lookup');
-
-var _lookup2 = _interopRequireDefault(_lookup);
-
-var _trainStream = require('./train-stream');
-
-var _trainStream2 = _interopRequireDefault(_trainStream);
-
-var _max = require('./utilities/max');
-
-var _max2 = _interopRequireDefault(_max);
-
-var _mse = require('./utilities/mse');
-
-var _mse2 = _interopRequireDefault(_mse);
-
-var _randos = require('./utilities/randos');
-
-var _randos2 = _interopRequireDefault(_randos);
-
-var _range = require('./utilities/range');
-
-var _range2 = _interopRequireDefault(_range);
-
-var _toArray = require('./utilities/to-array');
-
-var _toArray2 = _interopRequireDefault(_toArray);
-
-var _zeros = require('./utilities/zeros');
-
-var _zeros2 = _interopRequireDefault(_zeros);
-
-var _parallelTrainer = require('./parallel-trainer');
-
-var _avgNets = require('./utilities/avg-nets');
-
-var _avgNets2 = _interopRequireDefault(_avgNets);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _toConsumableArray(arr) {
   if (Array.isArray(arr)) {
     for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
@@ -37360,6 +36750,29 @@ function _classCallCheck(instance, Constructor) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
+
+var Thaw = require('thaw.js');
+
+var lookup = require('./lookup');
+
+var TrainStream = require('./train-stream');
+
+var max = require('./utilities/max');
+
+var mse = require('./utilities/mse');
+
+var randos = require('./utilities/randos');
+
+var range = require('./utilities/range');
+
+var toArray = require('./utilities/to-array');
+
+var zeros = require('./utilities/zeros');
+
+var _require = require('./parallel-trainer'),
+    trainParallel = _require.trainParallel;
+
+var avgNets = require('./utilities/avg-nets');
 /**
  * @param {object} options
  * @constructor
@@ -37506,19 +36919,19 @@ var NeuralNetwork = function () {
 
       for (var layer = 0; layer <= this.outputLayer; layer++) {
         var size = this.sizes[layer];
-        this.deltas[layer] = (0, _zeros2.default)(size);
-        this.errors[layer] = (0, _zeros2.default)(size);
-        this.outputs[layer] = (0, _zeros2.default)(size);
+        this.deltas[layer] = zeros(size);
+        this.errors[layer] = zeros(size);
+        this.outputs[layer] = zeros(size);
 
         if (layer > 0) {
-          this.biases[layer] = (0, _randos2.default)(size);
+          this.biases[layer] = randos(size);
           this.weights[layer] = new Array(size);
           this.changes[layer] = new Array(size);
 
           for (var node = 0; node < size; node++) {
             var prevSize = this.sizes[layer - 1];
-            this.weights[layer][node] = (0, _randos2.default)(prevSize);
-            this.changes[layer][node] = (0, _zeros2.default)(prevSize);
+            this.weights[layer][node] = randos(prevSize);
+            this.changes[layer][node] = zeros(prevSize);
           }
         }
       }
@@ -37577,13 +36990,13 @@ var NeuralNetwork = function () {
       if (!this.isRunnable) return null;
 
       if (this.inputLookup) {
-        input = _lookup2.default.toArray(this.inputLookup, input);
+        input = lookup.toArray(this.inputLookup, input);
       }
 
       var output = [].concat(_toConsumableArray(this.runInput(input)));
 
       if (this.outputLookup) {
-        output = _lookup2.default.toHash(this.outputLookup, output);
+        output = lookup.toHash(this.outputLookup, output);
       }
 
       return output;
@@ -37929,12 +37342,12 @@ var NeuralNetwork = function () {
 
       if (trainOpts.parallel) {
         trainOpts.log = this.trainOpts.log;
-        return (0, _parallelTrainer.trainParallel)(rawData, this, trainOpts);
+        return trainParallel(rawData, this, trainOpts);
       }
 
       return new Promise(function (resolve, reject) {
         try {
-          var thawedTrain = new _thaw2.default(new Array(_this4.trainOpts.iterations), {
+          var thawedTrain = new Thaw(new Array(_this4.trainOpts.iterations), {
             delay: true,
             each: function each() {
               return _this4._trainingTick(data, status, endTime) || thawedTrain.stop();
@@ -37969,7 +37382,7 @@ var NeuralNetwork = function () {
         return this;
       }
 
-      return _avgNets2.default.apply(undefined, _toConsumableArray([this].concat(nets)));
+      return avgNets.apply(undefined, _toConsumableArray([this].concat(nets)));
     }
     /**
      *
@@ -37988,7 +37401,7 @@ var NeuralNetwork = function () {
       this._adjustWeights();
 
       if (logErrorRate) {
-        return (0, _mse2.default)(this.errors[this.outputLayer]);
+        return mse(this.errors[this.outputLayer]);
       }
 
       return null;
@@ -38153,14 +37566,13 @@ var NeuralNetwork = function () {
 
       if (!Array.isArray(datumCheck) && !(datumCheck instanceof Float32Array)) {
         if (!this.inputLookup) {
-          this.inputLookup = _lookup2.default.buildLookup(data.map(function (value) {
+          this.inputLookup = lookup.buildLookup(data.map(function (value) {
             return value.input;
           }));
         }
 
         data = data.map(function (datum) {
-          var array = _lookup2.default.toArray(_this5.inputLookup, datum.input);
-
+          var array = lookup.toArray(_this5.inputLookup, datum.input);
           return Object.assign({}, datum, {
             input: array
           });
@@ -38169,14 +37581,13 @@ var NeuralNetwork = function () {
 
       if (!Array.isArray(data[0].output)) {
         if (!this.outputLookup) {
-          this.outputLookup = _lookup2.default.buildLookup(data.map(function (value) {
+          this.outputLookup = lookup.buildLookup(data.map(function (value) {
             return value.output;
           }));
         }
 
         data = data.map(function (datum) {
-          var array = _lookup2.default.toArray(_this5.outputLookup, datum.output);
-
+          var array = lookup.toArray(_this5.outputLookup, datum.output);
           return Object.assign({}, datum, {
             output: array
           });
@@ -38226,8 +37637,8 @@ var NeuralNetwork = function () {
 
           expected = target[0];
         } else {
-          actual = output.indexOf((0, _max2.default)(output));
-          expected = target.indexOf((0, _max2.default)(target));
+          actual = output.indexOf(max(output));
+          expected = target.indexOf(max(target));
         }
 
         if (actual !== expected) {
@@ -38254,7 +37665,7 @@ var NeuralNetwork = function () {
         var errors = output.map(function (value, j) {
           return target[j] - value;
         });
-        sum += (0, _mse2.default)(errors);
+        sum += mse(errors);
       };
 
       for (var i = 0; i < data.length; i++) {
@@ -38335,7 +37746,7 @@ var NeuralNetwork = function () {
         } else if (layer === _this7.outputLayer && _this7.outputLookup) {
           nodes = Object.keys(_this7.outputLookup);
         } else {
-          nodes = (0, _range2.default)(0, _this7.sizes[layer]);
+          nodes = range(0, _this7.sizes[layer]);
         }
 
         var _loop3 = function _loop3(j) {
@@ -38394,9 +37805,9 @@ var NeuralNetwork = function () {
         var layer = json.layers[i];
 
         if (i === 0 && (!layer[0] || json.inputLookup)) {
-          _this8.inputLookup = _lookup2.default.lookupFromHash(layer);
+          _this8.inputLookup = lookup.lookupFromHash(layer);
         } else if (i === _this8.outputLayer && (!layer[0] || json.outputLookup)) {
-          _this8.outputLookup = _lookup2.default.lookupFromHash(layer);
+          _this8.outputLookup = lookup.lookupFromHash(layer);
         }
 
         if (i > 0) {
@@ -38406,7 +37817,7 @@ var NeuralNetwork = function () {
           Object.keys(_nodes).forEach(function (j) {
             var node = _nodes[j];
             _this8.biases[i][j] = layer[node].bias;
-            _this8.weights[i][j] = (0, _toArray2.default)(layer[node].weights);
+            _this8.weights[i][j] = toArray(layer[node].weights);
           });
         }
       };
@@ -38498,7 +37909,7 @@ var NeuralNetwork = function () {
       opts = opts || {};
       opts.neuralNetwork = this;
       this.setActivation();
-      this.trainStream = new _trainStream2.default(opts);
+      this.trainStream = new TrainStream(opts);
       return this.trainStream;
     }
   }, {
@@ -38527,17 +37938,13 @@ var NeuralNetwork = function () {
   return NeuralNetwork;
 }();
 
-exports.default = NeuralNetwork;
+module.exports = NeuralNetwork;
 },{"thaw.js":"8AZL","./lookup":"Q1a6","./train-stream":"vEEq","./utilities/max":"UFcl","./utilities/mse":"YGn7","./utilities/randos":"S8tM","./utilities/range":"YhH7","./utilities/to-array":"HBY8","./utilities/zeros":"M4LY","./parallel-trainer":"IyGM","./utilities/avg-nets":"SLKQ"}],"6trg":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -38582,22 +37989,6 @@ var _get = function get(object, property, receiver) {
   }
 };
 
-var _gpu = require('gpu.js');
-
-var _neuralNetwork = require('./neural-network');
-
-var _neuralNetwork2 = _interopRequireDefault(_neuralNetwork);
-
-var _lookup = require('./lookup');
-
-var _lookup2 = _interopRequireDefault(_lookup);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -38627,6 +38018,14 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var _require = require('gpu.js'),
+    GPU = _require.GPU,
+    alias = _require.alias;
+
+var NeuralNetwork = require('./neural-network');
+
+var lookup = require('./lookup');
 
 function weightedSumSigmoid(weights, biases, inputs) {
   var sum = biases[this.thread.x];
@@ -38756,7 +38155,7 @@ var NeuralNetworkGPU = function (_NeuralNetwork) {
     _this.weightsCopies = [];
     _this.copyWeights = [];
     _this.errorCheckInterval = 100;
-    _this.gpu = new _gpu.GPU({
+    _this.gpu = new GPU({
       mode: options.mode
     });
     return _this;
@@ -38901,8 +38300,8 @@ var NeuralNetworkGPU = function (_NeuralNetwork) {
       for (var layer = this.outputLayer; layer > 0; layer--) {
         if (layer === this.outputLayer) {
           this.backwardPropagate[layer] = this.gpu.createKernelMap({
-            error: (0, _gpu.alias)('calcErrorOutput', calcErrorOutput),
-            deltas: (0, _gpu.alias)('calcDeltas', calcDeltas)
+            error: alias('calcErrorOutput', calcErrorOutput),
+            deltas: alias('calcDeltas', calcDeltas)
           }, function (outputs, targets) {
             var output = outputs[this.thread.x];
             return calcDeltas(calcErrorOutput(output, targets), output);
@@ -38912,8 +38311,8 @@ var NeuralNetworkGPU = function (_NeuralNetwork) {
           });
         } else {
           this.backwardPropagate[layer] = this.gpu.createKernelMap({
-            error: (0, _gpu.alias)('calcError', calcError),
-            deltas: (0, _gpu.alias)('calcDeltas', calcDeltas)
+            error: alias('calcError', calcError),
+            deltas: alias('calcDeltas', calcDeltas)
           }, function (nextWeights, outputs, nextDeltas) {
             var output = outputs[this.thread.x];
             return calcDeltas(calcError(nextWeights, nextDeltas), output);
@@ -38950,8 +38349,8 @@ var NeuralNetworkGPU = function (_NeuralNetwork) {
 
       for (var layer = 1; layer <= this.outputLayer; layer++) {
         this.changesPropagate[layer] = this.gpu.createKernelMap({
-          weights: (0, _gpu.alias)('addWeights', addWeights),
-          changes: (0, _gpu.alias)('calcChanges', calcChanges)
+          weights: alias('addWeights', addWeights),
+          changes: alias('calcChanges', calcChanges)
         }, function (previousOutputs, deltas, weights, changes) {
           var change = calcChanges(changes, deltas, previousOutputs);
           return addWeights(change, weights);
@@ -39040,7 +38439,7 @@ var NeuralNetworkGPU = function (_NeuralNetwork) {
       if (!this.isRunnable) return null;
 
       if (this.inputLookup) {
-        input = _lookup2.default.toArray(this.inputLookup, input);
+        input = lookup.toArray(this.inputLookup, input);
       }
 
       var inputTexture = this._texturizeInputData(input);
@@ -39049,7 +38448,7 @@ var NeuralNetworkGPU = function (_NeuralNetwork) {
       var output = outputTextures.toArray(this.gpu);
 
       if (this.outputLookup) {
-        output = _lookup2.default.toHash(this.outputLookup, output);
+        output = lookup.toHash(this.outputLookup, output);
       }
 
       return output;
@@ -39141,19 +38540,15 @@ var NeuralNetworkGPU = function (_NeuralNetwork) {
   }]);
 
   return NeuralNetworkGPU;
-}(_neuralNetwork2.default);
+}(NeuralNetwork);
 
-exports.default = NeuralNetworkGPU;
+module.exports = NeuralNetworkGPU;
 },{"gpu.js":"Ft/B","./neural-network":"8epZ","./lookup":"Q1a6"}],"sLgS":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -39172,18 +38567,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _types = require('./types');
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -39215,6 +38598,10 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var Internal = require('./types').Internal;
+
+var zeros2D = require('../utilities/zeros-2d');
+
 var RecurrentConnection = function (_Internal) {
   _inherits(RecurrentConnection, _Internal);
 
@@ -39240,7 +38627,7 @@ var RecurrentConnection = function (_Internal) {
   }, {
     key: 'learn',
     value: function learn() {
-      this.layer.deltas = (0, _zeros2d2.default)(this.width, this.height);
+      this.layer.deltas = zeros2D(this.width, this.height);
     }
   }, {
     key: 'setupKernels',
@@ -39289,19 +38676,15 @@ var RecurrentConnection = function (_Internal) {
   }]);
 
   return RecurrentConnection;
-}(_types.Internal);
+}(Internal);
 
-exports.default = RecurrentConnection;
+module.exports = RecurrentConnection;
 },{"./types":"pX1U","../utilities/zeros-2d":"C4Cz"}],"kvWK":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -39320,18 +38703,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _types = require('./types');
-
-var _base = require('./base');
-
-var _base2 = _interopRequireDefault(_base);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -39364,6 +38735,10 @@ function _inherits(subClass, superClass) {
 } // import zeros2D from '../utilities/zeros-2d'
 
 
+var Internal = require('./types').Internal;
+
+var Base = require('./base');
+
 var RecurrentInput = function (_Internal) {
   _inherits(RecurrentInput, _Internal);
 
@@ -39382,7 +38757,7 @@ var RecurrentInput = function (_Internal) {
   }, {
     key: 'validate',
     value: function validate() {
-      _base2.default.prototype.validate.call(this);
+      Base.prototype.validate.call(this);
 
       if (this.width !== this.recurrentInput.width) {
         throw new Error(this.constructor.name + ' layer width ' + this.width + ' and ' + this.recurrentInput.constructor.name + ' width (' + this.recurrentInput.width + ') are not same');
@@ -39441,19 +38816,15 @@ var RecurrentInput = function (_Internal) {
   }]);
 
   return RecurrentInput;
-}(_types.Internal);
+}(Internal);
 
-exports.default = RecurrentInput;
+module.exports = RecurrentInput;
 },{"./types":"pX1U","./base":"kIeX"}],"7ZE4":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -39472,18 +38843,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _zeros2d = require('../utilities/zeros-2d');
-
-var _zeros2d2 = _interopRequireDefault(_zeros2d);
-
-var _types = require('./types');
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -39515,6 +38874,10 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var zeros2D = require('../utilities/zeros-2d');
+
+var Internal = require('./types').Internal;
+
 var RecurrentZeros = function (_Internal) {
   _inherits(RecurrentZeros, _Internal);
 
@@ -39530,8 +38893,8 @@ var RecurrentZeros = function (_Internal) {
       this.praxis = null;
       this.width = width;
       this.height = height;
-      this.weights = (0, _zeros2d2.default)(width, height);
-      this.deltas = (0, _zeros2d2.default)(width, height);
+      this.weights = zeros2D(width, height);
+      this.deltas = zeros2D(width, height);
     }
   }, {
     key: 'setupKernels',
@@ -39557,7 +38920,7 @@ var RecurrentZeros = function (_Internal) {
     key: 'learn',
     value: function learn(previousLayer, nextLayer, learningRate) {
       this.weights = this.praxis.run(this, previousLayer, nextLayer, learningRate);
-      this.deltas = (0, _zeros2d2.default)(this.width, this.height);
+      this.deltas = zeros2D(this.width, this.height);
     }
   }, {
     key: 'validate',
@@ -39572,19 +38935,15 @@ var RecurrentZeros = function (_Internal) {
   }]);
 
   return RecurrentZeros;
-}(_types.Internal);
+}(Internal);
 
-exports.default = RecurrentZeros;
+module.exports = RecurrentZeros;
 },{"../utilities/zeros-2d":"C4Cz","./types":"pX1U"}],"JVtt":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -39629,36 +38988,6 @@ var _get = function get(object, property, receiver) {
   }
 };
 
-var _recurrentConnection = require('./layer/recurrent-connection');
-
-var _recurrentConnection2 = _interopRequireDefault(_recurrentConnection);
-
-var _recurrentInput = require('./layer/recurrent-input');
-
-var _recurrentInput2 = _interopRequireDefault(_recurrentInput);
-
-var _recurrentZeros = require('./layer/recurrent-zeros');
-
-var _recurrentZeros2 = _interopRequireDefault(_recurrentZeros);
-
-var _flattenLayers = require('./utilities/flatten-layers');
-
-var _flattenLayers2 = _interopRequireDefault(_flattenLayers);
-
-var _mse2d = require('./utilities/mse-2d');
-
-var _mse2d2 = _interopRequireDefault(_mse2d);
-
-var _feedForward = require('./feed-forward');
-
-var _feedForward2 = _interopRequireDefault(_feedForward);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _toConsumableArray(arr) {
   if (Array.isArray(arr)) {
     for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
@@ -39699,7 +39028,19 @@ function _inherits(subClass, superClass) {
     }
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-} // import Base from './layer/base'
+}
+
+var RecurrentConnection = require('./layer/recurrent-connection');
+
+var RecurrentInput = require('./layer/recurrent-input');
+
+var RecurrentZeros = require('./layer/recurrent-zeros');
+
+var flattenLayers = require('./utilities/flatten-layers');
+
+var mse2d = require('./utilities/mse-2d');
+
+var FeedForward = require('./feed-forward'); // const Base from './layer/base'
 
 
 var Recurrent = function (_FeedForward) {
@@ -39725,7 +39066,7 @@ var Recurrent = function (_FeedForward) {
       initialLayers.push(inputLayer);
       initialLayers.push.apply(initialLayers, _toConsumableArray(hiddenLayers));
       initialLayers.push(outputLayer);
-      var flattenedLayers = (0, _flattenLayers2.default)(initialLayers);
+      var flattenedLayers = flattenLayers(initialLayers);
       this._inputLayers = flattenedLayers.slice(0, flattenedLayers.indexOf(inputLayer) + 1);
       this._hiddenLayers = [flattenedLayers.slice(flattenedLayers.indexOf(inputLayer) + 1, flattenedLayers.indexOf(hiddenLayers[hiddenLayers.length - 1]) + 1)];
       this._outputLayers = flattenedLayers.slice(flattenedLayers.indexOf(hiddenLayers[hiddenLayers.length - 1]) + 1);
@@ -39753,7 +39094,7 @@ var Recurrent = function (_FeedForward) {
       var hiddenLayers = [];
 
       for (var i = 0; i < this.hiddenLayers.length; i++) {
-        var recurrentInput = new _recurrentZeros2.default();
+        var recurrentInput = new RecurrentZeros();
         var hiddenLayer = this.hiddenLayers[i](previousLayer, recurrentInput, i);
         previousLayer = hiddenLayer;
         hiddenLayers.push(hiddenLayer);
@@ -39800,7 +39141,7 @@ var Recurrent = function (_FeedForward) {
                 case 'RecurrentInput':
                 case 'RecurrentZeros':
                 default:
-                  layer = new _recurrentInput2.default();
+                  layer = new RecurrentInput();
                   layer.setDimensions(previousHiddenLayer.width, previousHiddenLayer.height);
                   layer.setRecurrentInput(previousHiddenLayers[this._recurrentIndices[recurrentIndex]]);
                   recurrentIndex++;
@@ -39847,7 +39188,7 @@ var Recurrent = function (_FeedForward) {
     key: 'initialize',
     value: function initialize() {
       this._previousInputs = [];
-      this._outputConnection = new _recurrentConnection2.default();
+      this._outputConnection = new RecurrentConnection();
 
       this._connectLayers();
 
@@ -39980,7 +39321,7 @@ var Recurrent = function (_FeedForward) {
 
       if (logErrorRate) {
         var outputLayer = this._outputLayers[this._outputLayers.length - 1];
-        return (0, _mse2d2.default)(outputLayer.errors.hasOwnProperty('toArray') ? outputLayer.errors.toArray() : outputLayer.errors);
+        return mse2d(outputLayer.errors.hasOwnProperty('toArray') ? outputLayer.errors.toArray() : outputLayer.errors);
       }
 
       return null;
@@ -40019,15 +39360,11 @@ var Recurrent = function (_FeedForward) {
   }]);
 
   return Recurrent;
-}(_feedForward2.default);
+}(FeedForward);
 
-exports.default = Recurrent;
+module.exports = Recurrent;
 },{"./layer/recurrent-connection":"sLgS","./layer/recurrent-input":"kvWK","./layer/recurrent-zeros":"7ZE4","./utilities/flatten-layers":"4Z71","./utilities/mse-2d":"3u/j","./feed-forward":"eqC7"}],"v84l":[function(require,module,exports) {
 'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -40047,21 +39384,13 @@ var _createClass = function () {
   };
 }();
 
-var _zeros = require('../../utilities/zeros');
-
-var _zeros2 = _interopRequireDefault(_zeros);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
+
+var zeros = require('../../utilities/zeros');
 /**
  * A matrix
  * @param {Number} [rows]
@@ -40078,8 +39407,8 @@ var Matrix = function () {
     if (columns === undefined) return;
     this.rows = rows;
     this.columns = columns;
-    this.weights = (0, _zeros2.default)(rows * columns);
-    this.deltas = (0, _zeros2.default)(rows * columns);
+    this.weights = zeros(rows * columns);
+    this.deltas = zeros(rows * columns);
   }
   /**
    *
@@ -40233,16 +39562,9 @@ var Matrix = function () {
   return Matrix;
 }();
 
-exports.default = Matrix;
+module.exports = Matrix;
 },{"../../utilities/zeros":"M4LY"}],"Sd27":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.randomFloat = randomFloat;
-exports.randomInteger = randomInteger;
-exports.randomN = randomN;
 
 function randomFloat(a, b) {
   return Math.random() * (b - a) + a;
@@ -40280,28 +39602,17 @@ function randomN(mu, std) {
 
 gaussRandom.returnV = false;
 gaussRandom.vVal = 0;
+module.exports = {
+  randomFloat: randomFloat,
+  randomInteger: randomInteger,
+  randomN: randomN
+};
 },{}],"zGuK":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _ = require('.');
-
-var _2 = _interopRequireDefault(_);
-
-var _random = require('../../utilities/random');
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -40332,6 +39643,10 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var Matrix = require('.');
+
+var randomFloat = require('../../utilities/random').randomFloat;
 /** return Matrix but filled with random numbers from gaussian
  * @param {Number} [rows]
  * @param {Number} [columns]
@@ -40353,129 +39668,25 @@ var RandomMatrix = function (_Matrix) {
     _this.std = std;
 
     for (var i = 0, max = _this.weights.length; i < max; i++) {
-      _this.weights[i] = (0, _random.randomFloat)(-std, std);
+      _this.weights[i] = randomFloat(-std, std);
     }
 
     return _this;
   }
 
   return RandomMatrix;
-}(_2.default);
+}(Matrix);
 
-exports.default = RandomMatrix;
-},{".":"v84l","../../utilities/random":"Sd27"}],"yuFB":[function(require,module,exports) {
-'use strict';
-
-var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
-
-function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _ = require('.');
-
-var _2 = _interopRequireDefault(_);
-
-var _ones = require('../../utilities/ones');
-
-var _ones2 = _interopRequireDefault(_ones);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _possibleConstructorReturn(self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
-/** return Matrix but filled with random numbers from gaussian
- * @param {Number} [rows]
- * @param {Number} [columns]
- * @constructor
- */
-
-
-var OnesMatrix = function (_Matrix) {
-  _inherits(OnesMatrix, _Matrix);
-
-  function OnesMatrix(rows, columns) {
-    _classCallCheck(this, OnesMatrix);
-
-    var _this = _possibleConstructorReturn(this, (OnesMatrix.__proto__ || Object.getPrototypeOf(OnesMatrix)).call(this, rows, columns));
-
-    _this.rows = rows;
-    _this.columns = columns;
-    _this.weights = (0, _ones2.default)(rows * columns);
-    _this.deltas = (0, _ones2.default)(rows * columns);
-    return _this;
-  }
-
-  return OnesMatrix;
-}(_2.default);
-
-exports.default = OnesMatrix;
-},{".":"v84l","../../utilities/ones":"f7P8"}],"SjoR":[function(require,module,exports) {
+module.exports = RandomMatrix;
+},{".":"v84l","../../utilities/random":"Sd27"}],"gPcR":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = copy;
-/*
- *
- * @param {Matrix} product
- * @param {Matrix} left
- */
-
-function copy(product, left) {
-  product.rows = parseInt(left.rows, 10);
-  product.columns = parseInt(left.columns, 10);
-  product.weights = left.weights.slice(0);
-  product.deltas = left.deltas.slice(0);
-}
-},{}],"gPcR":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = cloneNegative;
 /**
  *
  * @param {Matrix} product
  * @param {Matrix} left
  */
 
-function cloneNegative(product, left) {
+module.exports = function cloneNegative(product, left) {
   product.rows = parseInt(left.rows, 10);
   product.columns = parseInt(left.columns, 10);
   product.weights = left.weights.slice(0);
@@ -40485,14 +39696,9 @@ function cloneNegative(product, left) {
     product.weights[i] = -left.weights[i];
     product.deltas[i] = 0;
   }
-}
+};
 },{}],"2Be3":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = add;
 /**
  * add {left} and {right} matrix weights into {into}
  * @param {Matrix} product
@@ -40500,19 +39706,14 @@ exports.default = add;
  * @param {Matrix} right
  */
 
-function add(product, left, right) {
+module.exports = function add(product, left, right) {
   for (var i = 0; i < left.weights.length; i++) {
     product.weights[i] = left.weights[i] + right.weights[i];
     product.deltas[i] = 0;
   }
-}
+};
 },{}],"//pG":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = addB;
 /**
  * adds {from} deltas to {left} and {right} deltas
  * @param {Matrix} product
@@ -40520,37 +39721,27 @@ exports.default = addB;
  * @param {Matrix} right
  */
 
-function addB(product, left, right) {
+module.exports = function addB(product, left, right) {
   for (var i = 0; i < product.deltas.length; i++) {
     left.deltas[i] = product.deltas[i];
     right.deltas[i] = product.deltas[i];
   }
-}
+};
 },{}],"WPA9":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = allOnes;
 /**
  * makes matrix weights and deltas all ones
  * @param {Matrix} product
  */
 
-function allOnes(product) {
+module.exports = function allOnes(product) {
   for (var i = 0; i < product.weights.length; i++) {
     product.weights[i] = 1;
     product.deltas[i] = 0;
   }
-}
+};
 },{}],"7/in":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = multiply;
 /**
  * multiply {left} and {right} matrix weights to {into}
  * @param {Matrix} product
@@ -40558,7 +39749,7 @@ exports.default = multiply;
  * @param {Matrix} right
  */
 
-function multiply(product, left, right) {
+module.exports = function multiply(product, left, right) {
   var leftRows = left.rows;
   var leftColumns = left.columns;
   var rightColumns = right.columns; // loop over rows of left
@@ -40583,14 +39774,9 @@ function multiply(product, left, right) {
       product.weights[rightRowBase + rightColumn] = dot;
     }
   }
-}
+};
 },{}],"UbH8":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = multiplyB;
 /**
  * multiplies {from} deltas to {left} and {right}
  * @param {Matrix} product
@@ -40598,7 +39784,7 @@ exports.default = multiplyB;
  * @param {Matrix} right
  */
 
-function multiplyB(product, left, right) {
+module.exports = function multiplyB(product, left, right) {
   var leftRows = left.rows;
   var leftColumns = left.columns;
   var rightColumns = right.columns; // loop over rows of left
@@ -40619,35 +39805,25 @@ function multiplyB(product, left, right) {
       }
     }
   }
-}
+};
 },{}],"lIUj":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = multiplyElement;
 /**
  * @param {Matrix} product
  * @param {Matrix} left
  * @param {Matrix} right
  */
 
-function multiplyElement(product, left, right) {
+module.exports = function multiplyElement(product, left, right) {
   var weights = left.weights;
 
   for (var i = 0; i < weights.length; i++) {
     product.weights[i] = left.weights[i] * right.weights[i];
     product.deltas[i] = 0;
   }
-}
+};
 },{}],"zl5N":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = multiplyElementB;
 /**
  * multiplies {left} and {right} weight by {from} deltas into {left} and {right} deltas
  * @param {Matrix} product
@@ -40655,19 +39831,14 @@ exports.default = multiplyElementB;
  * @param {Matrix} right
  */
 
-function multiplyElementB(product, left, right) {
+module.exports = function multiplyElementB(product, left, right) {
   for (var i = 0; i < left.weights.length; i++) {
     left.deltas[i] = right.weights[i] * product.deltas[i];
     right.deltas[i] = left.weights[i] * product.deltas[i];
   }
-}
+};
 },{}],"i7sA":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = relu;
 /**
  *
  * relu {m} weights to {into} weights
@@ -40675,45 +39846,35 @@ exports.default = relu;
  * @param {Matrix} left
  */
 
-function relu(product, left) {
+module.exports = function relu(product, left) {
   for (var i = 0; i < left.weights.length; i++) {
     product.weights[i] = Math.max(0, left.weights[i]); // relu
 
     product.deltas[i] = 0;
   }
-}
+};
 },{}],"2PfX":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = reluB;
 /**
  * adds {from} deltas to {m} deltas when {m} weights are above other a threshold of 0
  * @param {Matrix} product
  * @param {Matrix} m
  */
 
-function reluB(product, left) {
+module.exports = function reluB(product, left) {
   for (var i = 0; i < product.deltas.length; i++) {
     left.deltas[i] = left.weights[i] > 0 ? product.deltas[i] : 0;
   }
-}
+};
 },{}],"OR1n":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = rowPluck;
 /**
  * @param {Matrix} product
  * @param {Matrix} left
  * @param {Number} rowPluckIndex
  */
 
-function rowPluck(product, left, rowPluckIndex) {
+module.exports = function rowPluck(product, left, rowPluckIndex) {
   var columns = left.columns;
   var rowBase = columns * rowPluckIndex;
 
@@ -40721,14 +39882,9 @@ function rowPluck(product, left, rowPluckIndex) {
     product.weights[column] = left.weights[rowBase + column];
     product.deltas[column] = 0;
   }
-}
+};
 },{}],"+DWT":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = rowPluckB;
 /**
  * adds {from} deltas into {m} deltas
  * @param {Matrix} product
@@ -40736,33 +39892,28 @@ exports.default = rowPluckB;
  * @param {Number} rowIndex
  */
 
-function rowPluckB(product, left, rowIndex) {
+module.exports = function rowPluckB(product, left, rowIndex) {
   var columns = left.columns;
   var rowBase = columns * rowIndex;
 
   for (var column = 0; column < columns; column++) {
     left.deltas[rowBase + column] = product.deltas[column];
   }
-}
+};
 },{}],"flLU":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = sigmoid;
 /**
  * @param {Matrix} product
  * @param {Matrix} left
  */
 
-function sigmoid(product, left) {
+module.exports = function sigmoid(product, left) {
   // sigmoid nonlinearity
   for (var i = 0; i < left.weights.length; i++) {
     product.weights[i] = 1 / (1 + Math.exp(-left.weights[i]));
     product.deltas[i] = 0;
   }
-}
+};
 
 function sig(x) {
   // helper function for computing sigmoid
@@ -40770,68 +39921,49 @@ function sig(x) {
 }
 },{}],"QxYO":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = sigmoidB;
 /**
  *
  * @param {Matrix} product
  * @param {Matrix} left
  */
 
-function sigmoidB(product, left) {
+module.exports = function sigmoidB(product, left) {
   for (var i = 0; i < product.deltas.length; i++) {
     var mwi = product.weights[i];
     left.deltas[i] = mwi * (1 - mwi) * product.deltas[i];
   }
-}
+};
 },{}],"OmLq":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = tanh;
 /**
  * @param {Matrix} product
  * @param {Matrix} left
  */
 
-function tanh(product, left) {
+module.exports = function tanh(product, left) {
   // tanh nonlinearity
   for (var i = 0; i < left.weights.length; i++) {
     product.weights[i] = Math.tanh(left.weights[i]);
     product.deltas[i] = 0;
   }
-}
+};
 },{}],"fARu":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = tanhB;
 /**
  *
  * @param {Matrix} product
  * @param {Matrix} left
  */
 
-function tanhB(product, left) {
+module.exports = function tanhB(product, left) {
   for (var i = 0; i < product.deltas.length; i++) {
     // grad for z = tanh(x) is (1 - z^2)
     var mwi = product.weights[i];
     left.deltas[i] = (1 - mwi * mwi) * product.deltas[i];
   }
-}
+};
 },{}],"ytIu":[function(require,module,exports) {
 'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -40851,93 +39983,45 @@ var _createClass = function () {
   };
 }();
 
-var _ = require('.');
-
-var _2 = _interopRequireDefault(_);
-
-var _onesMatrix = require('./ones-matrix');
-
-var _onesMatrix2 = _interopRequireDefault(_onesMatrix);
-
-var _copy = require('./copy');
-
-var _copy2 = _interopRequireDefault(_copy);
-
-var _cloneNegative2 = require('./clone-negative');
-
-var _cloneNegative3 = _interopRequireDefault(_cloneNegative2);
-
-var _add2 = require('./add');
-
-var _add3 = _interopRequireDefault(_add2);
-
-var _addB = require('./add-b');
-
-var _addB2 = _interopRequireDefault(_addB);
-
-var _allOnes2 = require('./all-ones');
-
-var _allOnes3 = _interopRequireDefault(_allOnes2);
-
-var _multiply2 = require('./multiply');
-
-var _multiply3 = _interopRequireDefault(_multiply2);
-
-var _multiplyB = require('./multiply-b');
-
-var _multiplyB2 = _interopRequireDefault(_multiplyB);
-
-var _multiplyElement2 = require('./multiply-element');
-
-var _multiplyElement3 = _interopRequireDefault(_multiplyElement2);
-
-var _multiplyElementB = require('./multiply-element-b');
-
-var _multiplyElementB2 = _interopRequireDefault(_multiplyElementB);
-
-var _relu2 = require('./relu');
-
-var _relu3 = _interopRequireDefault(_relu2);
-
-var _reluB = require('./relu-b');
-
-var _reluB2 = _interopRequireDefault(_reluB);
-
-var _rowPluck = require('./row-pluck');
-
-var _rowPluck2 = _interopRequireDefault(_rowPluck);
-
-var _rowPluckB = require('./row-pluck-b');
-
-var _rowPluckB2 = _interopRequireDefault(_rowPluckB);
-
-var _sigmoid2 = require('./sigmoid');
-
-var _sigmoid3 = _interopRequireDefault(_sigmoid2);
-
-var _sigmoidB = require('./sigmoid-b');
-
-var _sigmoidB2 = _interopRequireDefault(_sigmoidB);
-
-var _tanh2 = require('./tanh');
-
-var _tanh3 = _interopRequireDefault(_tanh2);
-
-var _tanhB = require('./tanh-b');
-
-var _tanhB2 = _interopRequireDefault(_tanhB);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
+
+var Matrix = require('.');
+
+var _cloneNegative = require('./clone-negative');
+
+var _add = require('./add');
+
+var addB = require('./add-b');
+
+var _allOnes = require('./all-ones');
+
+var _multiply = require('./multiply');
+
+var multiplyB = require('./multiply-b');
+
+var _multiplyElement = require('./multiply-element');
+
+var multiplyElementB = require('./multiply-element-b');
+
+var _relu = require('./relu');
+
+var reluB = require('./relu-b');
+
+var rowPluck = require('./row-pluck');
+
+var rowPluckB = require('./row-pluck-b');
+
+var _sigmoid = require('./sigmoid');
+
+var sigmoidB = require('./sigmoid-b');
+
+var _tanh = require('./tanh');
+
+var tanhB = require('./tanh-b');
 
 var Equation = function () {
   function Equation() {
@@ -40962,13 +40046,13 @@ var Equation = function () {
         throw new Error('misaligned matrices');
       }
 
-      var product = new _2.default(left.rows, left.columns);
+      var product = new Matrix(left.rows, left.columns);
       this.states.push({
         left: left,
         right: right,
         product: product,
-        forwardFn: _add3.default,
-        backpropagationFn: _addB2.default
+        forwardFn: _add,
+        backpropagationFn: addB
       });
       return product;
     }
@@ -40982,11 +40066,11 @@ var Equation = function () {
   }, {
     key: 'allOnes',
     value: function allOnes(rows, columns) {
-      var product = new _2.default(rows, columns);
+      var product = new Matrix(rows, columns);
       this.states.push({
         left: product,
         product: product,
-        forwardFn: _allOnes3.default
+        forwardFn: _allOnes
       });
       return product;
     }
@@ -40999,11 +40083,11 @@ var Equation = function () {
   }, {
     key: 'cloneNegative',
     value: function cloneNegative(m) {
-      var product = new _2.default(m.rows, m.columns);
+      var product = new Matrix(m.rows, m.columns);
       this.states.push({
         left: m,
         product: product,
-        forwardFn: _cloneNegative3.default
+        forwardFn: _cloneNegative
       });
       return product;
     }
@@ -41037,13 +40121,13 @@ var Equation = function () {
         throw new Error('misaligned matrices');
       }
 
-      var product = new _2.default(left.rows, right.columns);
+      var product = new Matrix(left.rows, right.columns);
       this.states.push({
         left: left,
         right: right,
         product: product,
-        forwardFn: _multiply3.default,
-        backpropagationFn: _multiplyB2.default
+        forwardFn: _multiply,
+        backpropagationFn: multiplyB
       });
       return product;
     }
@@ -41061,13 +40145,13 @@ var Equation = function () {
         throw new Error('misaligned matrices');
       }
 
-      var product = new _2.default(left.rows, left.columns);
+      var product = new Matrix(left.rows, left.columns);
       this.states.push({
         left: left,
         right: right,
         product: product,
-        forwardFn: _multiplyElement3.default,
-        backpropagationFn: _multiplyElementB2.default
+        forwardFn: _multiplyElement,
+        backpropagationFn: multiplyElementB
       });
       return product;
     }
@@ -41080,12 +40164,12 @@ var Equation = function () {
   }, {
     key: 'relu',
     value: function relu(m) {
-      var product = new _2.default(m.rows, m.columns);
+      var product = new Matrix(m.rows, m.columns);
       this.states.push({
         left: m,
         product: product,
-        forwardFn: _relu3.default,
-        backpropagationFn: _reluB2.default
+        forwardFn: _relu,
+        backpropagationFn: reluB
       });
       return product;
     }
@@ -41117,7 +40201,7 @@ var Equation = function () {
     key: 'inputMatrixToRow',
     value: function inputMatrixToRow(m) {
       var self = this;
-      var product = new _2.default(m.columns, 1);
+      var product = new Matrix(m.columns, 1);
       this.states.push({
         left: m,
 
@@ -41126,8 +40210,8 @@ var Equation = function () {
         },
 
         product: product,
-        forwardFn: _rowPluck2.default,
-        backpropagationFn: _rowPluckB2.default
+        forwardFn: rowPluck,
+        backpropagationFn: rowPluckB
       });
       return product;
     }
@@ -41140,12 +40224,12 @@ var Equation = function () {
   }, {
     key: 'sigmoid',
     value: function sigmoid(m) {
-      var product = new _2.default(m.rows, m.columns);
+      var product = new Matrix(m.rows, m.columns);
       this.states.push({
         left: m,
         product: product,
-        forwardFn: _sigmoid3.default,
-        backpropagationFn: _sigmoidB2.default
+        forwardFn: _sigmoid,
+        backpropagationFn: sigmoidB
       });
       return product;
     }
@@ -41158,12 +40242,12 @@ var Equation = function () {
   }, {
     key: 'tanh',
     value: function tanh(m) {
-      var product = new _2.default(m.rows, m.columns);
+      var product = new Matrix(m.rows, m.columns);
       this.states.push({
         left: m,
         product: product,
-        forwardFn: _tanh3.default,
-        backpropagationFn: _tanhB2.default
+        forwardFn: _tanh,
+        backpropagationFn: tanhB
       });
       return product;
     }
@@ -41265,26 +40349,21 @@ var Equation = function () {
   return Equation;
 }();
 
-exports.default = Equation;
-},{".":"v84l","./ones-matrix":"yuFB","./copy":"SjoR","./clone-negative":"gPcR","./add":"2Be3","./add-b":"//pG","./all-ones":"WPA9","./multiply":"7/in","./multiply-b":"UbH8","./multiply-element":"lIUj","./multiply-element-b":"zl5N","./relu":"i7sA","./relu-b":"2PfX","./row-pluck":"OR1n","./row-pluck-b":"+DWT","./sigmoid":"flLU","./sigmoid-b":"QxYO","./tanh":"OmLq","./tanh-b":"fARu"}],"lOwB":[function(require,module,exports) {
+module.exports = Equation;
+},{".":"v84l","./clone-negative":"gPcR","./add":"2Be3","./add-b":"//pG","./all-ones":"WPA9","./multiply":"7/in","./multiply-b":"UbH8","./multiply-element":"lIUj","./multiply-element-b":"zl5N","./relu":"i7sA","./relu-b":"2PfX","./row-pluck":"OR1n","./row-pluck-b":"+DWT","./sigmoid":"flLU","./sigmoid-b":"QxYO","./tanh":"OmLq","./tanh-b":"fARu"}],"lOwB":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = sampleI;
-
-var _random = require('../../utilities/random'); // prevent parser from renaming when calling toString() method later
+var _randomF = require('../../utilities/random').randomFloat; // prevent parser from renaming when calling toString() method later
 
 
-var randomF = _random.randomF;
+var randomF = _randomF;
 /**
  *
  * @param {Matrix} m
  * @returns {number}
  */
 
-function sampleI(m) {
+module.exports = function sampleI(m) {
   // sample argmax from w, assuming w are
   // probabilities that sum to one
   var r = randomF(0, 1);
@@ -41301,21 +40380,16 @@ function sampleI(m) {
 
     i++;
   }
-}
+};
 },{"../../utilities/random":"Sd27"}],"2wnU":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = maxI;
 /**
  *
  * @param {Matrix} m
  * @returns {number}
  */
 
-function maxI(m) {
+module.exports = function maxI(m) {
   // argmax of array w
   var weights = m.weights;
   var maxv = weights[0];
@@ -41329,24 +40403,11 @@ function maxI(m) {
   }
 
   return maxix;
-}
+};
 },{}],"Ens1":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = softmax;
-
-var _ = require('.');
-
-var _2 = _interopRequireDefault(_);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
+var Matrix = require('.');
 /**
  *
  * @param {Matrix} m
@@ -41354,8 +40415,8 @@ function _interopRequireDefault(obj) {
  */
 
 
-function softmax(m) {
-  var result = new _2.default(m.rows, m.columns); // probability volume
+module.exports = function softmax(m) {
+  var result = new Matrix(m.rows, m.columns); // probability volume
 
   var maxVal = -999999;
 
@@ -41380,13 +40441,23 @@ function softmax(m) {
 
 
   return result;
-}
-},{".":"v84l"}],"91u3":[function(require,module,exports) {
-'use strict';
+};
+},{".":"v84l"}],"SjoR":[function(require,module,exports) {
+"use strict";
+/*
+ *
+ * @param {Matrix} product
+ * @param {Matrix} left
+ */
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+module.exports = function copy(product, left) {
+  product.rows = parseInt(left.rows, 10);
+  product.columns = parseInt(left.columns, 10);
+  product.weights = left.weights.slice(0);
+  product.deltas = left.deltas.slice(0);
+};
+},{}],"91u3":[function(require,module,exports) {
+'use strict';
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -41644,13 +40715,9 @@ var DataFormatter = function () {
   return DataFormatter;
 }();
 
-exports.default = DataFormatter;
+module.exports = DataFormatter;
 },{}],"gJGF":[function(require,module,exports) {
 'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -41670,55 +40737,31 @@ var _createClass = function () {
   };
 }();
 
-var _matrix = require('./matrix');
-
-var _matrix2 = _interopRequireDefault(_matrix);
-
-var _randomMatrix = require('./matrix/random-matrix');
-
-var _randomMatrix2 = _interopRequireDefault(_randomMatrix);
-
-var _equation = require('./matrix/equation');
-
-var _equation2 = _interopRequireDefault(_equation);
-
-var _sampleI = require('./matrix/sample-i');
-
-var _sampleI2 = _interopRequireDefault(_sampleI);
-
-var _maxI = require('./matrix/max-i');
-
-var _maxI2 = _interopRequireDefault(_maxI);
-
-var _softmax = require('./matrix/softmax');
-
-var _softmax2 = _interopRequireDefault(_softmax);
-
-var _copy = require('./matrix/copy');
-
-var _copy2 = _interopRequireDefault(_copy);
-
-var _random = require('../utilities/random');
-
-var _zeros = require('../utilities/zeros');
-
-var _zeros2 = _interopRequireDefault(_zeros);
-
-var _dataFormatter = require('../utilities/data-formatter');
-
-var _dataFormatter2 = _interopRequireDefault(_dataFormatter);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
+
+var Matrix = require('./matrix');
+
+var RandomMatrix = require('./matrix/random-matrix');
+
+var Equation = require('./matrix/equation');
+
+var sampleI = require('./matrix/sample-i');
+
+var maxI = require('./matrix/max-i');
+
+var softmax = require('./matrix/softmax');
+
+var copy = require('./matrix/copy');
+
+var randomFloat = require('../utilities/random').randomFloat;
+
+var zeros = require('../utilities/zeros');
+
+var DataFormatter = require('../utilities/data-formatter');
 
 var RNN = function () {
   function RNN() {
@@ -41736,7 +40779,7 @@ var RNN = function () {
     this.ratioClipped = null;
     this.model = null;
     this.initialLayerInputs = this.hiddenSizes.map(function () {
-      return new _matrix2.default(_this.hiddenSizes[0], 1);
+      return new Matrix(_this.hiddenSizes[0], 1);
     });
     this.inputLookup = null;
     this.outputLookup = null;
@@ -41795,7 +40838,7 @@ var RNN = function () {
     key: 'createInputMatrix',
     value: function createInputMatrix() {
       // 0 is end, so add 1 to offset
-      this.model.input = new _randomMatrix2.default(this.inputRange + 1, this.inputSize, 0.08);
+      this.model.input = new RandomMatrix(this.inputRange + 1, this.inputSize, 0.08);
     }
   }, {
     key: 'createOutputMatrix',
@@ -41806,10 +40849,10 @@ var RNN = function () {
       var lastHiddenSize = this.hiddenSizes[this.hiddenSizes.length - 1]; // 0 is end, so add 1 to offset
       // whd
 
-      model.outputConnector = new _randomMatrix2.default(outputSize + 1, lastHiddenSize, 0.08); // 0 is end, so add 1 to offset
+      model.outputConnector = new RandomMatrix(outputSize + 1, lastHiddenSize, 0.08); // 0 is end, so add 1 to offset
       // bd
 
-      model.output = new _matrix2.default(outputSize + 1, 1);
+      model.output = new Matrix(outputSize + 1, 1);
     }
   }, {
     key: 'bindEquation',
@@ -41818,7 +40861,7 @@ var RNN = function () {
           model = _model2.model,
           hiddenSizes = _model2.hiddenSizes;
       var hiddenLayers = model.hiddenLayers;
-      var equation = new _equation2.default();
+      var equation = new Equation();
       var outputs = [];
       var equationConnection = model.equationConnections.length > 0 ? model.equationConnections[model.equationConnections.length - 1] : this.initialLayerInputs; // 0 index
 
@@ -41907,7 +40950,7 @@ var RNN = function () {
 
         var logProbabilities = output; // interpret output as log probabilities
 
-        var probabilities = (0, _softmax2.default)(output); // compute the softmax probabilities
+        var probabilities = softmax(output); // compute the softmax probabilities
 
         log2ppl += -Math.log2(probabilities.weights[target]); // accumulate base 2 log prob and do smoothing
 
@@ -41963,7 +41006,7 @@ var RNN = function () {
             deltas = matrix.deltas;
 
         if (!(matrixIndex in this.stepCache)) {
-          this.stepCache[matrixIndex] = (0, _zeros2.default)(matrix.rows * matrix.columns);
+          this.stepCache[matrixIndex] = zeros(matrix.rows * matrix.columns);
         }
 
         var cache = this.stepCache[matrixIndex];
@@ -42031,8 +41074,8 @@ var RNN = function () {
         var equation = model.equations[i]; // sample predicted letter
 
         var outputMatrix = equation.run(previousIndex);
-        var logProbabilities = new _matrix2.default(model.output.rows, model.output.columns);
-        (0, _copy2.default)(logProbabilities, outputMatrix);
+        var logProbabilities = new Matrix(model.output.rows, model.output.columns);
+        copy(logProbabilities, outputMatrix);
 
         if (temperature !== 1 && isSampleI) {
           /**
@@ -42046,8 +41089,8 @@ var RNN = function () {
           }
         }
 
-        var probs = (0, _softmax2.default)(logProbabilities);
-        var nextIndex = isSampleI ? (0, _sampleI2.default)(probs) : (0, _maxI2.default)(probs);
+        var probs = softmax(logProbabilities);
+        var nextIndex = isSampleI ? sampleI(probs) : maxI(probs);
         i++;
 
         if (nextIndex === 0) {
@@ -42200,18 +41243,18 @@ var RNN = function () {
       var model = this.model.model;
       var options = json.options;
       var allMatrices = model.allMatrices;
-      model.input = _matrix2.default.fromJSON(json.input);
+      model.input = Matrix.fromJSON(json.input);
       allMatrices.push(model.input);
       model.hiddenLayers = json.hiddenLayers.map(function (hiddenLayer) {
         var layers = {};
         Object.keys(hiddenLayer).forEach(function (p) {
-          layers[p] = _matrix2.default.fromJSON(hiddenLayer[p]);
+          layers[p] = Matrix.fromJSON(hiddenLayer[p]);
           allMatrices.push(layers[p]);
         });
         return layers;
       });
-      model.outputConnector = _matrix2.default.fromJSON(json.outputConnector);
-      model.output = _matrix2.default.fromJSON(json.output);
+      model.outputConnector = Matrix.fromJSON(json.outputConnector);
+      model.output = Matrix.fromJSON(json.output);
       allMatrices.push(model.outputConnector);
       allMatrices.push(model.output);
       Object.keys(defaults).forEach(function (p) {
@@ -42219,7 +41262,7 @@ var RNN = function () {
       });
 
       if (options.hasOwnProperty('dataFormatter') && options.dataFormatter !== null) {
-        this.dataFormatter = _dataFormatter2.default.fromJSON(options.dataFormatter);
+        this.dataFormatter = DataFormatter.fromJSON(options.dataFormatter);
         delete options.dataFormatter;
       }
 
@@ -42352,8 +41395,7 @@ var RNN = function () {
         }
       }
 
-      var src = '\n  if (typeof rawInput === \'undefined\') rawInput = [];\n  if (typeof maxPredictionLength === \'undefined\') maxPredictionLength = 100;\n  if (typeof isSampleI === \'undefined\') isSampleI = false;\n  if (typeof temperature === \'undefined\') temperature = 1;\n  ' + (this.dataFormatter !== null ? this.dataFormatter.toFunctionString() : '') + '\n\n  var input = ' + (this.dataFormatter !== null && typeof this.formatDataIn === 'function' ? 'formatDataIn(rawInput)' : 'rawInput') + ';\n  var json = ' + jsonString + ';\n  var _i = 0;\n  var output = [];\n  var states = [];\n  var prevStates;\n  while (true) {\n    var previousIndex = (_i === 0\n        ? 0\n        : _i < input.length\n          ? input[_i - 1] + 1\n          : output[_i - 1])\n          ;\n    var rowPluckIndex = previousIndex;\n    prevStates = states;\n    states = [];\n    ' + statesRaw.join(';\n    ') + ';\n    for (var stateIndex = 0, stateMax = ' + statesRaw.length + '; stateIndex < stateMax; stateIndex++) {\n      var state = states[stateIndex];\n      var product = state.product;\n      var left = state.left;\n      var right = state.right;\n\n      switch (state.name) {\n' + innerFunctionsSwitch.join('\n') + '\n      }\n    }\n\n    var logProbabilities = state.product;\n    if (temperature !== 1 && isSampleI) {\n      for (var q = 0, nq = logProbabilities.weights.length; q < nq; q++) {\n        logProbabilities.weights[q] /= temperature;\n      }\n    }\n\n    var probs = softmax(logProbabilities);\n    var nextIndex = isSampleI ? sampleI(probs) : maxI(probs);\n\n    _i++;\n    if (nextIndex === 0) {\n      break;\n    }\n    if (_i >= maxPredictionLength) {\n      break;\n    }\n\n    output.push(nextIndex);\n  }\n  ' + (this.dataFormatter !== null && typeof this.formatDataOut === 'function' ? 'return formatDataOut(input, output.slice(input.length).map(function(value) { return value - 1; }))' : 'return output.slice(input.length).map(function(value) { return value - 1; })') + ';\n  function Matrix(rows, columns) {\n    this.rows = rows;\n    this.columns = columns;\n    this.weights = zeros(rows * columns);\n  }\n  ' + (this.dataFormatter !== null && typeof this.formatDataIn === 'function' ? 'function formatDataIn(input, output) { ' + toInner(this.formatDataIn.toString()).replace(/this[.]dataFormatter[\n\s]+[.]/g, '').replace(/this[.]dataFormatter[.]/g, '').replace(/this[.]dataFormatter/g, 'true') + ' }' : '') + '\n  ' + (this.dataFormatter !== null && typeof this.formatDataOut === 'function' ? 'function formatDataOut(input, output) { ' + toInner(this.formatDataOut.toString()).replace(/this[.]dataFormatter[\n\s]+[.]/g, '').replace(/this[.]dataFormatter[.]/g, '').replace(/this[.]dataFormatter/g, 'true') + ' }' : '') + '\n  ' + _zeros2.default.toString() + '\n  ' + _softmax2.default.toString().replace('_2.default', 'Matrix') + '\n  ' + _random.randomFloat.toString() + '\n  ' + _sampleI2.default.toString() + '\n  ' + _maxI2.default.toString(); // eslint-disable-next-line
-
+      var src = '\n  if (typeof rawInput === \'undefined\') rawInput = [];\n  if (typeof maxPredictionLength === \'undefined\') maxPredictionLength = 100;\n  if (typeof isSampleI === \'undefined\') isSampleI = false;\n  if (typeof temperature === \'undefined\') temperature = 1;\n  ' + (this.dataFormatter !== null ? this.dataFormatter.toFunctionString() : '') + '\n\n  var input = ' + (this.dataFormatter !== null && typeof this.formatDataIn === 'function' ? 'formatDataIn(rawInput)' : 'rawInput') + ';\n  var json = ' + jsonString + ';\n  var _i = 0;\n  var output = [];\n  var states = [];\n  var prevStates;\n  while (true) {\n    var previousIndex = (_i === 0\n        ? 0\n        : _i < input.length\n          ? input[_i - 1] + 1\n          : output[_i - 1])\n          ;\n    var rowPluckIndex = previousIndex;\n    prevStates = states;\n    states = [];\n    ' + statesRaw.join(';\n    ') + ';\n    for (var stateIndex = 0, stateMax = ' + statesRaw.length + '; stateIndex < stateMax; stateIndex++) {\n      var state = states[stateIndex];\n      var product = state.product;\n      var left = state.left;\n      var right = state.right;\n\n      switch (state.name) {\n' + innerFunctionsSwitch.join('\n') + '\n      }\n    }\n\n    var logProbabilities = state.product;\n    if (temperature !== 1 && isSampleI) {\n      for (var q = 0, nq = logProbabilities.weights.length; q < nq; q++) {\n        logProbabilities.weights[q] /= temperature;\n      }\n    }\n\n    var probs = softmax(logProbabilities);\n    var nextIndex = isSampleI ? sampleI(probs) : maxI(probs);\n\n    _i++;\n    if (nextIndex === 0) {\n      break;\n    }\n    if (_i >= maxPredictionLength) {\n      break;\n    }\n\n    output.push(nextIndex);\n  }\n  ' + (this.dataFormatter !== null && typeof this.formatDataOut === 'function' ? 'return formatDataOut(input, output.slice(input.length).map(function(value) { return value - 1; }))' : 'return output.slice(input.length).map(function(value) { return value - 1; })') + ';\n  function Matrix(rows, columns) {\n    this.rows = rows;\n    this.columns = columns;\n    this.weights = zeros(rows * columns);\n  }\n  ' + (this.dataFormatter !== null && typeof this.formatDataIn === 'function' ? 'function formatDataIn(input, output) { ' + toInner(this.formatDataIn.toString()).replace(/this[.]dataFormatter[\n\s]+[.]/g, '').replace(/this[.]dataFormatter[.]/g, '').replace(/this[.]dataFormatter/g, 'true') + ' }' : '') + '\n  ' + (this.dataFormatter !== null && typeof this.formatDataOut === 'function' ? 'function formatDataOut(input, output) { ' + toInner(this.formatDataOut.toString()).replace(/this[.]dataFormatter[\n\s]+[.]/g, '').replace(/this[.]dataFormatter[.]/g, '').replace(/this[.]dataFormatter/g, 'true') + ' }' : '') + '\n  ' + zeros.toString() + '\n  ' + softmax.toString().replace('_2.default', 'Matrix') + '\n  ' + randomFloat.toString() + '\n  ' + sampleI.toString() + '\n  ' + maxI.toString(); // eslint-disable-next-line
 
       return new Function('rawInput', 'maxPredictionLength', 'isSampleI', 'temperature', src);
     }
@@ -42372,11 +41414,11 @@ var RNN = function () {
     value: function getModel(hiddenSize, prevSize) {
       return {
         // wxh
-        weight: new _randomMatrix2.default(hiddenSize, prevSize, 0.08),
+        weight: new RandomMatrix(hiddenSize, prevSize, 0.08),
         // whh
-        transition: new _randomMatrix2.default(hiddenSize, hiddenSize, 0.08),
+        transition: new RandomMatrix(hiddenSize, hiddenSize, 0.08),
         // bhh
-        bias: new _matrix2.default(hiddenSize, 1)
+        bias: new Matrix(hiddenSize, 1)
       };
     }
     /**
@@ -42401,7 +41443,6 @@ var RNN = function () {
   return RNN;
 }();
 
-exports.default = RNN;
 RNN.defaults = {
   inputSize: 20,
   inputRange: 20,
@@ -42433,7 +41474,7 @@ RNN.defaults = {
           values.push(data[i]);
         }
 
-        this.dataFormatter = new _dataFormatter2.default(values);
+        this.dataFormatter = new DataFormatter(values);
       }
 
       for (var _i = 0, max = data.length; _i < max; _i++) {
@@ -42446,7 +41487,7 @@ RNN.defaults = {
           values.push(data[_i2].output);
         }
 
-        this.dataFormatter = _dataFormatter2.default.fromArrayInputOutput(values);
+        this.dataFormatter = DataFormatter.fromArrayInputOutput(values);
       }
 
       for (var _i3 = 0, _max = data.length; _i3 < _max; _i3++) {
@@ -42502,16 +41543,13 @@ RNN.trainDefaults = {
   callbackPeriod: 10,
   keepNetworkIntact: false
 };
+module.exports = RNN;
 },{"./matrix":"v84l","./matrix/random-matrix":"zGuK","./matrix/equation":"ytIu","./matrix/sample-i":"lOwB","./matrix/max-i":"2wnU","./matrix/softmax":"Ens1","./matrix/copy":"SjoR","../utilities/random":"Sd27","../utilities/zeros":"M4LY","../utilities/data-formatter":"91u3"}],"zri4":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -42530,28 +41568,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _matrix = require('./matrix');
-
-var _matrix2 = _interopRequireDefault(_matrix);
-
-var _randomMatrix = require('./matrix/random-matrix');
-
-var _randomMatrix2 = _interopRequireDefault(_randomMatrix);
-
-var _equation = require('./matrix/equation');
-
-var _equation2 = _interopRequireDefault(_equation);
-
-var _rnn = require('./rnn');
-
-var _rnn2 = _interopRequireDefault(_rnn);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -42583,6 +41599,14 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var Matrix = require('./matrix');
+
+var RandomMatrix = require('./matrix/random-matrix');
+
+var Equation = require('./matrix/equation');
+
+var RNN = require('./rnn');
+
 var RNNTimeStep = function (_RNN) {
   _inherits(RNNTimeStep, _RNN); // eslint-disable-next-line
 
@@ -42596,7 +41620,7 @@ var RNNTimeStep = function (_RNN) {
   _createClass(RNNTimeStep, [{
     key: 'createInputMatrix',
     value: function createInputMatrix() {
-      this.model.input = new _randomMatrix2.default(this.inputSize, 1, 0.08);
+      this.model.input = new RandomMatrix(this.inputSize, 1, 0.08);
     }
   }, {
     key: 'createOutputMatrix',
@@ -42605,9 +41629,9 @@ var RNNTimeStep = function (_RNN) {
           outputSize = this.outputSize;
       var lastHiddenSize = this.hiddenSizes[this.hiddenSizes.length - 1]; // whd
 
-      model.outputConnector = new _randomMatrix2.default(outputSize, lastHiddenSize, 0.08); // bd
+      model.outputConnector = new RandomMatrix(outputSize, lastHiddenSize, 0.08); // bd
 
-      model.output = new _matrix2.default(outputSize, 1);
+      model.output = new Matrix(outputSize, 1);
     }
   }, {
     key: 'bindEquation',
@@ -42615,7 +41639,7 @@ var RNNTimeStep = function (_RNN) {
       var model = this.model,
           hiddenSizes = this.hiddenSizes;
       var hiddenLayers = model.hiddenLayers;
-      var equation = new _equation2.default();
+      var equation = new Equation();
       var outputs = [];
       var equationConnection = model.equationConnections.length > 0 ? model.equationConnections[model.equationConnections.length - 1] : this.initialLayerInputs; // 0 index
 
@@ -42757,9 +41781,8 @@ var RNNTimeStep = function (_RNN) {
   }]);
 
   return RNNTimeStep;
-}(_rnn2.default);
+}(RNN);
 
-exports.default = RNNTimeStep;
 RNNTimeStep.defaults = {
   inputSize: 1,
   hiddenSizes: [20],
@@ -42772,17 +41795,14 @@ RNNTimeStep.defaults = {
   json: null,
   dataFormatter: null
 };
-RNNTimeStep.trainDefaults = _rnn2.default.trainDefaults;
+RNNTimeStep.trainDefaults = RNN.trainDefaults;
+module.exports = RNNTimeStep;
 },{"./matrix":"v84l","./matrix/random-matrix":"zGuK","./matrix/equation":"ytIu","./rnn":"gJGF"}],"e2+i":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -42801,24 +41821,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _matrix = require('./matrix');
-
-var _matrix2 = _interopRequireDefault(_matrix);
-
-var _randomMatrix = require('./matrix/random-matrix');
-
-var _randomMatrix2 = _interopRequireDefault(_randomMatrix);
-
-var _rnn = require('./rnn');
-
-var _rnn2 = _interopRequireDefault(_rnn);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -42850,6 +41852,12 @@ function _inherits(subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
+var Matrix = require('./matrix');
+
+var RandomMatrix = require('./matrix/random-matrix');
+
+var RNN = require('./rnn');
+
 var LSTM = function (_RNN) {
   _inherits(LSTM, _RNN);
 
@@ -42865,30 +41873,30 @@ var LSTM = function (_RNN) {
       return {
         // gates parameters
         // wix
-        inputMatrix: new _randomMatrix2.default(hiddenSize, prevSize, 0.08),
+        inputMatrix: new RandomMatrix(hiddenSize, prevSize, 0.08),
         // wih
-        inputHidden: new _randomMatrix2.default(hiddenSize, hiddenSize, 0.08),
+        inputHidden: new RandomMatrix(hiddenSize, hiddenSize, 0.08),
         // bi
-        inputBias: new _matrix2.default(hiddenSize, 1),
+        inputBias: new Matrix(hiddenSize, 1),
         // wfx
-        forgetMatrix: new _randomMatrix2.default(hiddenSize, prevSize, 0.08),
+        forgetMatrix: new RandomMatrix(hiddenSize, prevSize, 0.08),
         // wfh
-        forgetHidden: new _randomMatrix2.default(hiddenSize, hiddenSize, 0.08),
+        forgetHidden: new RandomMatrix(hiddenSize, hiddenSize, 0.08),
         // bf
-        forgetBias: new _matrix2.default(hiddenSize, 1),
+        forgetBias: new Matrix(hiddenSize, 1),
         // wox
-        outputMatrix: new _randomMatrix2.default(hiddenSize, prevSize, 0.08),
+        outputMatrix: new RandomMatrix(hiddenSize, prevSize, 0.08),
         // woh
-        outputHidden: new _randomMatrix2.default(hiddenSize, hiddenSize, 0.08),
+        outputHidden: new RandomMatrix(hiddenSize, hiddenSize, 0.08),
         // bo
-        outputBias: new _matrix2.default(hiddenSize, 1),
+        outputBias: new Matrix(hiddenSize, 1),
         // cell write params
         // wcx
-        cellActivationMatrix: new _randomMatrix2.default(hiddenSize, prevSize, 0.08),
+        cellActivationMatrix: new RandomMatrix(hiddenSize, prevSize, 0.08),
         // wch
-        cellActivationHidden: new _randomMatrix2.default(hiddenSize, hiddenSize, 0.08),
+        cellActivationHidden: new RandomMatrix(hiddenSize, hiddenSize, 0.08),
         // bc
-        cellActivationBias: new _matrix2.default(hiddenSize, 1)
+        cellActivationBias: new Matrix(hiddenSize, 1)
       };
     }
     /**
@@ -42927,19 +41935,15 @@ var LSTM = function (_RNN) {
   }]);
 
   return LSTM;
-}(_rnn2.default);
+}(RNN);
 
-exports.default = LSTM;
+module.exports = LSTM;
 },{"./matrix":"v84l","./matrix/random-matrix":"zGuK","./rnn":"gJGF"}],"hEPI":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -42958,24 +41962,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _matrix = require('./matrix');
-
-var _matrix2 = _interopRequireDefault(_matrix);
-
-var _lstm = require('./lstm');
-
-var _lstm2 = _interopRequireDefault(_lstm);
-
-var _rnnTimeStep = require('./rnn-time-step');
-
-var _rnnTimeStep2 = _interopRequireDefault(_rnnTimeStep);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -43006,6 +41992,12 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var Matrix = require('./matrix');
+
+var LSTM = require('./lstm');
+
+var RNNTimeStep = require('./rnn-time-step');
 
 var LSTMTimeStep = function (_RNNTimeStep) {
   _inherits(LSTMTimeStep, _RNNTimeStep);
@@ -43019,7 +42011,7 @@ var LSTMTimeStep = function (_RNNTimeStep) {
   _createClass(LSTMTimeStep, [{
     key: 'getModel',
     value: function getModel(hiddenSize, prevSize) {
-      return _lstm2.default.prototype.getModel.call(this, hiddenSize, prevSize);
+      return LSTM.prototype.getModel.call(this, hiddenSize, prevSize);
     }
     /**
      *
@@ -43033,24 +42025,20 @@ var LSTMTimeStep = function (_RNNTimeStep) {
   }, {
     key: 'getEquation',
     value: function getEquation(equation, inputMatrix, previousResult, hiddenLayer) {
-      return _lstm2.default.prototype.getEquation.call(this, equation, inputMatrix, previousResult, hiddenLayer);
+      return LSTM.prototype.getEquation.call(this, equation, inputMatrix, previousResult, hiddenLayer);
     }
   }]);
 
   return LSTMTimeStep;
-}(_rnnTimeStep2.default);
+}(RNNTimeStep);
 
-exports.default = LSTMTimeStep;
+module.exports = LSTMTimeStep;
 },{"./matrix":"v84l","./lstm":"e2+i","./rnn-time-step":"zri4"}],"wLPK":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -43069,24 +42057,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _matrix = require('./matrix');
-
-var _matrix2 = _interopRequireDefault(_matrix);
-
-var _randomMatrix = require('./matrix/random-matrix');
-
-var _randomMatrix2 = _interopRequireDefault(_randomMatrix);
-
-var _rnn = require('./rnn');
-
-var _rnn2 = _interopRequireDefault(_rnn);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -43117,6 +42087,12 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
+
+var Matrix = require('./matrix');
+
+var RandomMatrix = require('./matrix/random-matrix');
+
+var RNN = require('./rnn');
 
 var GRU = function (_RNN) {
   _inherits(GRU, _RNN);
@@ -43133,25 +42109,25 @@ var GRU = function (_RNN) {
       return {
         // update Gate
         // wzxh
-        updateGateInputMatrix: new _randomMatrix2.default(hiddenSize, prevSize, 0.08),
+        updateGateInputMatrix: new RandomMatrix(hiddenSize, prevSize, 0.08),
         // wzhh
-        updateGateHiddenMatrix: new _randomMatrix2.default(hiddenSize, hiddenSize, 0.08),
+        updateGateHiddenMatrix: new RandomMatrix(hiddenSize, hiddenSize, 0.08),
         // bz
-        updateGateBias: new _matrix2.default(hiddenSize, 1),
+        updateGateBias: new Matrix(hiddenSize, 1),
         // reset Gate
         // wrxh
-        resetGateInputMatrix: new _randomMatrix2.default(hiddenSize, prevSize, 0.08),
+        resetGateInputMatrix: new RandomMatrix(hiddenSize, prevSize, 0.08),
         // wrhh
-        resetGateHiddenMatrix: new _randomMatrix2.default(hiddenSize, hiddenSize, 0.08),
+        resetGateHiddenMatrix: new RandomMatrix(hiddenSize, hiddenSize, 0.08),
         // br
-        resetGateBias: new _matrix2.default(hiddenSize, 1),
+        resetGateBias: new Matrix(hiddenSize, 1),
         // cell write parameters
         // wcxh
-        cellWriteInputMatrix: new _randomMatrix2.default(hiddenSize, prevSize, 0.08),
+        cellWriteInputMatrix: new RandomMatrix(hiddenSize, prevSize, 0.08),
         // wchh
-        cellWriteHiddenMatrix: new _randomMatrix2.default(hiddenSize, hiddenSize, 0.08),
+        cellWriteHiddenMatrix: new RandomMatrix(hiddenSize, hiddenSize, 0.08),
         // bc
-        cellWriteBias: new _matrix2.default(hiddenSize, 1)
+        cellWriteBias: new Matrix(hiddenSize, 1)
       };
     }
     /**
@@ -43186,19 +42162,15 @@ var GRU = function (_RNN) {
   }]);
 
   return GRU;
-}(_rnn2.default);
+}(RNN);
 
-exports.default = GRU;
+module.exports = GRU;
 },{"./matrix":"v84l","./matrix/random-matrix":"zGuK","./rnn":"gJGF"}],"+7gC":[function(require,module,exports) {
 'use strict';
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) { return _typeof2(obj); } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj); };
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () {
   function defineProperties(target, props) {
@@ -43217,20 +42189,6 @@ var _createClass = function () {
     return Constructor;
   };
 }();
-
-var _gru = require('./gru');
-
-var _gru2 = _interopRequireDefault(_gru);
-
-var _rnnTimeStep = require('./rnn-time-step');
-
-var _rnnTimeStep2 = _interopRequireDefault(_rnnTimeStep);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -43263,6 +42221,10 @@ function _inherits(subClass, superClass) {
 } // import Matrix from './matrix'
 
 
+var GRU = require('./gru');
+
+var RNNTimeStep = require('./rnn-time-step');
+
 var GRUTimeStep = function (_RNNTimeStep) {
   _inherits(GRUTimeStep, _RNNTimeStep);
 
@@ -43275,7 +42237,7 @@ var GRUTimeStep = function (_RNNTimeStep) {
   _createClass(GRUTimeStep, null, [{
     key: 'getModel',
     value: function getModel(hiddenSize, prevSize) {
-      return _gru2.default.prototype.getModel(hiddenSize, prevSize);
+      return GRU.prototype.getModel(hiddenSize, prevSize);
     }
     /**
      *
@@ -43289,400 +42251,322 @@ var GRUTimeStep = function (_RNNTimeStep) {
   }, {
     key: 'getEquation',
     value: function getEquation(equation, inputMatrix, previousResult, hiddenLayer) {
-      return _gru2.default.prototype.getEquation(equation, inputMatrix, previousResult, hiddenLayer);
+      return GRU.prototype.getEquation(equation, inputMatrix, previousResult, hiddenLayer);
     }
   }]);
 
   return GRUTimeStep;
-}(_rnnTimeStep2.default);
+}(RNNTimeStep);
 
-exports.default = GRUTimeStep;
+module.exports = GRUTimeStep;
 },{"./gru":"wLPK","./rnn-time-step":"zri4"}],"nL/1":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = feedForward;
+var _require = require('./index'),
+    add = _require.add,
+    multiply = _require.multiply,
+    random = _require.random,
+    sigmoid = _require.sigmoid;
 
-var _index = require('./index');
-
-function feedForward(settings, input) {
+module.exports = function feedForward(settings, input) {
   var height = settings.height;
-  var weights = (0, _index.random)({
+  var weights = random({
     name: 'weights',
     height: height,
     width: input.height
   });
-  var biases = (0, _index.random)({
+  var biases = random({
     name: 'biases',
     height: height
   });
-  return (0, _index.sigmoid)((0, _index.add)((0, _index.multiply)(weights, input), biases));
-}
+  return sigmoid(add(multiply(weights, input), biases));
+};
 },{"./index":"X3lc"}],"v+cs":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+var _require = require('.'),
+    add = _require.add,
+    negative = _require.negative,
+    multiply = _require.multiply,
+    multiplyElement = _require.multiplyElement,
+    ones = _require.ones,
+    sigmoid = _require.sigmoid,
+    random = _require.random,
+    tanh = _require.tanh,
+    zeros = _require.zeros;
 
-var _ = require('.');
-
-exports.default = function (settings, recurrentInput, input) {
+module.exports = function (settings, recurrentInput, input) {
   var height = settings.height;
-  var updateGateWeights = (0, _.random)({
+  var updateGateWeights = random({
     height: height,
     width: input.height
   });
-  var updateGatePeepholes = (0, _.random)({
+  var updateGatePeepholes = random({
     width: height,
     height: height
   });
-  var updateGateBias = (0, _.zeros)({
+  var updateGateBias = zeros({
     height: height
   });
-  var updateGate = (0, _.sigmoid)((0, _.add)((0, _.add)((0, _.multiply)(updateGateWeights, input), (0, _.multiply)(updateGatePeepholes, recurrentInput)), updateGateBias));
-  var resetGateWeights = (0, _.random)({
+  var updateGate = sigmoid(add(add(multiply(updateGateWeights, input), multiply(updateGatePeepholes, recurrentInput)), updateGateBias));
+  var resetGateWeights = random({
     height: height,
     width: input.height
   });
-  var resetGatePeepholes = (0, _.random)({
+  var resetGatePeepholes = random({
     width: height,
     height: height
   });
-  var resetGateBias = (0, _.zeros)({
+  var resetGateBias = zeros({
     height: height
   });
-  var resetGate = (0, _.sigmoid)((0, _.add)((0, _.add)((0, _.multiply)(resetGateWeights, input), (0, _.multiply)(resetGatePeepholes, recurrentInput)), resetGateBias));
-  var cellWeights = (0, _.random)({
+  var resetGate = sigmoid(add(add(multiply(resetGateWeights, input), multiply(resetGatePeepholes, recurrentInput)), resetGateBias));
+  var cellWeights = random({
     height: height,
     width: input.height
   });
-  var cellPeepholes = (0, _.random)({
+  var cellPeepholes = random({
     width: height,
     height: height
   });
-  var cellBias = (0, _.zeros)({
+  var cellBias = zeros({
     height: height
   });
-  var cell = (0, _.tanh)((0, _.add)((0, _.add)((0, _.multiply)(cellWeights, input), (0, _.multiply)(cellPeepholes, (0, _.multiplyElement)(resetGate, recurrentInput))), cellBias)); // compute hidden state as gated, saturated cell activations
+  var cell = tanh(add(add(multiply(cellWeights, input), multiply(cellPeepholes, multiplyElement(resetGate, recurrentInput))), cellBias)); // compute hidden state as gated, saturated cell activations
   // negate updateGate
 
-  return (0, _.add)((0, _.multiplyElement)((0, _.add)((0, _.ones)(updateGate.rows, updateGate.columns), (0, _.negative)(updateGate)), cell), (0, _.multiplyElement)(recurrentInput, updateGate));
+  return add(multiplyElement(add(ones(updateGate.rows, updateGate.columns), negative(updateGate)), cell), multiplyElement(recurrentInput, updateGate));
 };
 },{".":"X3lc"}],"Mqbi":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+var _require = require('./index'),
+    add = _require.add,
+    multiply = _require.multiply,
+    multiplyElement = _require.multiplyElement,
+    random = _require.random,
+    sigmoid = _require.sigmoid,
+    tanh = _require.tanh,
+    zeros = _require.zeros;
 
-var _index = require('./index');
-
-exports.default = function (settings, recurrentInput, input) {
+module.exports = function (settings, recurrentInput, input) {
   var height = settings.height;
-  var inputGateWeights = (0, _index.random)({
+  var inputGateWeights = random({
     height: height,
     width: input.height
   });
-  var inputGatePeepholes = (0, _index.random)({
+  var inputGatePeepholes = random({
     width: height,
     height: height
   });
-  var inputGateBias = (0, _index.zeros)({
+  var inputGateBias = zeros({
     height: height
   });
-  var inputGate = (0, _index.sigmoid)((0, _index.add)((0, _index.add)((0, _index.multiply)(inputGateWeights, input), (0, _index.multiply)(inputGatePeepholes, recurrentInput)), inputGateBias));
-  var forgetGateWeights = (0, _index.random)({
+  var inputGate = sigmoid(add(add(multiply(inputGateWeights, input), multiply(inputGatePeepholes, recurrentInput)), inputGateBias));
+  var forgetGateWeights = random({
     height: height,
     width: input.height
   });
-  var forgetGatePeepholes = (0, _index.random)({
+  var forgetGatePeepholes = random({
     width: height,
     height: height
   });
-  var forgetGateBias = (0, _index.zeros)({
+  var forgetGateBias = zeros({
     height: height
   });
-  var forgetGate = (0, _index.sigmoid)((0, _index.add)((0, _index.add)((0, _index.multiply)(forgetGateWeights, input), (0, _index.multiply)(forgetGatePeepholes, recurrentInput)), forgetGateBias));
-  var outputGateWeights = (0, _index.random)({
+  var forgetGate = sigmoid(add(add(multiply(forgetGateWeights, input), multiply(forgetGatePeepholes, recurrentInput)), forgetGateBias));
+  var outputGateWeights = random({
     height: height,
     width: input.height
   });
-  var outputGatePeepholes = (0, _index.random)({
+  var outputGatePeepholes = random({
     width: height,
     height: height
   });
-  var outputGateBias = (0, _index.zeros)({
+  var outputGateBias = zeros({
     height: height
   });
-  var outputGate = (0, _index.sigmoid)((0, _index.add)((0, _index.add)((0, _index.multiply)(outputGateWeights, input), (0, _index.multiply)(outputGatePeepholes, recurrentInput)), outputGateBias));
-  var memoryWeights = (0, _index.random)({
+  var outputGate = sigmoid(add(add(multiply(outputGateWeights, input), multiply(outputGatePeepholes, recurrentInput)), outputGateBias));
+  var memoryWeights = random({
     height: height,
     width: input.height
   });
-  var memoryPeepholes = (0, _index.random)({
+  var memoryPeepholes = random({
     width: height,
     height: height
   });
-  var memoryBias = (0, _index.zeros)({
+  var memoryBias = zeros({
     height: height
   });
-  var memory = (0, _index.tanh)((0, _index.add)((0, _index.add)((0, _index.multiply)(memoryWeights, input), (0, _index.multiply)(memoryPeepholes, recurrentInput)), memoryBias)); // compute new cell activation
+  var memory = tanh(add(add(multiply(memoryWeights, input), multiply(memoryPeepholes, recurrentInput)), memoryBias)); // compute new cell activation
 
-  var retainCell = (0, _index.multiplyElement)(forgetGate, input); // what do we keep from cell
+  var retainCell = multiplyElement(forgetGate, input); // what do we keep from cell
 
-  var writeCell = (0, _index.multiplyElement)(inputGate, memory); // what do we write to cell
+  var writeCell = multiplyElement(inputGate, memory); // what do we write to cell
 
-  var cell = (0, _index.add)(retainCell, writeCell); // new cell contents
+  var cell = add(retainCell, writeCell); // new cell contents
   // compute hidden state as gated, saturated cell activations
 
-  return (0, _index.multiplyElement)(outputGate, (0, _index.tanh)(cell));
+  return multiplyElement(outputGate, tanh(cell));
 };
 },{"./index":"X3lc"}],"7ERy":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+var _require = require('.'),
+    relu = _require.relu,
+    add = _require.add,
+    multiply = _require.multiply,
+    random = _require.random,
+    zeros = _require.zeros;
 
-var _ = require('.');
-
-exports.default = function (settings, input, recurrentInput) {
+module.exports = function (settings, input, recurrentInput) {
   var height = settings.height;
   recurrentInput.setDimensions(1, height); // wxh
 
-  var weight = (0, _.random)({
+  var weight = random({
     name: 'weight',
     height: height,
     width: input.height
   }); // whh
 
-  var transition = (0, _.random)({
+  var transition = random({
     name: 'transition',
     height: height,
     width: height
   }); // bhh
 
-  var bias = (0, _.zeros)({
+  var bias = zeros({
     name: 'bias',
     height: height
   });
-  return (0, _.relu)((0, _.add)((0, _.add)((0, _.multiply)(weight, input), (0, _.multiply)(transition, recurrentInput)), bias));
+  return relu(add(add(multiply(weight, input), multiply(transition, recurrentInput)), bias));
 };
 },{".":"X3lc"}],"YS3q":[function(require,module,exports) {
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+var _require = require('.'),
+    add = _require.add,
+    multiply = _require.multiply,
+    random = _require.random,
+    target = _require.target,
+    zeros = _require.zeros;
 
-var _ = require('.');
-
-exports.default = function (settings, inputLayer) {
+module.exports = function (settings, inputLayer) {
   var height = settings.height;
-  var outputGate = (0, _.random)({
+  var outputGate = random({
     height: height,
     width: inputLayer.height
   });
-  var output = (0, _.zeros)({
+  var output = zeros({
     height: height
   });
-  var outputGateConnector = (0, _.multiply)(outputGate, inputLayer);
-  return (0, _.target)(settings, (0, _.add)(outputGateConnector, output));
+  var outputGateConnector = multiply(outputGate, inputLayer);
+  return target(settings, add(outputGateConnector, output));
 };
 },{".":"X3lc"}],"Focm":[function(require,module,exports) {
 'use strict';
 
-var _activation = require('./activation');
+var activation = require('./activation');
 
-var _activation2 = _interopRequireDefault(_activation);
+var crossValidate = require('./cross-validate').crossValidate;
 
-var _crossValidate = require('./cross-validate');
+var layer = require('./layer');
 
-var _crossValidate2 = _interopRequireDefault(_crossValidate);
+var likely = require('./likely');
 
-var _layer = require('./layer');
+var lookup = require('./lookup');
 
-var layer = _interopRequireWildcard(_layer);
+var praxis = require('./praxis');
 
-var _likely = require('./likely');
+var FeedForward = require('./feed-forward');
 
-var _likely2 = _interopRequireDefault(_likely);
+var NeuralNetwork = require('./neural-network');
 
-var _lookup = require('./lookup');
+var NeuralNetworkGPU = require('./neural-network-gpu');
 
-var _lookup2 = _interopRequireDefault(_lookup);
+var TrainStream = require('./train-stream');
 
-var _praxis = require('./praxis');
+var Recurrent = require('./recurrent');
 
-var _praxis2 = _interopRequireDefault(_praxis);
+var RNNTimeStep = require('./recurrent/rnn-time-step');
 
-var _feedForward = require('./feed-forward');
+var LSTMTimeStep = require('./recurrent/lstm-time-step');
 
-var _feedForward2 = _interopRequireDefault(_feedForward);
+var GRUTimeStep = require('./recurrent/gru-time-step');
 
-var _neuralNetwork = require('./neural-network');
+var RNN = require('./recurrent/rnn');
 
-var _neuralNetwork2 = _interopRequireDefault(_neuralNetwork);
+var LSTM = require('./recurrent/lstm');
 
-var _neuralNetworkGpu = require('./neural-network-gpu');
+var GRU = require('./recurrent/gru');
 
-var _neuralNetworkGpu2 = _interopRequireDefault(_neuralNetworkGpu);
+var max = require('./utilities/max');
 
-var _trainStream = require('./train-stream');
+var mse = require('./utilities/mse');
 
-var _trainStream2 = _interopRequireDefault(_trainStream);
+var ones = require('./utilities/ones');
 
-var _recurrent = require('./recurrent');
+var random = require('./utilities/random');
 
-var _recurrent2 = _interopRequireDefault(_recurrent);
+var randomWeight = require('./utilities/random-weight');
 
-var _rnnTimeStep = require('./recurrent/rnn-time-step');
+var randos = require('./utilities/randos');
 
-var _rnnTimeStep2 = _interopRequireDefault(_rnnTimeStep);
+var range = require('./utilities/range');
 
-var _lstmTimeStep = require('./recurrent/lstm-time-step');
+var toArray = require('./utilities/to-array');
 
-var _lstmTimeStep2 = _interopRequireDefault(_lstmTimeStep);
+var DataFormatter = require('./utilities/data-formatter');
 
-var _gruTimeStep = require('./recurrent/gru-time-step');
+var zeros = require('./utilities/zeros'); // layer deps
 
-var _gruTimeStep2 = _interopRequireDefault(_gruTimeStep);
 
-var _rnn = require('./recurrent/rnn');
+var feedForward = require('./layer/feed-forward');
 
-var _rnn2 = _interopRequireDefault(_rnn);
+var gru = require('./layer/gru');
 
-var _lstm = require('./recurrent/lstm');
+var lstm = require('./layer/lstm');
 
-var _lstm2 = _interopRequireDefault(_lstm);
+var recurrent = require('./layer/recurrent');
 
-var _gru = require('./recurrent/gru');
+var output = require('./layer/output');
 
-var _gru2 = _interopRequireDefault(_gru);
-
-var _max = require('./utilities/max');
-
-var _max2 = _interopRequireDefault(_max);
-
-var _mse = require('./utilities/mse');
-
-var _mse2 = _interopRequireDefault(_mse);
-
-var _ones = require('./utilities/ones');
-
-var _ones2 = _interopRequireDefault(_ones);
-
-var _random = require('./utilities/random');
-
-var _random2 = _interopRequireDefault(_random);
-
-var _randomWeight = require('./utilities/random-weight');
-
-var _randomWeight2 = _interopRequireDefault(_randomWeight);
-
-var _randos = require('./utilities/randos');
-
-var _randos2 = _interopRequireDefault(_randos);
-
-var _range = require('./utilities/range');
-
-var _range2 = _interopRequireDefault(_range);
-
-var _toArray = require('./utilities/to-array');
-
-var _toArray2 = _interopRequireDefault(_toArray);
-
-var _dataFormatter = require('./utilities/data-formatter');
-
-var _dataFormatter2 = _interopRequireDefault(_dataFormatter);
-
-var _zeros = require('./utilities/zeros');
-
-var _zeros2 = _interopRequireDefault(_zeros);
-
-var _feedForward3 = require('./layer/feed-forward');
-
-var _feedForward4 = _interopRequireDefault(_feedForward3);
-
-var _gru3 = require('./layer/gru');
-
-var _gru4 = _interopRequireDefault(_gru3);
-
-var _lstm3 = require('./layer/lstm');
-
-var _lstm4 = _interopRequireDefault(_lstm3);
-
-var _recurrent3 = require('./layer/recurrent');
-
-var _recurrent4 = _interopRequireDefault(_recurrent3);
-
-var _output = require('./layer/output');
-
-var _output2 = _interopRequireDefault(_output);
-
-function _interopRequireWildcard(obj) {
-  if (obj && obj.__esModule) {
-    return obj;
-  } else {
-    var newObj = {};
-
-    if (obj != null) {
-      for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
-      }
-    }
-
-    newObj.default = obj;
-    return newObj;
-  }
-}
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
-layer.feedForward = _feedForward4.default; // layer deps
-
-layer.gru = _gru4.default;
-layer.lstm = _lstm4.default;
-layer.recurrent = _recurrent4.default;
-layer.output = _output2.default;
+layer.feedForward = feedForward;
+layer.gru = gru;
+layer.lstm = lstm;
+layer.recurrent = recurrent;
+layer.output = output;
 var brain = {
-  activation: _activation2.default,
-  crossValidate: _crossValidate2.default,
-  likely: _likely2.default,
+  activation: activation,
+  crossValidate: crossValidate,
+  likely: likely,
   layer: layer,
-  lookup: _lookup2.default,
-  praxis: _praxis2.default,
-  FeedForward: _feedForward2.default,
-  NeuralNetwork: _neuralNetwork2.default,
-  NeuralNetworkGPU: _neuralNetworkGpu2.default,
-  Recurrent: _recurrent2.default,
-  TrainStream: _trainStream2.default,
+  lookup: lookup,
+  praxis: praxis,
+  FeedForward: FeedForward,
+  NeuralNetwork: NeuralNetwork,
+  NeuralNetworkGPU: NeuralNetworkGPU,
+  Recurrent: Recurrent,
+  TrainStream: TrainStream,
   recurrent: {
-    RNNTimeStep: _rnnTimeStep2.default,
-    LSTMTimeStep: _lstmTimeStep2.default,
-    GRUTimeStep: _gruTimeStep2.default,
-    RNN: _rnn2.default,
-    LSTM: _lstm2.default,
-    GRU: _gru2.default
+    RNNTimeStep: RNNTimeStep,
+    LSTMTimeStep: LSTMTimeStep,
+    GRUTimeStep: GRUTimeStep,
+    RNN: RNN,
+    LSTM: LSTM,
+    GRU: GRU
   },
   utilities: {
-    max: _max2.default,
-    mse: _mse2.default,
-    ones: _ones2.default,
-    random: _random2.default,
-    randomWeight: _randomWeight2.default,
-    randos: _randos2.default,
-    range: _range2.default,
-    toArray: _toArray2.default,
-    DataFormatter: _dataFormatter2.default,
-    zeros: _zeros2.default
+    max: max,
+    mse: mse,
+    ones: ones,
+    random: random,
+    randomWeight: randomWeight,
+    randos: randos,
+    range: range,
+    toArray: toArray,
+    DataFormatter: DataFormatter,
+    zeros: zeros
   }
 };
 
