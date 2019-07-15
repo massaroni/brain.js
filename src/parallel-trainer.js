@@ -1,11 +1,11 @@
-import partition from './utilities/partition';
+const partition = require('./utilities/partition');
 const workerFarm = require('worker-farm');
 const workers    = workerFarm(require.resolve('./parallel-trainer-worker'));
 
 /**
  * Ensemble training, via simple parameter averaging.
  */
-export async function trainParallel(data, net, trainOptions = {}) {
+async function trainParallel(data, net, trainOptions = {}) {
   const startMs = Date.now();
   const log = (trainOptions.log === true ? console.log : trainOptions.log) || (() => {});
   const logPeriod = trainOptions.logPeriod || 1;
@@ -67,7 +67,7 @@ export async function trainParallel(data, net, trainOptions = {}) {
   return {error, iterations, epochs, elapsedMs};
 }
 
-export function unpackTrainOpts(trainOptions, net, data) {
+function unpackTrainOpts(trainOptions, net, data) {
   const parallel = trainOptions.parallel || {};
   let threadsOpts = parallel.threads;
   if (!threadsOpts || Number.isInteger(threadsOpts)) {
@@ -154,3 +154,5 @@ function runTrainingWorker(netType, netJSON, trainingData, trainOpts) {
     });
   });
 }
+
+module.exports = { trainParallel, unpackTrainOpts };

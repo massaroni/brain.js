@@ -1,5 +1,5 @@
-import assert from 'assert';
-import partition from '../../src/utilities/partition';
+const assert = require('assert');
+const partition = require('../../src/utilities/partition');
 
 describe('partition', () => {
 

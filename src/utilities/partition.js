@@ -1,4 +1,4 @@
-export default function partition(array, partitions = 1, partitionSize = 1) {
+module.exports = function partition(array, partitions = 1, partitionSize = 1) {
   const stdSize = Math.floor(array.length / partitions);
   let step = stdSize;
   if (partitionSize <= stdSize) {

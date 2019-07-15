@@ -1,10 +1,8 @@
-import NeuralNetwork from '../neural-network';
-
 /**
  * Parameter averaging, supports NeuralNetwork and NeuralNetworkGPU.
  * @param  {...any} nets 
  */
-export default function avgNets(...nets) {
+module.exports = function avgNets(...nets) {
   if (!nets || !nets.length) {
     return;
   }

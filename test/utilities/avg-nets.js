@@ -1,7 +1,7 @@
-import assert from 'assert';
-import NeuralNetwork from '../../src/neural-network';
-import NeuralNetworkGPU from '../../src/neural-network-gpu';
-import avgNets from '../../src/utilities/avg-nets';
+const assert = require('assert');
+const NeuralNetwork = require('../../src/neural-network');
+const NeuralNetworkGPU = require('../../src/neural-network-gpu');
+const avgNets = require('../../src/utilities/avg-nets');
 
 describe('avg-nets', () => {
 
