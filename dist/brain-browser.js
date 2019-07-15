@@ -35249,12 +35249,7 @@ module.exports = function range(start, end) {
 },{}],"5E9k":[function(require,module,exports) {
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = partition;
-
-function partition(array) {
+module.exports = function partition(array) {
   var partitions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
   var partitionSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
   var stdSize = Math.floor(array.length / partitions);
@@ -35281,7 +35276,7 @@ function partition(array) {
   var tailIdx = Math.min(array.length - partitionSize, from + partitionSize);
   partitioned.push(array.slice(tailIdx));
   return partitioned;
-}
+};
 },{}],"zv8z":[function(require,module,exports) {
 exports.endianness = function () { return 'LE' };
 
@@ -36202,11 +36197,6 @@ var _typeof2 = typeof Symbol === "function" && _typeof3(Symbol.iterator) === "sy
 
 function _typeof3(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof3 = function _typeof3(obj) { return typeof obj; }; } else { _typeof3 = function _typeof3(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof3(obj); }
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.trainParallel = undefined;
-
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
 } : function (obj) {
@@ -36217,7 +36207,7 @@ var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "sym
  */
 
 
-var trainParallel = exports.trainParallel = function () {
+var trainParallel = function () {
   var _ref = _asyncToGenerator(
   /*#__PURE__*/
   regeneratorRuntime.mark(function _callee(data, net) {
@@ -36364,18 +36354,6 @@ var trainParallel = exports.trainParallel = function () {
   };
 }();
 
-exports.unpackTrainOpts = unpackTrainOpts;
-
-var _partition = require('./utilities/partition');
-
-var _partition2 = _interopRequireDefault(_partition);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
-
 function _toConsumableArray(arr) {
   if (Array.isArray(arr)) {
     for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
@@ -36417,6 +36395,8 @@ function _asyncToGenerator(fn) {
   };
 }
 
+var partition = require('./utilities/partition');
+
 var workerFarm = require('worker-farm');
 
 var workers = workerFarm(require.resolve('./parallel-trainer-worker'));
@@ -36450,7 +36430,7 @@ function unpackTrainOpts(trainOptions, net, data) {
       if (trainingDataSize) {
         partitioned += threadCount;
         var trainingData = data.slice(dataUsed, trainingDataSize);
-        partitions = (0, _partition2.default)(trainingData, threadCount, partitionSize);
+        partitions = partition(trainingData, threadCount, partitionSize);
         dataUsed += trainingDataSize;
       }
     } else if (Number.isInteger(config)) {
@@ -36472,7 +36452,7 @@ function unpackTrainOpts(trainOptions, net, data) {
 
     var _partitionSize = parallel.partitionSize || 1;
 
-    var _partitions = (0, _partition2.default)(remainingData, unpartitioned, _partitionSize);
+    var _partitions = partition(remainingData, unpartitioned, _partitionSize);
 
     var _iteratorNormalCompletion2 = true;
     var _didIteratorError2 = false;
@@ -36577,30 +36557,19 @@ function runTrainingWorker(netType, netJSON, trainingData, trainOpts) {
     });
   });
 }
+
+module.exports = {
+  trainParallel: trainParallel,
+  unpackTrainOpts: unpackTrainOpts
+};
 },{"./utilities/partition":"5E9k","worker-farm":"UCX9","./index":"Focm"}],"SLKQ":[function(require,module,exports) {
 'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = avgNets;
-
-var _neuralNetwork = require('../neural-network');
-
-var _neuralNetwork2 = _interopRequireDefault(_neuralNetwork);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
 /**
  * Parameter averaging, supports NeuralNetwork and NeuralNetworkGPU.
  * @param  {...any} nets 
  */
 
-
-function avgNets() {
+module.exports = function avgNets() {
   for (var _len = arguments.length, nets = Array(_len), _key = 0; _key < _len; _key++) {
     nets[_key] = arguments[_key];
   }
@@ -36683,7 +36652,7 @@ function avgNets() {
   var merged = new netCtor();
   merged.fromJSON(refNet);
   return merged;
-}
+};
 
 function equalsShallow() {
   for (var _len2 = arguments.length, arrays = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
@@ -36712,7 +36681,7 @@ function equalsShallow() {
 
   return true;
 }
-},{"../neural-network":"8epZ"}],"8epZ":[function(require,module,exports) {
+},{}],"8epZ":[function(require,module,exports) {
 'use strict';
 
 var _createClass = function () {

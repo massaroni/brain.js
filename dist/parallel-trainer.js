@@ -1,16 +1,11 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.trainParallel = undefined;
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 /**
  * Ensemble training, via simple parameter averaging.
  */
-var trainParallel = exports.trainParallel = function () {
+var trainParallel = function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, net) {
     var trainOptions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
@@ -151,20 +146,15 @@ var trainParallel = exports.trainParallel = function () {
   };
 }();
 
-exports.unpackTrainOpts = unpackTrainOpts;
-
-var _partition = require('./utilities/partition');
-
-var _partition2 = _interopRequireDefault(_partition);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
+var partition = require('./utilities/partition');
 var workerFarm = require('worker-farm');
-var workers = workerFarm(require.resolve('./parallel-trainer-worker'));function unpackTrainOpts(trainOptions, net, data) {
+var workers = workerFarm(require.resolve('./parallel-trainer-worker'));
+
+function unpackTrainOpts(trainOptions, net, data) {
   var parallel = trainOptions.parallel || {};
   var threadsOpts = parallel.threads;
   if (!threadsOpts || Number.isInteger(threadsOpts)) {
@@ -190,7 +180,7 @@ var workers = workerFarm(require.resolve('./parallel-trainer-worker'));function 
       if (trainingDataSize) {
         partitioned += threadCount;
         var trainingData = data.slice(dataUsed, trainingDataSize);
-        partitions = (0, _partition2.default)(trainingData, threadCount, partitionSize);
+        partitions = partition(trainingData, threadCount, partitionSize);
         dataUsed += trainingDataSize;
       }
     } else if (Number.isInteger(config)) {
@@ -205,7 +195,7 @@ var workers = workerFarm(require.resolve('./parallel-trainer-worker'));function 
   if (unpartitioned) {
     var remainingData = dataUsed === 0 ? data : data.slice(dataUsed);
     var _partitionSize = parallel.partitionSize || 1;
-    var _partitions = (0, _partition2.default)(remainingData, unpartitioned, _partitionSize);
+    var _partitions = partition(remainingData, unpartitioned, _partitionSize);
     var _iteratorNormalCompletion2 = true;
     var _didIteratorError2 = false;
     var _iteratorError2 = undefined;
@@ -294,3 +284,5 @@ function runTrainingWorker(netType, netJSON, trainingData, trainOpts) {
     });
   });
 }
+
+module.exports = { trainParallel: trainParallel, unpackTrainOpts: unpackTrainOpts };

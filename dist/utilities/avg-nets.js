@@ -1,21 +1,10 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = avgNets;
-
-var _neuralNetwork = require('../neural-network');
-
-var _neuralNetwork2 = _interopRequireDefault(_neuralNetwork);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 /**
  * Parameter averaging, supports NeuralNetwork and NeuralNetworkGPU.
  * @param  {...any} nets 
  */
-function avgNets() {
+module.exports = function avgNets() {
   for (var _len = arguments.length, nets = Array(_len), _key = 0; _key < _len; _key++) {
     nets[_key] = arguments[_key];
   }
@@ -97,7 +86,7 @@ function avgNets() {
   var merged = new netCtor();
   merged.fromJSON(refNet);
   return merged;
-}
+};
 
 function equalsShallow() {
   for (var _len2 = arguments.length, arrays = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {

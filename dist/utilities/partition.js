@@ -1,10 +1,6 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = partition;
-function partition(array) {
+module.exports = function partition(array) {
   var partitions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
   var partitionSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
 
@@ -29,4 +25,4 @@ function partition(array) {
   partitioned.push(array.slice(tailIdx));
 
   return partitioned;
-}
+};
