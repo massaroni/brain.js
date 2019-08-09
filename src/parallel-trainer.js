@@ -26,6 +26,7 @@ export async function trainParallel(data, net, trainOptions = {}) {
   let error = 1;
   let epochs = 0;
   let iterations = 0;
+  let itemIterations = 0;
 
   while (epochs < maxEpochs && error >= errorThresh) {
     let promises = [];
@@ -51,11 +52,12 @@ export async function trainParallel(data, net, trainOptions = {}) {
       const result = trained.test(threads[partitionIdx].partition[0]);
       worstError = Math.max(result.error, worstError);
       iterations += status.iterations;
+      itemIterations += status.iterations * threads[t].partition.length;
     }
     error = worstError;
     epochs++;
     if (epochs % logPeriod === 0) {
-      log('iterations: ' + iterations + ', error: ' + error + ', epochs: ' + epochs);
+      log({iterations: iterations, error: error, epochs: epochs, itemIterations: itemIterations});
     }
 
     globalWeights = trainedNets[0].avg(...trainedNets.slice(1)).toJSON();
