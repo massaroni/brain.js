@@ -66,7 +66,7 @@ export async function trainParallel(data, net, trainOptions = {}) {
   net.fromJSON(globalWeights);
   const endMs = Date.now();
   const elapsedMs = endMs - startMs;
-  return {error, iterations, epochs, elapsedMs};
+  return {error, iterations, itemIterations, epochs, elapsedMs};
 }
 
 export function unpackTrainOpts(trainOptions, net, data) {
