@@ -34,6 +34,7 @@ async function trainParallel(data, net) {
   var maxEpochs = parallel.epochs || 1000;
   var errorThresh = trainOptions.errorThresh || NetCtor.trainDefaults.errorThresh;
   var threads = unpackTrainOpts(trainOptions, net, data);
+  var threadCount = threads.length;
 
   var peerTrainOptions = Object.assign({}, trainOptions);
   delete peerTrainOptions.parallel;
@@ -46,6 +47,7 @@ async function trainParallel(data, net) {
   var error = 1;
   var epochs = 0;
   var iterations = 0;
+  var itemIterations = 0;
 
   while (epochs < maxEpochs && error >= errorThresh) {
     var _trainedNets$;
@@ -85,7 +87,6 @@ async function trainParallel(data, net) {
     var results = await Promise.all(promises);
     var worstError = 0;
     var trainedNets = [];
-    var threadCount = threads.length;
     for (var t = threadCount - 1; t >= 0; t--) {
       var trained = results[t].trained;
       var status = results[t].status;
@@ -94,11 +95,12 @@ async function trainParallel(data, net) {
       var result = trained.test(threads[partitionIdx].partition[0]);
       worstError = Math.max(result.error, worstError);
       iterations += status.iterations;
+      itemIterations += status.iterations * threads[t].partition.length;
     }
     error = worstError;
     epochs++;
     if (epochs % logPeriod === 0) {
-      log('iterations: ' + iterations + ', error: ' + error + ', epochs: ' + epochs);
+      log({ iterations: iterations, error: error, epochs: epochs, itemIterations: itemIterations, threadCount: threadCount });
     }
 
     globalWeights = (_trainedNets$ = trainedNets[0]).avg.apply(_trainedNets$, _toConsumableArray(trainedNets.slice(1))).toJSON();
@@ -107,7 +109,7 @@ async function trainParallel(data, net) {
   net.fromJSON(globalWeights);
   var endMs = Date.now();
   var elapsedMs = endMs - startMs;
-  return { error: error, iterations: iterations, epochs: epochs, elapsedMs: elapsedMs };
+  return { error: error, iterations: iterations, itemIterations: itemIterations, epochs: epochs, threadCount: threadCount, elapsedMs: elapsedMs };
 }
 
 function unpackTrainOpts(trainOptions, net, data) {
