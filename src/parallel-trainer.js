@@ -14,7 +14,8 @@ export async function trainParallel(data, net, trainOptions = {}) {
   const maxEpochs = parallel.epochs || 1000;
   const errorThresh = trainOptions.errorThresh || NetCtor.trainDefaults.errorThresh;
   const threads = unpackTrainOpts(trainOptions, net, data);
-  
+  const threadCount = threads.length;
+
   let peerTrainOptions = Object.assign({}, trainOptions);
   delete peerTrainOptions.parallel;
   delete peerTrainOptions.callback;
@@ -43,7 +44,6 @@ export async function trainParallel(data, net, trainOptions = {}) {
     const results = await Promise.all(promises);
     let worstError = 0;
     let trainedNets = [];
-    const threadCount = threads.length;
     for (let t = threadCount - 1; t >= 0; t--) {
       const trained = results[t].trained;
       const status = results[t].status;
@@ -57,7 +57,7 @@ export async function trainParallel(data, net, trainOptions = {}) {
     error = worstError;
     epochs++;
     if (epochs % logPeriod === 0) {
-      log({iterations: iterations, error: error, epochs: epochs, itemIterations: itemIterations});
+      log({iterations, error, epochs, itemIterations, threadCount});
     }
 
     globalWeights = trainedNets[0].avg(...trainedNets.slice(1)).toJSON();
@@ -66,7 +66,7 @@ export async function trainParallel(data, net, trainOptions = {}) {
   net.fromJSON(globalWeights);
   const endMs = Date.now();
   const elapsedMs = endMs - startMs;
-  return {error, iterations, itemIterations, epochs, elapsedMs};
+  return {error, iterations, itemIterations, epochs, threadCount, elapsedMs};
 }
 
 export function unpackTrainOpts(trainOptions, net, data) {
