@@ -10,6 +10,7 @@ export async function trainParallel(data, net, trainOptions = {}) {
   const log = (trainOptions.log === true ? console.log : trainOptions.log) || (() => {});
   const logPeriod = trainOptions.logPeriod || 1;
   const parallel = trainOptions.parallel || {};
+  const threadLog = parallel.log === true ? console.log : parallel.log;
   const NetCtor = Object.getPrototypeOf(net).constructor;
   const maxEpochs = parallel.epochs || 1000;
   const errorThresh = trainOptions.errorThresh || NetCtor.trainDefaults.errorThresh;
@@ -19,7 +20,8 @@ export async function trainParallel(data, net, trainOptions = {}) {
   let peerTrainOptions = Object.assign({}, trainOptions);
   delete peerTrainOptions.parallel;
   delete peerTrainOptions.callback;
-  delete peerTrainOptions.log;
+  peerTrainOptions.log = threadLog;
+  peerTrainOptions.logPeriod = parallel.logPeriod;
   
   net.train([data[0]], {errorThresh: 0.9, iterations: 1}); // initialize weights
   let globalWeights = net.toJSON();
