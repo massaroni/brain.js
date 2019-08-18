@@ -1,32 +1,20 @@
 //const brainjs = require('../src').default;
 const brainjs = require('../dist/index').default;
+const mathGenerator = require('./math-db-generator');
 
-const {
-  readMNISTFiles,
-  mnistToBrainjsTrainingSet
-} = require('./mnist-utils');
-
-const dbPath = './mnist-data';
-console.log('Reading MNIST database from ' + dbPath);
-const mnistTrainingSet = readMNISTFiles(dbPath);
-if (!mnistTrainingSet || mnistTrainingSet.length < 1) {
-  return console.error('Empty training set.');
-}
-
-let brainTrainingSet = mnistToBrainjsTrainingSet(mnistTrainingSet);
-//brainTrainingSet = brainTrainingSet.slice(0, 10);
+const brainTrainingSet = mathGenerator(2000, 'sin(x/3) + (0.5 * cos(x/2))', 2, -100, 100, true);
 console.log('Loaded', brainTrainingSet.length, 'training items.');
 console.log(brainTrainingSet[0].input.length, 'Input neurons.');
 
-const config = {
+const multithreadedConfig = {
+  parallel: {threads: 2, epochs: 10000, log: true, logPeriod: 1, syncMode: true},
+  iterations: 100, // this is passed down to the trainer threads in multithreaded mode
   binaryThresh: 0.5,
-  hiddenLayers: [900, 200],
+  hiddenLayers: [50, 50],
   activation: 'tanh',
-  //activation: 'sigmoid',
   errorThresh: 0.005,
-  iterations: 1000, // this is passed down to the trainer threads in multithreaded mode
-  learningRate: 0.15,
-  momentum: 0.1,
+  learningRate: 0.001,
+  momentum: 0.5,
   beta1: 0.9,
   beta2: 0.999,
   epsilon: 1e-8,
@@ -34,44 +22,67 @@ const config = {
   log: (...args) => {console.log('progress: ', ...args)}
 };
 
-//trainSingleThreaded(config);
-trainMultithreaded(config, 7);
+const singlethrededConfig = {
+  iterations: 10000,
+  binaryThresh: 0.5,
+  hiddenLayers: [50, 50],
+  activation: 'tanh',
+  errorThresh: 0.005,
+  learningRate: 0.001,
+  momentum: 0.5,
+  beta1: 0.9,
+  beta2: 0.999,
+  epsilon: 1e-8,
+  logPeriod: 1,
+  log: (...args) => {console.log('progress: ', ...args)}
+};
+
+trainSingleThreaded(singlethrededConfig).then(() => trainMultithreaded(multithreadedConfig));
 
 function trainSingleThreaded(config) {
-  let syncConfig = Object.assign({}, config);
   let itemIterations = 0;
   const statusRegex = /iterations: (\d+), training error: (\d+(\.\d+)?)/;
-  syncConfig.log = (statusStr) => {
-    console.log(statusStr);
+  config.log = (statusStr) => {
+    console.log('Single-threaded progress:', statusStr);
     const status = statusRegex.exec(statusStr);
-    const iterations = parseInt(status[1]);
-    itemIterations += iterations * brainTrainingSet.length;
-    console.log('itemIterations:', itemIterations);
+    if (!status) {
+      console.log('Single-threaded status =', statusStr);
+    } else {
+      const iterations = parseInt(status[1]);
+      itemIterations += iterations * brainTrainingSet.length;
+      console.log('Single-threaded item iterations =', itemIterations);
+    }
   };
 
-  console.log('Training in single threaded mode...');
+  console.log('////// Training in single-threaded mode //////');
   const startMs = Date.now();
-  const net = new brainjs.NeuralNetwork(syncConfig);
-  const results = net.train(brainTrainingSet, syncConfig);
+  const net = new brainjs.NeuralNetwork(config);
+  const results = net.train(brainTrainingSet, config);
   const endMs = Date.now();
-  console.log('Final itemIterations:', itemIterations);
-  console.log('Done in', (endMs - startMs) / 1000, 'seconds:', JSON.stringify(results));
+  console.log('Done in', Math.floor((endMs - startMs) / 1000), 'seconds.');
+  console.log('Single-threaded results: ', results);
+  console.log('Single-threaded item iterations:', itemIterations, 'per thread.');
+  return Promise.resolve();
 }
 
-function trainMultithreaded(config, threadCount) {
-  let asyncConfig = Object.assign({}, config);
-  asyncConfig.parallel = {threads: threadCount, epochs: 100};
-  asyncConfig.logPeriod = 1;
-  asyncConfig.log = console.log;
+function trainMultithreaded(config) {
+  let itemIterations = 0;
+  config.log = function (status) {
+    itemIterations = status.itemIterations;
+    console.log('Multi-threaded progress:', status);
+    console.log('Multi-threaded item iterations =', itemIterations);
+  };
 
-  const startMs = Date.now();
-  const net = new brainjs.NeuralNetwork(asyncConfig);
+  const net = new brainjs.NeuralNetwork(config);
   
-  net.trainAsync(brainTrainingSet, asyncConfig).then((results) => {
+  console.log('////// Training in multi-threaded mode //////');
+  const startMs = Date.now();
+  return net.trainAsync(brainTrainingSet, config).then((results) => {
     const endMs = Date.now();
-    console.log('Final:', results);
-    console.log('Done in', (endMs - startMs) / 1000, 'seconds');
+    console.log('Done in', Math.floor((endMs - startMs) / 1000), 'seconds.');
+    console.log('Multi-threaded results: ', results);
+    console.log('Multi-threaded item iterations:', Math.ceil(itemIterations / results.threadCount), 'per thread.');
   }, (reason) => {
-    console.error('Multithreded training failed: ', JSON.stringify(reason))
+    console.error('Multi-threaded training failed: ', JSON.stringify(reason))
   });
 }
