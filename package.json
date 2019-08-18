@@ -45,6 +45,7 @@
     "fs-extra": "^8.1.0",
     "js-datasets-iris": "^1.0.4",
     "licensify": "^3.1.2",
+    "math-expression-evaluator": "^1.2.17",
     "mocha": "^5.2.0",
     "rimraf": "^2.6.2",
     "sinon": "^1.17.6",
