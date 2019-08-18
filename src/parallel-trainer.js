@@ -44,25 +44,32 @@ export async function trainParallel(data, net, trainOptions = {}) {
     }
 
     const results = await Promise.all(promises);
-    let worstError = 0;
+    let maxError, minError;
     let trainedNets = [];
-    for (let t = threadCount - 1; t >= 0; t--) {
+    for (let t = 0; t < threadCount; t++) {
       const trained = results[t].trained;
       const status = results[t].status;
+      maxError = t === 0 ? status.error : Math.max(maxError, status.error);
+      minError = t === 0 ? status.error : Math.min(minError, status.error);
       trainedNets.push(trained);
-      const partitionIdx = (t === 0 ? threadCount : t) - 1;
-      const result = trained.test(threads[partitionIdx].partition[0]);
-      worstError = Math.max(result.error, worstError);
       iterations += status.iterations;
       itemIterations += status.iterations * threads[t].partition.length;
     }
-    error = worstError;
+
+    globalWeights = trainedNets[0].avg(...trainedNets.slice(1)).toJSON();
+
+    if (maxError <= errorThresh) {
+      error = maxError;
+    } else if (minError <= errorThresh) {
+      const testnet = new NetCtor(trainOptions);
+      testnet.fromJSON(globalWeights);
+      error = trained.test(data).error;
+    }
+    
     epochs++;
     if (epochs % logPeriod === 0) {
       log({iterations, error, epochs, itemIterations, threadCount});
     }
-
-    globalWeights = trainedNets[0].avg(...trainedNets.slice(1)).toJSON();
   }
 
   net.fromJSON(globalWeights);

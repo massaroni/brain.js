@@ -65,8 +65,8 @@ async function trainParallel(data, net) {
         var thread = _step.value;
 
         if (parallel.syncMode === true) {
-          var _result = runTrainingSync(thread.type, globalWeights, thread.partition, peerTrainOptions);
-          promises.push(Promise.resolve(_result));
+          var result = runTrainingSync(thread.type, globalWeights, thread.partition, peerTrainOptions);
+          promises.push(Promise.resolve(result));
         } else {
           promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, peerTrainOptions));
         }
@@ -87,25 +87,33 @@ async function trainParallel(data, net) {
     }
 
     var results = await Promise.all(promises);
-    var worstError = 0;
+    var maxError = void 0,
+        minError = void 0;
     var trainedNets = [];
-    for (var t = threadCount - 1; t >= 0; t--) {
-      var trained = results[t].trained;
+    for (var t = 0; t < threadCount; t++) {
+      var _trained = results[t].trained;
       var status = results[t].status;
-      trainedNets.push(trained);
-      var partitionIdx = (t === 0 ? threadCount : t) - 1;
-      var result = trained.test(threads[partitionIdx].partition[0]);
-      worstError = Math.max(result.error, worstError);
+      maxError = t === 0 ? status.error : Math.max(maxError, status.error);
+      minError = t === 0 ? status.error : Math.min(minError, status.error);
+      trainedNets.push(_trained);
       iterations += status.iterations;
       itemIterations += status.iterations * threads[t].partition.length;
     }
-    error = worstError;
+
+    globalWeights = (_trainedNets$ = trainedNets[0]).avg.apply(_trainedNets$, _toConsumableArray(trainedNets.slice(1))).toJSON();
+
+    if (maxError <= errorThresh) {
+      error = maxError;
+    } else if (minError <= errorThresh) {
+      var testnet = new NetCtor(trainOptions);
+      testnet.fromJSON(globalWeights);
+      error = trained.test(data).error;
+    }
+
     epochs++;
     if (epochs % logPeriod === 0) {
       log({ iterations: iterations, error: error, epochs: epochs, itemIterations: itemIterations, threadCount: threadCount });
     }
-
-    globalWeights = (_trainedNets$ = trainedNets[0]).avg.apply(_trainedNets$, _toConsumableArray(trainedNets.slice(1))).toJSON();
   }
 
   net.fromJSON(globalWeights);
