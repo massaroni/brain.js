@@ -5,23 +5,24 @@ const workers    = workerFarm(require.resolve('./parallel-trainer-worker'));
 /**
  * Ensemble training, via simple parameter averaging.
  */
-export async function trainParallel(data, net, trainOptions = {}) {
+export async function trainParallel(data, net, trainOpts = {}) {
   const startMs = Date.now();
-  const log = (trainOptions.log === true ? console.log : trainOptions.log) || (() => {});
-  const logPeriod = trainOptions.logPeriod || 1;
-  const parallel = trainOptions.parallel || {};
+  const log = (trainOpts.log === true ? console.log : trainOpts.log) || (() => {});
+  const logPeriod = trainOpts.logPeriod || 1;
+  const parallel = trainOpts.parallel || {};
   const threadLog = parallel.log === true ? console.log : parallel.log;
   const NetCtor = Object.getPrototypeOf(net).constructor;
   const maxEpochs = parallel.epochs || 1000;
-  const errorThresh = trainOptions.errorThresh || NetCtor.trainDefaults.errorThresh;
-  const threads = unpackTrainOpts(trainOptions, net, data);
+  const errorThresh = trainOpts.errorThresh || NetCtor.trainDefaults.errorThresh;
+  const threads = unpackTrainOpts(trainOpts, net, data);
   const threadCount = threads.length;
 
-  let peerTrainOptions = Object.assign({}, trainOptions);
-  delete peerTrainOptions.parallel;
-  delete peerTrainOptions.callback;
-  peerTrainOptions.log = threadLog;
-  peerTrainOptions.logPeriod = parallel.logPeriod;
+  let threadTrainOpts = Object.assign({}, trainOpts);
+  delete threadTrainOpts.parallel;
+  delete threadTrainOpts.callback;
+  threadTrainOpts.log = threadLog;
+  threadTrainOpts.logPeriod = parallel.logPeriod;
+  threadTrainOpts.timeout = !threadTrainOpts.timeout || threadTrainOpts.timeout === Infinity ? Number.MAX_SAFE_INTEGER : threadTrainOpts.timeout;
   
   net.train([data[0]], {errorThresh: 0.9, iterations: 1}); // initialize weights
   let globalWeights = net.toJSON();
@@ -36,10 +37,10 @@ export async function trainParallel(data, net, trainOptions = {}) {
 
     for (let thread of threads) {
       if (parallel.syncMode === true) {
-        let result = runTrainingSync(thread.type, globalWeights, thread.partition, peerTrainOptions);
+        let result = runTrainingSync(thread.type, globalWeights, thread.partition, threadTrainOpts);
         promises.push(Promise.resolve(result));
       } else {
-        promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, peerTrainOptions));
+        promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, threadTrainOpts));
       }
     }
 
@@ -61,9 +62,9 @@ export async function trainParallel(data, net, trainOptions = {}) {
     if (maxError <= errorThresh) {
       error = maxError;
     } else if (minError <= errorThresh) {
-      const testnet = new NetCtor(trainOptions);
+      const testnet = new NetCtor(trainOpts);
       testnet.fromJSON(globalWeights);
-      error = trained.test(data).error;
+      error = testnet.test(data).error;
     }
     
     epochs++;
