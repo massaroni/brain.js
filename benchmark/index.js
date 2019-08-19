@@ -9,7 +9,7 @@ console.log('Loaded', brainTrainingSet.length, 'training items.');
 console.log(brainTrainingSet[0].input.length, 'Input neurons.');
 
 const multithreadedConfig = {
-  parallel: {threads: 4, epochs: 10000, log: false, logPeriod: 1, syncMode: false},
+  parallel: {threads: 3, epochs: 10000, log: false, logPeriod: 1, syncMode: false},
   iterations: 6, // this is passed down to the trainer threads in multithreaded mode
   learningRate: 0.0001,
   hiddenLayers: [50, 50],
@@ -39,7 +39,7 @@ const singlethrededConfig = {
   log: true
 };
 
-trainSingleThreaded(singlethrededConfig).then(() => trainMultithreaded(multithreadedConfig));
+trainSingleThreaded(singlethrededConfig).then(() => trainMultithreaded(multithreadedConfig)).then(() => process.exit());
 
 function trainSingleThreaded(config) {
   let itemIterations = 0;
