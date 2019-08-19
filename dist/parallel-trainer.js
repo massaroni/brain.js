@@ -44,7 +44,7 @@ async function trainParallel(data, net) {
   threadTrainOpts.logPeriod = parallel.logPeriod;
   threadTrainOpts.timeout = !threadTrainOpts.timeout || threadTrainOpts.timeout === Infinity ? Number.MAX_SAFE_INTEGER : threadTrainOpts.timeout;
 
-  net.train([data[0]], { errorThresh: 0.9, iterations: 1 }); // initialize weights
+  net.verifyIsInitialized(data);
   var globalWeights = net.toJSON();
 
   var error = 1;
