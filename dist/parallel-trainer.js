@@ -113,7 +113,7 @@ async function trainParallel(data, net) {
 
     epochs++;
     if (epochs % logPeriod === 0) {
-      log({ iterations: iterations, error: error, epochs: epochs, itemIterations: itemIterations, threadCount: threadCount });
+      log({ iterations: iterations, error: error, epochs: epochs, itemIterations: itemIterations, threadCount: threadCount, globalWeights: globalWeights });
     }
   }
 

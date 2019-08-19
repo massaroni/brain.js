@@ -69,7 +69,7 @@ export async function trainParallel(data, net, trainOpts = {}) {
     
     epochs++;
     if (epochs % logPeriod === 0) {
-      log({iterations, error, epochs, itemIterations, threadCount});
+      log({iterations, error, epochs, itemIterations, threadCount, globalWeights});
     }
   }
 

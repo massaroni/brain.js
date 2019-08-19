@@ -82,6 +82,7 @@ function trainMultithreaded(config) {
   return net.trainAsync(brainTrainingSet, config).then((results) => {
     const endMs = Date.now();
     console.log('Done in', Math.floor((endMs - startMs) / 1000), 'seconds.');
+    delete results.globalWeights;
     console.log('Multi-threaded results: ', JSON.stringify(results));
     console.log('Multi-threaded item iterations:', Math.ceil(itemIterations / results.threadCount), 'per thread.');
   }, (reason) => {
