@@ -24,24 +24,25 @@ var workers = workerFarm(require.resolve('./parallel-trainer-worker'));
  * Ensemble training, via simple parameter averaging.
  */
 async function trainParallel(data, net) {
-  var trainOptions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var trainOpts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
   var startMs = Date.now();
-  var log = (trainOptions.log === true ? console.log : trainOptions.log) || function () {};
-  var logPeriod = trainOptions.logPeriod || 1;
-  var parallel = trainOptions.parallel || {};
+  var log = (trainOpts.log === true ? console.log : trainOpts.log) || function () {};
+  var logPeriod = trainOpts.logPeriod || 1;
+  var parallel = trainOpts.parallel || {};
   var threadLog = parallel.log === true ? console.log : parallel.log;
   var NetCtor = Object.getPrototypeOf(net).constructor;
   var maxEpochs = parallel.epochs || 1000;
-  var errorThresh = trainOptions.errorThresh || NetCtor.trainDefaults.errorThresh;
-  var threads = unpackTrainOpts(trainOptions, net, data);
+  var errorThresh = trainOpts.errorThresh || NetCtor.trainDefaults.errorThresh;
+  var threads = unpackTrainOpts(trainOpts, net, data);
   var threadCount = threads.length;
 
-  var peerTrainOptions = Object.assign({}, trainOptions);
-  delete peerTrainOptions.parallel;
-  delete peerTrainOptions.callback;
-  peerTrainOptions.log = threadLog;
-  peerTrainOptions.logPeriod = parallel.logPeriod;
+  var threadTrainOpts = Object.assign({}, trainOpts);
+  delete threadTrainOpts.parallel;
+  delete threadTrainOpts.callback;
+  threadTrainOpts.log = threadLog;
+  threadTrainOpts.logPeriod = parallel.logPeriod;
+  threadTrainOpts.timeout = !threadTrainOpts.timeout || threadTrainOpts.timeout === Infinity ? Number.MAX_SAFE_INTEGER : threadTrainOpts.timeout;
 
   net.train([data[0]], { errorThresh: 0.9, iterations: 1 }); // initialize weights
   var globalWeights = net.toJSON();
@@ -65,10 +66,10 @@ async function trainParallel(data, net) {
         var thread = _step.value;
 
         if (parallel.syncMode === true) {
-          var result = runTrainingSync(thread.type, globalWeights, thread.partition, peerTrainOptions);
+          var result = runTrainingSync(thread.type, globalWeights, thread.partition, threadTrainOpts);
           promises.push(Promise.resolve(result));
         } else {
-          promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, peerTrainOptions));
+          promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, threadTrainOpts));
         }
       }
     } catch (err) {
@@ -91,11 +92,11 @@ async function trainParallel(data, net) {
         minError = void 0;
     var trainedNets = [];
     for (var t = 0; t < threadCount; t++) {
-      var _trained = results[t].trained;
+      var trained = results[t].trained;
       var status = results[t].status;
       maxError = t === 0 ? status.error : Math.max(maxError, status.error);
       minError = t === 0 ? status.error : Math.min(minError, status.error);
-      trainedNets.push(_trained);
+      trainedNets.push(trained);
       iterations += status.iterations;
       itemIterations += status.iterations * threads[t].partition.length;
     }
@@ -105,9 +106,9 @@ async function trainParallel(data, net) {
     if (maxError <= errorThresh) {
       error = maxError;
     } else if (minError <= errorThresh) {
-      var testnet = new NetCtor(trainOptions);
+      var testnet = new NetCtor(trainOpts);
       testnet.fromJSON(globalWeights);
-      error = trained.test(data).error;
+      error = testnet.test(data).error;
     }
 
     epochs++;
