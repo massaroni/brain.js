@@ -1,40 +1,42 @@
 //const brainjs = require('../src').default;
 const brainjs = require('../dist/index').default;
 const mathGenerator = require('./math-db-generator');
+const shuffle = require('./shuffle-deterministic');
 
-const brainTrainingSet = mathGenerator(2000, 'sin(x/3) + (0.5 * cos(x/2))', 2, -100, 100, true);
+const brainTrainingSet = mathGenerator(5000, 'sin(x/3) + (0.5 * cos(x/2))', 3, -120, 120, true);
+shuffle(brainTrainingSet, (x) => JSON.stringify(x.input));
 console.log('Loaded', brainTrainingSet.length, 'training items.');
 console.log(brainTrainingSet[0].input.length, 'Input neurons.');
 
 const multithreadedConfig = {
-  parallel: {threads: 2, epochs: 10000, log: true, logPeriod: 1, syncMode: true},
-  iterations: 100, // this is passed down to the trainer threads in multithreaded mode
-  binaryThresh: 0.5,
+  parallel: {threads: 4, epochs: 10000, log: false, logPeriod: 1, syncMode: false},
+  iterations: 6, // this is passed down to the trainer threads in multithreaded mode
+  learningRate: 0.0001,
   hiddenLayers: [50, 50],
-  activation: 'tanh',
   errorThresh: 0.005,
-  learningRate: 0.001,
+  activation: 'tanh',
   momentum: 0.5,
+  binaryThresh: 0.5,
   beta1: 0.9,
   beta2: 0.999,
   epsilon: 1e-8,
   logPeriod: 1,
-  log: (...args) => {console.log('progress: ', ...args)}
+  log: true
 };
 
 const singlethrededConfig = {
   iterations: 10000,
-  binaryThresh: 0.5,
+  learningRate: 0.0001,
   hiddenLayers: [50, 50],
-  activation: 'tanh',
   errorThresh: 0.005,
-  learningRate: 0.001,
+  activation: 'tanh',
   momentum: 0.5,
+  binaryThresh: 0.5,
   beta1: 0.9,
   beta2: 0.999,
   epsilon: 1e-8,
   logPeriod: 1,
-  log: (...args) => {console.log('progress: ', ...args)}
+  log: true
 };
 
 trainSingleThreaded(singlethrededConfig).then(() => trainMultithreaded(multithreadedConfig));
@@ -43,7 +45,7 @@ function trainSingleThreaded(config) {
   let itemIterations = 0;
   const statusRegex = /iterations: (\d+), training error: (\d+(\.\d+)?)/;
   config.log = (statusStr) => {
-    console.log('Single-threaded progress:', statusStr);
+    console.log('Single-threaded progress:' + statusStr);
     const status = statusRegex.exec(statusStr);
     if (!status) {
       console.log('Single-threaded status =', statusStr);
@@ -60,7 +62,7 @@ function trainSingleThreaded(config) {
   const results = net.train(brainTrainingSet, config);
   const endMs = Date.now();
   console.log('Done in', Math.floor((endMs - startMs) / 1000), 'seconds.');
-  console.log('Single-threaded results: ', results);
+  console.log('Single-threaded results: ', JSON.stringify(results));
   console.log('Single-threaded item iterations:', itemIterations, 'per thread.');
   return Promise.resolve();
 }
@@ -69,7 +71,7 @@ function trainMultithreaded(config) {
   let itemIterations = 0;
   config.log = function (status) {
     itemIterations = status.itemIterations;
-    console.log('Multi-threaded progress:', status);
+    console.log('Multi-threaded progress: error =', status.error);
     console.log('Multi-threaded item iterations =', itemIterations);
   };
 
@@ -80,9 +82,10 @@ function trainMultithreaded(config) {
   return net.trainAsync(brainTrainingSet, config).then((results) => {
     const endMs = Date.now();
     console.log('Done in', Math.floor((endMs - startMs) / 1000), 'seconds.');
-    console.log('Multi-threaded results: ', results);
+    console.log('Multi-threaded results: ', JSON.stringify(results));
     console.log('Multi-threaded item iterations:', Math.ceil(itemIterations / results.threadCount), 'per thread.');
   }, (reason) => {
-    console.error('Multi-threaded training failed: ', JSON.stringify(reason))
+    const msg = reason instanceof Error ? reason.message : JSON.stringify(reason);
+    console.error('Multi-threaded training failed: ', msg);
   });
 }
