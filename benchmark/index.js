@@ -3,14 +3,14 @@ const brainjs = require('../dist/index').default;
 const mathGenerator = require('./math-db-generator');
 const shuffle = require('./shuffle-deterministic');
 
-const brainTrainingSet = mathGenerator(5000, 'sin(x/3) + (0.5 * cos(x/2))', 3, -120, 120, true);
+const brainTrainingSet = mathGenerator(5000, 'sin(x/3) + (0.5 * cos(x/2))', 1, -120, 120, true);
 shuffle(brainTrainingSet, (x) => JSON.stringify(x.input));
 console.log('Loaded', brainTrainingSet.length, 'training items.');
 console.log(brainTrainingSet[0].input.length, 'Input neurons.');
 
 const multithreadedConfig = {
-  parallel: {threads: 3, epochs: 10000, log: false, logPeriod: 1, syncMode: false},
-  iterations: 6, // this is passed down to the trainer threads in multithreaded mode
+  parallel: {threads: 2, partitionSize: 3200, epochs: 10000, log: false, logPeriod: 1, syncMode: false},
+  iterations: 3, // this is passed down to the trainer threads in multithreaded mode
   learningRate: 0.0001,
   hiddenLayers: [50, 50],
   errorThresh: 0.005,
@@ -40,6 +40,7 @@ const singlethrededConfig = {
 };
 
 trainSingleThreaded(singlethrededConfig).then(() => trainMultithreaded(multithreadedConfig)).then(() => process.exit());
+//trainMultithreaded(multithreadedConfig).then(() => process.exit());
 
 function trainSingleThreaded(config) {
   let itemIterations = 0;
@@ -61,8 +62,10 @@ function trainSingleThreaded(config) {
   const net = new brainjs.NeuralNetwork(config);
   const results = net.train(brainTrainingSet, config);
   const endMs = Date.now();
+  const testResults = net.test(brainTrainingSet);
   console.log('Done in', Math.floor((endMs - startMs) / 1000), 'seconds.');
   console.log('Single-threaded results: ', JSON.stringify(results));
+  console.log('Single-threaded test error =', testResults.error);
   console.log('Single-threaded item iterations:', itemIterations, 'per thread.');
   return Promise.resolve();
 }
@@ -84,6 +87,8 @@ function trainMultithreaded(config) {
     console.log('Done in', Math.floor((endMs - startMs) / 1000), 'seconds.');
     delete results.globalWeights;
     console.log('Multi-threaded results: ', JSON.stringify(results));
+    const testResults = net.test(brainTrainingSet);
+    console.log('Multi-threaded test error =', testResults.error);
     console.log('Multi-threaded item iterations:', Math.ceil(itemIterations / results.threadCount), 'per thread.');
   }, (reason) => {
     const msg = reason instanceof Error ? reason.message : JSON.stringify(reason);
