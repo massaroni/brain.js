@@ -21,6 +21,21 @@ describe('Parallel Trainer', () => {
     });
 
 
+    it('can generate overlapping partitions', () => {
+      const net = new NeuralNetwork();
+      const trainingData = ['a','b','c','d','e','f'];
+      const actual = unpackTrainOpts({parallel: {threads: 3, partitionSize: 3}}, net, trainingData);
+
+      const expectedThreads = [
+        {type: 'NeuralNetwork', partition: ['a','b', 'c']},
+        {type: 'NeuralNetwork', partition: ['b','c', 'd']},
+        {type: 'NeuralNetwork', partition: ['d', 'e','f']},
+      ];
+
+      assert.deepEqual(expectedThreads, actual);
+    });
+
+
     it('can parse complex threads options', () => {
       const net = new NeuralNetwork();
       const trainingData = ['a','b','c','d','e','f'];
@@ -70,13 +85,13 @@ describe('Parallel Trainer', () => {
       ];
   
       const net = new NeuralNetwork();
-      const status = await trainParallel(trainingData, net, {parallel: { threads: 2, syncMode: true }});
-      assert.ok(status.epochs > 1);
+      const status = await trainParallel(trainingData, net, {parallel: { threads: 2, syncMode: true, errorMode: 'test'}});
+      assert.ok(status.epochs >= 1);
       checkPerformance(net, trainingData);
     });
 
 
-    it('can converge via ensemble training with trainAsync()', async function () {
+    it('can converge via multithreaded training with trainAsync()', async function () {
       const trainingData = [
         {input: [0, 1], output: [1]},
         {input: [0, 0], output: [0]},
@@ -85,8 +100,8 @@ describe('Parallel Trainer', () => {
       ];
   
       const net = new NeuralNetwork();
-      const status = await net.trainAsync(trainingData, {parallel: { threads: 2, syncMode: true }});
-      assert.ok(status.epochs > 1);
+      const status = await net.trainAsync(trainingData, {parallel: { threads: 2, syncMode: true, errorMode: 'test'}});
+      assert.ok(status.epochs >= 1);
       checkPerformance(net, trainingData);
     });
 

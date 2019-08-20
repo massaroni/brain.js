@@ -10,7 +10,7 @@ export async function trainParallel(data, net, trainOpts = {}) {
   const log = (trainOpts.log === true ? console.log : trainOpts.log) || (() => {});
   const logPeriod = trainOpts.logPeriod || 1;
   const parallel = trainOpts.parallel || {};
-  const threadLog = parallel.log === true ? console.log : parallel.log;
+  const threadLog = parallel.log === true ? console.log : parallel.log || false;
   const NetCtor = Object.getPrototypeOf(net).constructor;
   const maxEpochs = parallel.epochs || 1000;
   const errorThresh = trainOpts.errorThresh || NetCtor.trainDefaults.errorThresh;
@@ -21,7 +21,7 @@ export async function trainParallel(data, net, trainOpts = {}) {
   delete threadTrainOpts.parallel;
   delete threadTrainOpts.callback;
   threadTrainOpts.log = threadLog;
-  threadTrainOpts.logPeriod = parallel.logPeriod;
+  threadTrainOpts.logPeriod = parallel.logPeriod || 1;
   threadTrainOpts.timeout = !threadTrainOpts.timeout || threadTrainOpts.timeout === Infinity ? Number.MAX_SAFE_INTEGER : threadTrainOpts.timeout;
   
   net.verifyIsInitialized(data);
@@ -59,12 +59,16 @@ export async function trainParallel(data, net, trainOpts = {}) {
 
     globalWeights = trainedNets[0].avg(...trainedNets.slice(1)).toJSON();
 
-    if (maxError <= errorThresh) {
-      error = maxError;
-    } else if (minError <= errorThresh) {
-      const testnet = new NetCtor(trainOpts);
-      testnet.fromJSON(globalWeights);
-      error = testnet.test(data).error;
+    error = maxError;
+    if (minError <= errorThresh) {
+      if (parallel.errorMode === 'test') {
+        const testnet = new NetCtor();
+        testnet.fromJSON(globalWeights);
+        const testResult = testnet.test(data);
+        error = Math.max(error, testResult.error);
+      } else {
+        error = minError;
+      }
     }
     
     epochs++;
