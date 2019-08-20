@@ -1,14 +1,14 @@
 const activation = require('./activation');
-const crossValidate = require('./cross-validate').crossValidate;
+const CrossValidate = require('./cross-validate');
 const layer = require('./layer');
 const likely = require('./likely');
 const lookup = require('./lookup');
 const praxis = require('./praxis');
-const FeedForward = require('./feed-forward');
+const { FeedForward } = require('./feed-forward');
 const NeuralNetwork = require('./neural-network');
 const NeuralNetworkGPU = require('./neural-network-gpu');
 const TrainStream = require('./train-stream');
-const Recurrent = require('./recurrent');
+const { Recurrent } = require('./recurrent');
 const RNNTimeStep = require('./recurrent/rnn-time-step');
 const LSTMTimeStep = require('./recurrent/lstm-time-step');
 const GRUTimeStep = require('./recurrent/gru-time-step');
@@ -25,23 +25,11 @@ const range = require('./utilities/range');
 const toArray = require('./utilities/to-array');
 const DataFormatter = require('./utilities/data-formatter');
 const zeros = require('./utilities/zeros');
-
-// layer deps
-const feedForward = require('./layer/feed-forward');
-const gru = require('./layer/gru');
-const lstm = require('./layer/lstm');
-const recurrent = require('./layer/recurrent');
-const output = require('./layer/output');
-
-layer.feedForward = feedForward;
-layer.gru = gru;
-layer.lstm = lstm;
-layer.recurrent = recurrent;
-layer.output = output;
+const toSVG = require('./utilities/to-svg');
 
 const brain = {
   activation,
-  crossValidate,
+  CrossValidate,
   likely,
   layer,
   lookup,
@@ -70,6 +58,7 @@ const brain = {
     toArray,
     DataFormatter,
     zeros,
+    toSVG,
   },
 };
 
