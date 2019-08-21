@@ -76,7 +76,7 @@ describe('Parallel Trainer', () => {
       }
     };
 
-    it('can converge via ensemble training.', async function () {
+    it('can converge via multithreaded training.', async function () {
       const trainingData = [
         {input: [0, 1], output: [1]},
         {input: [0, 0], output: [0]},

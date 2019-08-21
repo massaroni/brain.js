@@ -298,63 +298,57 @@ With multiple networks you can train in parallel like this:
 Train a NeuralNetwork on 3 cpu threads.
 ```javascript
 const net = new brain.NeuralNetwork();
-net
-.trainAsync(data, {
-parallel: {
-threads: 3,
-partitionSize: 1500, // optional. send a partition of 1500 items from the training set to each thread.  Raise this number to get some overlap in the training data partitions.
-epochs: 20000, // optional. limit each thread to 20,000 training runs
-},
-// ... and the usual training options
-})
-.then(res => {
-// do something with my trained network
-})
-.catch(handleError);
+net.trainAsync(data, {
+  parallel: {
+    threads: 3,
+    partitionSize: 1500, // optional. send a partition of 1500 items from the training set to each thread.  Raise this number to get some overlap in the training data partitions.
+    epochs: 20000, // optional. limit each thread to 20,000 training runs
+  },
+  iterations: 10
+  // ... and the usual training options
+}).then(res => {
+  // do something with my trained network
+}).catch(handleError);
 ```
 
 Train a NeuralNetwork on 6 cpu threads and 2 GPU threads.
 ```javascript
 const net = new brain.NeuralNetwork();
-net
-.trainAsync(data, {
-parallel: {
-threads: {
-NeuralNetwork: 6,
-NeuralNetworkGPU: 2
-}
-},
-// ... and the usual training options
-})
-.then(res => {
-// do something with my trained network
-})
-.catch(handleError);
+net.trainAsync(data, {
+  parallel: {
+    threads: {
+      NeuralNetwork: 6,
+      NeuralNetworkGPU: 2
+    }
+  },
+  iterations: 10
+  // ... and the usual training options
+}).then(res => {
+  // do something with my trained network
+}).catch(handleError);
 ```
 
 Train a single NeuralNetwork on 6 cpu threads and 2 GPU threads, and send 10x more training data to the GPUs because they can run through it faster.
 ```javascript
 const net = new brain.NeuralNetwork();
-net
-.trainAsync(data, {
-parallel: {
-threads: {
-NeuralNetwork: {
-threads: 6,
-trainingDataSize: 2200
-},
-NeuralNetworkGPU: {
-threads: 2,
-trainingDataSize: 22000
-}
-}
-},
-// ... and the usual training options
-})
-.then(res => {
-// do something with my trained network
-})
-.catch(handleError);
+net.trainAsync(data, {
+  parallel: {
+    threads: {
+      NeuralNetwork: {
+        threads: 6,
+        trainingDataSize: 2200
+      },
+      NeuralNetworkGPU: {
+        threads: 2,
+        trainingDataSize: 22000
+      }
+    }
+  },
+  iterations: 10
+  // ... and the usual training options
+}).then(res => {
+  // do something with my trained network
+}).catch(handleError);
 ```
 * Note that at this time, multithreaded training is limited to the NeuralNetwork and NeuralNetworkGPU types on NodeJS.
 
