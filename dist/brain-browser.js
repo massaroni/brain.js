@@ -38624,7 +38624,7 @@ var workerFarm = require('worker-farm');
 
 var workers = workerFarm(require.resolve('./parallel-trainer-worker'));
 /**
- * Ensemble training, via simple parameter averaging.
+ * Multithreaded training, via simple parameter averaging.
  */
 
 function trainParallel(_x, _x2) {
@@ -38635,20 +38635,23 @@ function _trainParallel() {
   _trainParallel = _asyncToGenerator(
   /*#__PURE__*/
   regeneratorRuntime.mark(function _callee(data, net) {
-    var trainOptions,
+    var trainOpts,
         startMs,
         log,
         logPeriod,
         parallel,
+        threadLog,
         NetCtor,
         maxEpochs,
         errorThresh,
         threads,
-        peerTrainOptions,
+        threadCount,
+        threadTrainOpts,
         globalWeights,
         error,
         epochs,
         iterations,
+        itemIterations,
         _trainedNets$,
         promises,
         _iteratorNormalCompletion,
@@ -38657,16 +38660,16 @@ function _trainParallel() {
         _iterator,
         _step,
         thread,
-        _result,
+        result,
         results,
-        worstError,
+        maxError,
+        minError,
         trainedNets,
-        threadCount,
         t,
         trained,
         status,
-        partitionIdx,
-        result,
+        testnet,
+        testResult,
         endMs,
         elapsedMs,
         _args = arguments;
@@ -38675,34 +38678,35 @@ function _trainParallel() {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            trainOptions = _args.length > 2 && _args[2] !== undefined ? _args[2] : {};
+            trainOpts = _args.length > 2 && _args[2] !== undefined ? _args[2] : {};
             startMs = Date.now();
 
-            log = (trainOptions.log === true ? console.log : trainOptions.log) || function () {};
+            log = (trainOpts.log === true ? console.log : trainOpts.log) || function () {};
 
-            logPeriod = trainOptions.logPeriod || 1;
-            parallel = trainOptions.parallel || {};
+            logPeriod = trainOpts.logPeriod || 1;
+            parallel = trainOpts.parallel || {};
+            threadLog = parallel.log === true ? console.log : parallel.log || false;
             NetCtor = Object.getPrototypeOf(net).constructor;
             maxEpochs = parallel.epochs || 1000;
-            errorThresh = trainOptions.errorThresh || NetCtor.trainDefaults.errorThresh;
-            threads = unpackTrainOpts(trainOptions, net, data);
-            peerTrainOptions = Object.assign({}, trainOptions);
-            delete peerTrainOptions.parallel;
-            delete peerTrainOptions.callback;
-            delete peerTrainOptions.log;
-            net.train([data[0]], {
-              errorThresh: 0.9,
-              iterations: 1
-            }); // initialize weights
-
+            errorThresh = trainOpts.errorThresh || NetCtor.trainDefaults.errorThresh;
+            threads = unpackTrainOpts(trainOpts, net, data);
+            threadCount = threads.length;
+            threadTrainOpts = Object.assign({}, trainOpts);
+            delete threadTrainOpts.parallel;
+            delete threadTrainOpts.callback;
+            threadTrainOpts.log = threadLog;
+            threadTrainOpts.logPeriod = parallel.logPeriod || 1;
+            threadTrainOpts.timeout = !threadTrainOpts.timeout || threadTrainOpts.timeout === Infinity ? Number.MAX_SAFE_INTEGER : threadTrainOpts.timeout;
+            net.verifyIsInitialized(data);
             globalWeights = net.toJSON();
             error = 1;
             epochs = 0;
             iterations = 0;
+            itemIterations = 0;
 
-          case 18:
+          case 23:
             if (!(epochs < maxEpochs && error >= errorThresh)) {
-              _context.next = 52;
+              _context.next = 57;
               break;
             }
 
@@ -38710,100 +38714,120 @@ function _trainParallel() {
             _iteratorNormalCompletion = true;
             _didIteratorError = false;
             _iteratorError = undefined;
-            _context.prev = 23;
+            _context.prev = 28;
 
             for (_iterator = threads[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
               thread = _step.value;
 
               if (parallel.syncMode === true) {
-                _result = runTrainingSync(thread.type, globalWeights, thread.partition, peerTrainOptions);
-                promises.push(Promise.resolve(_result));
+                result = runTrainingSync(thread.type, globalWeights, thread.partition, threadTrainOpts);
+                promises.push(Promise.resolve(result));
               } else {
-                promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, peerTrainOptions));
+                promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, threadTrainOpts));
               }
             }
 
-            _context.next = 31;
+            _context.next = 36;
             break;
 
-          case 27:
-            _context.prev = 27;
-            _context.t0 = _context["catch"](23);
+          case 32:
+            _context.prev = 32;
+            _context.t0 = _context["catch"](28);
             _didIteratorError = true;
             _iteratorError = _context.t0;
 
-          case 31:
-            _context.prev = 31;
-            _context.prev = 32;
+          case 36:
+            _context.prev = 36;
+            _context.prev = 37;
 
             if (!_iteratorNormalCompletion && _iterator.return != null) {
               _iterator.return();
             }
 
-          case 34:
-            _context.prev = 34;
+          case 39:
+            _context.prev = 39;
 
             if (!_didIteratorError) {
-              _context.next = 37;
+              _context.next = 42;
               break;
             }
 
             throw _iteratorError;
 
-          case 37:
-            return _context.finish(34);
+          case 42:
+            return _context.finish(39);
 
-          case 38:
-            return _context.finish(31);
+          case 43:
+            return _context.finish(36);
 
-          case 39:
-            _context.next = 41;
+          case 44:
+            _context.next = 46;
             return Promise.all(promises);
 
-          case 41:
+          case 46:
             results = _context.sent;
-            worstError = 0;
+            maxError = void 0, minError = void 0;
             trainedNets = [];
-            threadCount = threads.length;
 
-            for (t = threadCount - 1; t >= 0; t--) {
+            for (t = 0; t < threadCount; t++) {
               trained = results[t].trained;
               status = results[t].status;
+              maxError = t === 0 ? status.error : Math.max(maxError, status.error);
+              minError = t === 0 ? status.error : Math.min(minError, status.error);
               trainedNets.push(trained);
-              partitionIdx = (t === 0 ? threadCount : t) - 1;
-              result = trained.test(threads[partitionIdx].partition[0]);
-              worstError = Math.max(result.error, worstError);
               iterations += status.iterations;
-            }
-
-            error = worstError;
-            epochs++;
-
-            if (epochs % logPeriod === 0) {
-              log('iterations: ' + iterations + ', error: ' + error + ', epochs: ' + epochs);
+              itemIterations += status.iterations * threads[t].partition.length;
             }
 
             globalWeights = (_trainedNets$ = trainedNets[0]).avg.apply(_trainedNets$, _toConsumableArray(trainedNets.slice(1))).toJSON();
-            _context.next = 18;
+            error = maxError;
+
+            if (minError <= errorThresh) {
+              if (parallel.errorMode === 'test') {
+                testnet = new NetCtor();
+                testnet.fromJSON(globalWeights);
+                testResult = testnet.test(data);
+                error = Math.max(error, testResult.error);
+              } else {
+                error = minError;
+              }
+            }
+
+            epochs++;
+
+            if (epochs % logPeriod === 0) {
+              log({
+                iterations: iterations,
+                error: error,
+                epochs: epochs,
+                itemIterations: itemIterations,
+                threadCount: threadCount,
+                globalWeights: globalWeights
+              });
+            }
+
+            _context.next = 23;
             break;
 
-          case 52:
+          case 57:
             net.fromJSON(globalWeights);
             endMs = Date.now();
             elapsedMs = endMs - startMs;
             return _context.abrupt("return", {
               error: error,
               iterations: iterations,
+              itemIterations: itemIterations,
               epochs: epochs,
+              threadCount: threadCount,
               elapsedMs: elapsedMs
             });
 
-          case 56:
+          case 61:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[23, 27, 31, 39], [32,, 34, 38]]);
+    }, _callee, null, [[28, 32, 36, 44], [37,, 39, 43]]);
   }));
   return _trainParallel.apply(this, arguments);
 }
@@ -38905,7 +38929,7 @@ function runTrainingSync(netType, netJSON, trainingData, trainOpts) {
 }
 
 function runTrainingWorker(netType, netJSON, trainingData, trainOpts) {
-  var brainjs = require('./index').default;
+  var brainjs = require('./index');
 
   return new Promise(function (resolve, reject) {
     workers({

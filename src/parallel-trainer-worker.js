@@ -1,4 +1,4 @@
-const brainjs = require('./index').default;
+const brainjs = require('./index');
 
 module.exports = function (job, callback) {
   try {

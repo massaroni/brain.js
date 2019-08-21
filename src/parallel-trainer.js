@@ -3,68 +3,84 @@ const workerFarm = require('worker-farm');
 const workers    = workerFarm(require.resolve('./parallel-trainer-worker'));
 
 /**
- * Ensemble training, via simple parameter averaging.
+ * Multithreaded training, via simple parameter averaging.
  */
-async function trainParallel(data, net, trainOptions = {}) {
+async function trainParallel(data, net, trainOpts = {}) {
   const startMs = Date.now();
-  const log = (trainOptions.log === true ? console.log : trainOptions.log) || (() => {});
-  const logPeriod = trainOptions.logPeriod || 1;
-  const parallel = trainOptions.parallel || {};
+  const log = (trainOpts.log === true ? console.log : trainOpts.log) || (() => {});
+  const logPeriod = trainOpts.logPeriod || 1;
+  const parallel = trainOpts.parallel || {};
+  const threadLog = parallel.log === true ? console.log : parallel.log || false;
   const NetCtor = Object.getPrototypeOf(net).constructor;
   const maxEpochs = parallel.epochs || 1000;
-  const errorThresh = trainOptions.errorThresh || NetCtor.trainDefaults.errorThresh;
-  const threads = unpackTrainOpts(trainOptions, net, data);
+  const errorThresh = trainOpts.errorThresh || NetCtor.trainDefaults.errorThresh;
+  const threads = unpackTrainOpts(trainOpts, net, data);
+  const threadCount = threads.length;
+
+  let threadTrainOpts = Object.assign({}, trainOpts);
+  delete threadTrainOpts.parallel;
+  delete threadTrainOpts.callback;
+  threadTrainOpts.log = threadLog;
+  threadTrainOpts.logPeriod = parallel.logPeriod || 1;
+  threadTrainOpts.timeout = !threadTrainOpts.timeout || threadTrainOpts.timeout === Infinity ? Number.MAX_SAFE_INTEGER : threadTrainOpts.timeout;
   
-  let peerTrainOptions = Object.assign({}, trainOptions);
-  delete peerTrainOptions.parallel;
-  delete peerTrainOptions.callback;
-  delete peerTrainOptions.log;
-  
-  net.train([data[0]], {errorThresh: 0.9, iterations: 1}); // initialize weights
+  net.verifyIsInitialized(data);
   let globalWeights = net.toJSON();
 
   let error = 1;
   let epochs = 0;
   let iterations = 0;
+  let itemIterations = 0;
 
   while (epochs < maxEpochs && error >= errorThresh) {
     let promises = [];
 
     for (let thread of threads) {
       if (parallel.syncMode === true) {
-        let result = runTrainingSync(thread.type, globalWeights, thread.partition, peerTrainOptions);
+        let result = runTrainingSync(thread.type, globalWeights, thread.partition, threadTrainOpts);
         promises.push(Promise.resolve(result));
       } else {
-        promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, peerTrainOptions));
+        promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, threadTrainOpts));
       }
     }
 
     const results = await Promise.all(promises);
-    let worstError = 0;
+    let maxError, minError;
     let trainedNets = [];
-    const threadCount = threads.length;
-    for (let t = threadCount - 1; t >= 0; t--) {
+    for (let t = 0; t < threadCount; t++) {
       const trained = results[t].trained;
       const status = results[t].status;
+      maxError = t === 0 ? status.error : Math.max(maxError, status.error);
+      minError = t === 0 ? status.error : Math.min(minError, status.error);
       trainedNets.push(trained);
-      const partitionIdx = (t === 0 ? threadCount : t) - 1;
-      const result = trained.test(threads[partitionIdx].partition[0]);
-      worstError = Math.max(result.error, worstError);
       iterations += status.iterations;
-    }
-    error = worstError;
-    epochs++;
-    if (epochs % logPeriod === 0) {
-      log('iterations: ' + iterations + ', error: ' + error + ', epochs: ' + epochs);
+      itemIterations += status.iterations * threads[t].partition.length;
     }
 
     globalWeights = trainedNets[0].avg(...trainedNets.slice(1)).toJSON();
+
+    error = maxError;
+    if (minError <= errorThresh) {
+      if (parallel.errorMode === 'test') {
+        const testnet = new NetCtor();
+        testnet.fromJSON(globalWeights);
+        const testResult = testnet.test(data);
+        error = Math.max(error, testResult.error);
+      } else {
+        error = minError;
+      }
+    }
+    
+    epochs++;
+    if (epochs % logPeriod === 0) {
+      log({iterations, error, epochs, itemIterations, threadCount, globalWeights});
+    }
   }
 
   net.fromJSON(globalWeights);
   const endMs = Date.now();
   const elapsedMs = endMs - startMs;
-  return {error, iterations, epochs, elapsedMs};
+  return {error, iterations, itemIterations, epochs, threadCount, elapsedMs};
 }
 
 function unpackTrainOpts(trainOptions, net, data) {
@@ -140,7 +156,7 @@ function runTrainingSync(netType, netJSON, trainingData, trainOpts) {
 }
 
 function runTrainingWorker(netType, netJSON, trainingData, trainOpts) {
-  const brainjs = require('./index').default;
+  const brainjs = require('./index');
   return new Promise((resolve, reject) => {
     workers({netType, netJSON, trainingData, trainOpts}, (error, results) => {
       if (error) {
