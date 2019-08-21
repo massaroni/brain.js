@@ -1,11 +1,11 @@
-import partition from './utilities/partition';
+const partition = require('./utilities/partition');
 const workerFarm = require('worker-farm');
 const workers    = workerFarm(require.resolve('./parallel-trainer-worker'));
 
 /**
- * Ensemble training, via simple parameter averaging.
+ * Multithreaded training, via simple parameter averaging.
  */
-export async function trainParallel(data, net, trainOpts = {}) {
+async function trainParallel(data, net, trainOpts = {}) {
   const startMs = Date.now();
   const log = (trainOpts.log === true ? console.log : trainOpts.log) || (() => {});
   const logPeriod = trainOpts.logPeriod || 1;
@@ -94,7 +94,7 @@ export async function trainParallel(data, net, trainOpts = {}) {
     error, threadCount, elapsedMs};
 }
 
-export function unpackTrainOpts(trainOptions, net, data) {
+function unpackTrainOpts(trainOptions, net, data) {
   const parallel = trainOptions.parallel || {};
   let threadsOpts = parallel.threads;
   if (!threadsOpts || Number.isInteger(threadsOpts)) {
@@ -167,7 +167,7 @@ function runTrainingSync(netType, netJSON, trainingData, trainOpts) {
 }
 
 function runTrainingWorker(netType, netJSON, trainingData, trainOpts) {
-  const brainjs = require('./index').default;
+  const brainjs = require('./index');
   return new Promise((resolve, reject) => {
     workers({netType, netJSON, trainingData, trainOpts}, (error, results) => {
       if (error) {
@@ -181,3 +181,5 @@ function runTrainingWorker(netType, netJSON, trainingData, trainOpts) {
     });
   });
 }
+
+module.exports = { trainParallel, unpackTrainOpts };

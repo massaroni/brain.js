@@ -1,5 +1,4 @@
-//const brainjs = require('../src').default;
-const brainjs = require('../dist/index').default;
+const brainjs = require('../src');
 const mathGenerator = require('./math-db-generator');
 const shuffle = require('./shuffle-deterministic');
 

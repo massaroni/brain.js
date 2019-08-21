@@ -1,6 +1,6 @@
-import assert from 'assert';
-import NeuralNetwork from '../../src/neural-network';
-import {trainParallel, unpackTrainOpts} from '../../src/parallel-trainer';
+const assert = require('assert');
+const NeuralNetwork = require('../../src/neural-network');
+const {trainParallel, unpackTrainOpts} = require('../../src/parallel-trainer');
 
 describe('Parallel Trainer', () => {
 
