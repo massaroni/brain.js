@@ -85,7 +85,7 @@ describe('Parallel Trainer', () => {
       ];
   
       const net = new NeuralNetwork();
-      const status = await trainParallel(trainingData, net, {parallel: { threads: 2, syncMode: true, errorMode: 'test'}});
+      const status = await trainParallel(trainingData, net, {parallel: { threads: 2, synchronous: true, errorMode: 'test'}});
       assert.ok(status.epochs >= 1);
       checkPerformance(net, trainingData);
     });
@@ -100,7 +100,7 @@ describe('Parallel Trainer', () => {
       ];
   
       const net = new NeuralNetwork();
-      const status = await net.trainAsync(trainingData, {parallel: { threads: 2, syncMode: true, errorMode: 'test'}});
+      const status = await net.trainAsync(trainingData, {parallel: { threads: 2, synchronous: true, errorMode: 'test'}});
       assert.ok(status.epochs >= 1);
       checkPerformance(net, trainingData);
     });

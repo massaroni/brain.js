@@ -301,10 +301,11 @@ const net = new brain.NeuralNetwork();
 net.trainAsync(data, {
   parallel: {
     threads: 3,
+    iterationsPerThread: 8,
     partitionSize: 1500, // optional. send a partition of 1500 items from the training set to each thread.  Raise this number to get some overlap in the training data partitions.
     epochs: 20000, // optional. limit each thread to 20,000 training runs
   },
-  iterations: 10
+  iterations: 10000
   // ... and the usual training options
 }).then(res => {
   // do something with my trained network
@@ -316,12 +317,13 @@ Train a NeuralNetwork on 6 cpu threads and 2 GPU threads.
 const net = new brain.NeuralNetwork();
 net.trainAsync(data, {
   parallel: {
+    iterationsPerThread: 8,
     threads: {
       NeuralNetwork: 6,
       NeuralNetworkGPU: 2
     }
   },
-  iterations: 10
+  iterations: 10000
   // ... and the usual training options
 }).then(res => {
   // do something with my trained network
@@ -333,6 +335,7 @@ Train a single NeuralNetwork on 6 cpu threads and 2 GPU threads, and send 10x mo
 const net = new brain.NeuralNetwork();
 net.trainAsync(data, {
   parallel: {
+    iterationsPerThread: 8,
     threads: {
       NeuralNetwork: {
         threads: 6,
@@ -344,7 +347,7 @@ net.trainAsync(data, {
       }
     }
   },
-  iterations: 10
+  iterations: 10000
   // ... and the usual training options
 }).then(res => {
   // do something with my trained network

@@ -12,7 +12,7 @@ async function trainParallel(data, net, trainOpts = {}) {
   const parallel = trainOpts.parallel || {};
   const threadLog = parallel.log === true ? console.log : parallel.log || false;
   const NetCtor = Object.getPrototypeOf(net).constructor;
-  const maxEpochs = parallel.epochs || 1000;
+  const maxEpochs = trainOpts.iterations || 1000;
   const errorThresh = trainOpts.errorThresh || NetCtor.trainDefaults.errorThresh;
   const threads = unpackTrainOpts(trainOpts, net, data);
   const threadCount = threads.length;
@@ -20,6 +20,7 @@ async function trainParallel(data, net, trainOpts = {}) {
   let threadTrainOpts = Object.assign({}, trainOpts);
   delete threadTrainOpts.parallel;
   delete threadTrainOpts.callback;
+  threadTrainOpts.iterations = parallel.iterationsPerThread || 10;
   threadTrainOpts.log = threadLog;
   threadTrainOpts.logPeriod = parallel.logPeriod || 1;
   threadTrainOpts.timeout = !threadTrainOpts.timeout || threadTrainOpts.timeout === Infinity ? Number.MAX_SAFE_INTEGER : threadTrainOpts.timeout;
@@ -36,7 +37,7 @@ async function trainParallel(data, net, trainOpts = {}) {
     let promises = [];
 
     for (let thread of threads) {
-      if (parallel.syncMode === true) {
+      if (parallel.synchronous === true) {
         let result = runTrainingSync(thread.type, globalWeights, thread.partition, threadTrainOpts);
         promises.push(Promise.resolve(result));
       } else {
@@ -73,14 +74,24 @@ async function trainParallel(data, net, trainOpts = {}) {
     
     epochs++;
     if (epochs % logPeriod === 0) {
-      log({iterations, error, epochs, itemIterations, threadCount, globalWeights});
+      log({
+        threadIterations: iterations,
+        iterations: epochs,
+        itemIterations,
+        trainedNetJSON: globalWeights,
+        error, threadCount});
     }
   }
 
   net.fromJSON(globalWeights);
   const endMs = Date.now();
   const elapsedMs = endMs - startMs;
-  return {error, iterations, itemIterations, epochs, threadCount, elapsedMs};
+  return {
+    threadIterations: iterations,
+    iterations: epochs,
+    itemIterations,
+    trainedNetJSON: globalWeights,
+    error, threadCount, elapsedMs};
 }
 
 function unpackTrainOpts(trainOptions, net, data) {
