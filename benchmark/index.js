@@ -30,8 +30,14 @@ const configs = [
   {
     name: '2 Threads 0.0001 LR Overlapping Partitions',
     config: {
-      parallel: {threads: 2, partitionSize: 3200, epochs: 10000, log: false, logPeriod: 1, syncMode: false},
-      iterations: 3, // this is passed down to the trainer threads in multithreaded mode
+      parallel: {
+        threads: 2,
+        iterationsPerThread: 3,
+        partitionSize: 3200,
+        log: false,
+        logPeriod: 1
+      },
+      iterations: 10000,
       learningRate: 0.0001,
       hiddenLayers: [50, 50],
       errorThresh: 0.005,
@@ -49,8 +55,14 @@ const configs = [
   {
     name: '4 Threads 0.0001 LR Overlapping Partitions',
     config: {
-      parallel: {threads: 4, partitionSize: 2000, epochs: 10000, log: false, logPeriod: 1, syncMode: false},
-      iterations: 5,
+      parallel: {
+        threads: 4,
+        iterationsPerThread: 5,
+        partitionSize: 2000,
+        log: false,
+        logPeriod: 1
+      },
+      iterations: 10000,
       learningRate: 0.0001,
       hiddenLayers: [50, 50],
       errorThresh: 0.005,
@@ -86,8 +98,14 @@ const configs = [
   {
     name: '2 Threads 0.001 LR Overlapping Partitions',
     config: {
-      parallel: {threads: 2, partitionSize: 3200, epochs: 10000, log: false, logPeriod: 1, syncMode: false},
-      iterations: 3,
+      parallel: {
+        threads: 2,
+        iterationsPerThread: 3,
+        partitionSize: 3200,
+        log: false,
+        logPeriod: 1
+      },
+      iterations: 10000,
       learningRate: 0.001,
       hiddenLayers: [50, 50],
       errorThresh: 0.005,
@@ -123,8 +141,14 @@ const configs = [
   {
     name: '2 Threads 0.01 LR Overlapping Partitions',
     config: {
-      parallel: {threads: 2, partitionSize: 3200, epochs: 10000, log: false, logPeriod: 1, syncMode: false},
-      iterations: 3,
+      parallel: {
+        threads: 2,
+        iterationsPerThread: 3,
+        partitionSize: 3200,
+        log: false,
+        logPeriod: 1
+      },
+      iterations: 10000,
       learningRate: 0.01,
       hiddenLayers: [50, 50],
       errorThresh: 0.005,

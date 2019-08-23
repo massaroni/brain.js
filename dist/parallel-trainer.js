@@ -32,7 +32,7 @@ async function trainParallel(data, net) {
   var parallel = trainOpts.parallel || {};
   var threadLog = parallel.log === true ? console.log : parallel.log || false;
   var NetCtor = Object.getPrototypeOf(net).constructor;
-  var maxEpochs = parallel.epochs || 1000;
+  var maxEpochs = trainOpts.iterations || 1000;
   var errorThresh = trainOpts.errorThresh || NetCtor.trainDefaults.errorThresh;
   var threads = unpackTrainOpts(trainOpts, net, data);
   var threadCount = threads.length;
@@ -40,6 +40,7 @@ async function trainParallel(data, net) {
   var threadTrainOpts = Object.assign({}, trainOpts);
   delete threadTrainOpts.parallel;
   delete threadTrainOpts.callback;
+  threadTrainOpts.iterations = parallel.iterationsPerThread || 10;
   threadTrainOpts.log = threadLog;
   threadTrainOpts.logPeriod = parallel.logPeriod || 1;
   threadTrainOpts.timeout = !threadTrainOpts.timeout || threadTrainOpts.timeout === Infinity ? Number.MAX_SAFE_INTEGER : threadTrainOpts.timeout;
@@ -65,7 +66,7 @@ async function trainParallel(data, net) {
       for (var _iterator = threads[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
         var thread = _step.value;
 
-        if (parallel.syncMode === true) {
+        if (parallel.synchronous === true) {
           var result = runTrainingSync(thread.type, globalWeights, thread.partition, threadTrainOpts);
           promises.push(Promise.resolve(result));
         } else {
@@ -117,14 +118,24 @@ async function trainParallel(data, net) {
 
     epochs++;
     if (epochs % logPeriod === 0) {
-      log({ iterations: iterations, error: error, epochs: epochs, itemIterations: itemIterations, threadCount: threadCount, globalWeights: globalWeights });
+      log({
+        threadIterations: iterations,
+        iterations: epochs,
+        itemIterations: itemIterations,
+        trainedNetJSON: globalWeights,
+        error: error, threadCount: threadCount });
     }
   }
 
   net.fromJSON(globalWeights);
   var endMs = Date.now();
   var elapsedMs = endMs - startMs;
-  return { error: error, iterations: iterations, itemIterations: itemIterations, epochs: epochs, threadCount: threadCount, elapsedMs: elapsedMs };
+  return {
+    threadIterations: iterations,
+    iterations: epochs,
+    itemIterations: itemIterations,
+    trainedNetJSON: globalWeights,
+    error: error, threadCount: threadCount, elapsedMs: elapsedMs };
 }
 
 function unpackTrainOpts(trainOptions, net, data) {
