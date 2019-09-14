@@ -1,10 +1,10 @@
-import NeuralNetwork from '../neural-network';
+const equalsShallow = require('./eq-shallow');
 
 /**
  * Parameter averaging, supports NeuralNetwork and NeuralNetworkGPU.
  * @param  {...any} nets 
  */
-export default function avgNets(...nets) {
+module.exports = function avgNets(...nets) {
   if (!nets || !nets.length) {
     return;
   }
@@ -57,26 +57,4 @@ export default function avgNets(...nets) {
   const merged = new netCtor();
   merged.fromJSON(refNet);
   return merged;
-}
-
-function equalsShallow(...arrays) {
-  if (!!arrays && arrays.length) {
-    const len = arrays[0].length;
-    for (let a = 1; a < arrays.length; a++) {
-      if (arrays[a].length !== len) {
-        return false;
-      }
-    }
-
-    for (let i = 0; i < len; i++) {
-      const item = arrays[0][i];
-      for (let a = 1; a < arrays.length; a++) {
-        if (item !== arrays[a][i]) {
-          return false;
-        }
-      }
-    }
-  }
-
-  return true;
-}
+};
