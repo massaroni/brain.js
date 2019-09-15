@@ -54,4 +54,14 @@ describe('partition', () => {
     assert.deepStrictEqual(actual, [['a','b','c'],['b','c','d']]);
   });
 
+  it('can partition duplicate overlapping segments', () => {
+    const actual = partition(['a','b','c','d'], 4, 3, (a) => a);
+    assert.deepStrictEqual(actual, [
+      ['a','b','c'],
+      ['b','c','d'],
+      ['a','b','c'],
+      ['b','c','d'],
+    ]);
+  });
+
 });
