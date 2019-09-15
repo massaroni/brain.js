@@ -1,4 +1,12 @@
 module.exports = function partition(array, partitions = 1, partitionSize = 1) {
+  if (partitionSize >= array.length) {
+    const partitioned = [];
+    for (let p = 0; p < partitions; p++) {
+      partitioned.push(array);
+    }
+    return partitioned;
+  }
+
   const stdSize = Math.floor(array.length / partitions);
   let step = stdSize;
   if (partitionSize <= stdSize) {

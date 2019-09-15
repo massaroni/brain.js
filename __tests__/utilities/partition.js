@@ -3,6 +3,18 @@ const partition = require('../../src/utilities/partition');
 
 describe('partition', () => {
 
+  it('would return the full set for full partition sizes', () => {
+    const fullSet = [1, 2, 3, 4, 5, 6];
+    const actual = partition(fullSet, 4, 6);
+    assert.deepStrictEqual(actual, [fullSet, fullSet, fullSet, fullSet]);
+  });
+
+  it('would return the full set for oversized partition sizes', () => {
+    const fullSet = [1, 2, 3, 4, 5, 6];
+    const actual = partition(fullSet, 4, 60);
+    assert.deepStrictEqual(actual, [fullSet, fullSet, fullSet, fullSet]);
+  });
+
   it('can partition an even-len array without overlap', () => {
     const actual = partition([1, 2, 3, 4, 5, 6], 3, 2);
     assert.deepStrictEqual(actual, [[1, 2], [3, 4], [5, 6]]);
