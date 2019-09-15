@@ -1,4 +1,8 @@
-module.exports = function partition(array, partitions = 1, partitionSize = 1, shuffler = shuffleCopy) {
+module.exports = function partition(array, partitions = 1, partitionSize, shuffler = shuffleCopy) {
+  if (!partitionSize || (partitions * partitionSize < array.length)) {
+    partitionSize = Math.ceil(array.length / partitions);
+  }
+
   if (partitionSize >= array.length) {
     const partitioned = [];
     for (let p = 0; p < partitions; p++) {
@@ -24,26 +28,16 @@ module.exports = function partition(array, partitions = 1, partitionSize = 1, sh
 };
 
 function appendPartitions(array, partitions, partitionSize, partitioned) {
-  const stdSize = Math.floor(array.length / partitions);
-  let step = stdSize;
-  if (partitionSize <= stdSize) {
-    partitionSize = stdSize;
-  } else {
-    step = (partitionSize - stdSize);
-    if (array.length / partitions > stdSize) {
-      step += 1;
-    }
-  }
-  
-  let from = 0;
+  const gap = array.length - partitionSize;
+  const spacing = Math.max(1, Math.floor(gap / (partitions - 1)));
+
   for (let p = 0; p < partitions - 1; p++) {
-    partitioned.push(array.slice(from, Math.min(array.length, from + partitionSize)));
-    from += step;
+    const from = p * spacing;
+    partitioned.push(array.slice(from, from + partitionSize));
   }
-  let tailIdx = Math.min(array.length - partitionSize, from + partitionSize);
+
+  const tailIdx = array.length - partitionSize;
   partitioned.push(array.slice(tailIdx));
-  
-  return partitioned;
 }
 
 function shuffleCopy(array) {
