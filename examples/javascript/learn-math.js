@@ -1,7 +1,15 @@
 const brain = require('../../src');
 
 const LSTM = brain.recurrent.LSTM;
-const net = new LSTM();
+const options = {
+  iterations: 10000,
+  hiddenLayers: [100],
+  learningRate: 0.0001,
+  errorThresh: 0.03,
+  log: true,
+  logPeriod: 1,
+};
+const net = new LSTM(options);
 
 // used to build list below
 // const mathProblemsSet = new Set();
@@ -117,7 +125,7 @@ const mathProblems = [
   '9+9=18'
 ];
 
-net.train(mathProblems, { log: true, errorThresh: 0.03 });
+net.train(mathProblems, options);
 
 let errors = 0;
 for (let i = 0; i < mathProblems.length; i++) {
