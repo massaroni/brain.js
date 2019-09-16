@@ -9,6 +9,10 @@ const { randomFloat } = require('../utilities/random');
 const zeros = require('../utilities/zeros');
 const DataFormatter = require('../utilities/data-formatter');
 const NeuralNetwork = require('../neural-network');
+const { trainParallel } = require('../parallel-trainer');
+const { avgNetsRnn } = require('../utilities/avg-nets-rnn');
+const { subtractNetsRnn } = require('../utilities/subtract-nets-rnn');
+const { multNetRnn } = require('../utilities/scalar-mult-rnn');
 
 class RNN {
   constructor(options = {}) {
@@ -444,6 +448,39 @@ class RNN {
     };
   }
 
+  formatData(data) {
+    if (this.hasOwnProperty('setupData')) {
+      this.setupData(data);
+    }
+    this.verifyIsInitialized(data);
+  }
+
+  /**
+   * Trains in multithreaded mode, given the "parallel" training option.
+   * 
+   * @param data
+   * @param options
+   * @returns {Promise}
+   * @resolves {{error: number, iterations: number}}
+   * @rejects {{trainError: string, status: {error: number, iterations: number}}
+   */
+  trainAsync(data, options = {}) {
+    this.updateTrainingOptions(options);
+    
+    if (this.trainOpts.parallel) {
+      return trainParallel(data, this, this.trainOpts);
+    }
+
+    const self = this;
+    return new Promise((resolve, reject) => {
+      try {
+        resolve(self.train(rawData, options));
+      } catch (trainError) {
+        reject({trainError, status});
+      }
+    });
+  }
+
   /**
    *
    * @param {Object[]|String[]} data an array of objects: `{input: 'string', output: 'string'}` or an array of strings
@@ -492,6 +529,53 @@ class RNN {
 
   addFormat() {
     throw new Error('not yet implemented');
+  }
+
+  /**
+   * Merge these nets via parameter averaging.
+   * 
+   * @param  {...any} nets other nets of the same type, to average with this one
+   */
+  avg(...nets) {
+    if (!nets || !nets.length) {
+      return this;
+    }
+
+    return avgNetsRnn(...[this].concat(nets));
+  }
+
+  /**
+   * Get the difference of two nets.
+   * 
+   * @param {*} rhsNet another RNN of the same type
+   * @returns the difference of this and rhsNet
+   */
+  subtract(rhsNet) {
+    if (!rhsNet) {
+      return this;
+    }
+
+    return subtractNetsRnn(this, rhsNet);
+  }
+
+  /**
+   * Multiply this net by a scalar value.
+   * 
+   * @param {*} multiplier scalar value
+   * @return the multiplied net
+   */
+  multiplyScalar(multiplier) {
+    return multNetRnn(multiplier, this);
+  }
+
+  /**
+   * Divide this net by a scalar value.
+   * 
+   * @param {*} divisor scalar value
+   * @return the divided net
+   */
+  divideScalar(divisor) {
+    return this.multiplyScalar(1 / divisor);
   }
 
   /**
@@ -859,6 +943,7 @@ RNN.trainDefaults = {
   log: false,
   logPeriod: 10,
   learningRate: 0.01,
+  parallel: null,
   callback: null,
   callbackPeriod: 10
 };

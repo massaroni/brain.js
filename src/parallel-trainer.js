@@ -1,6 +1,47 @@
 const partition = require('./utilities/partition');
 const workerFarm = require('worker-farm');
 const workers    = workerFarm(require.resolve('./parallel-trainer-worker'));
+const { avgNetsRnnJson } = require('./utilities/avg-nets-rnn');
+const { subtractNetsRnnJson } = require('./utilities/subtract-nets-rnn');
+const { multNetRnnJson } = require('./utilities/scalar-mult-rnn');
+
+const netNameToType = {
+  NeuralNetwork: 'NeuralNetwork',
+  NeuralNetworkGPU: 'NeuralNetworkGPU',
+  //RNNTimeStep: 'recurrent.RNNTimeStep',
+  //LSTMTimeStep: 'recurrent.LSTMTimeStep',
+  //GRUTimeStep: 'recurrent.GRUTimeStep',
+  //RNN: 'recurrent.RNN',
+  LSTM: 'recurrent.LSTM',
+  //GRU: 'recurrent.GRU',
+}
+
+const aggregators = {
+  NeuralNetwork: aggregatorNN,
+  NeuralNetworkGPU: aggregatorNN,
+  LSTM: aggregatorRNN,
+}
+
+function aggregatorNN(previousJson, trainOpts, ...trainedNets) {
+  return trainedNets[0].avg(...trainedNets.slice(1)).toJSON();
+}
+
+/**
+ * RNN merging: V(t) = Va(t) - B*V(t-1)
+ * roughly based on this: https://arxiv.org/pdf/1708.05604.pdf
+ * 
+ * @param {*} previousJson 
+ * @param  {...any} trainedNets 
+ */
+function aggregatorRNN(previousJson, trainOpts, ...trainedNets) {
+  const parallel = trainOpts.parallel || {};
+  const rnnMergeBetaOpt = parallel.rnnMergeBeta;
+  const rnnMergeBeta = Number.isFinite(rnnMergeBetaOpt) ? rnnMergeBetaOpt : 0.000001;
+  const jsons = trainedNets.map((n) => n.toJSON());
+  const avg = avgNetsRnnJson(...jsons);
+  const previousJsonRescaled = multNetRnnJson(rnnMergeBeta, previousJson);
+  return subtractNetsRnnJson(avg, previousJsonRescaled);
+}
 
 /**
  * Multithreaded training, via simple parameter averaging.
@@ -12,6 +53,8 @@ async function trainParallel(data, net, trainOpts = {}) {
   const parallel = trainOpts.parallel || {};
   const threadLog = parallel.log === true ? console.log : parallel.log || false;
   const NetCtor = Object.getPrototypeOf(net).constructor;
+  const netType = NetCtor.name;
+  const aggregator = aggregators[netType];
   const maxEpochs = trainOpts.iterations || 1000;
   const errorThresh = trainOpts.errorThresh || NetCtor.trainDefaults.errorThresh;
   const threads = unpackTrainOpts(trainOpts, net, data);
@@ -25,7 +68,7 @@ async function trainParallel(data, net, trainOpts = {}) {
   threadTrainOpts.logPeriod = parallel.logPeriod || 1;
   threadTrainOpts.timeout = !threadTrainOpts.timeout || threadTrainOpts.timeout === Infinity ? Number.MAX_SAFE_INTEGER : threadTrainOpts.timeout;
   
-  net.verifyIsInitialized(data);
+  net.prepTraining(data, trainOpts);
   let globalWeights = net.toJSON();
 
   let error = 1;
@@ -58,15 +101,28 @@ async function trainParallel(data, net, trainOpts = {}) {
       itemIterations += status.iterations * threads[t].partition.length;
     }
 
-    globalWeights = trainedNets[0].avg(...trainedNets.slice(1)).toJSON();
+    globalWeights = aggregator(globalWeights, trainOpts, ...trainedNets);
 
     error = maxError;
     if (minError <= errorThresh) {
       if (parallel.errorMode === 'test') {
         const testnet = new NetCtor();
         testnet.fromJSON(globalWeights);
-        const testResult = testnet.test(data);
-        error = Math.max(error, testResult.error);
+        if (!!testnet.test) {
+          const testResult = testnet.test(data);
+          error = Math.max(error, testResult.error);
+        //} else if (maxError > errorThresh) {
+        //  error = maxError;
+        } else {
+          const testIterations = 1;
+          const testOpts = Object.assign({}, trainOpts);
+          testOpts.iterations = testIterations;
+          const result = testnet.train(data, testOpts);
+          error = result.error;
+          globalWeights = testnet.toJSON();
+          iterations += testIterations;
+          itemIterations += (data.length * testIterations);
+        }
       } else {
         error = minError;
       }
@@ -109,6 +165,11 @@ function unpackTrainOpts(trainOptions, net, data) {
   let types = [];
   let totalThreads = 0;
   for (let netName in threadsOpts) {
+    const type = netNameToType[netName];
+    if (!type) {
+      throw new Error('Unsupported net: ' + netName);
+    }
+
     const config = threadsOpts[netName];
     let threadCount = 1;
     let partitions = null;
@@ -128,7 +189,7 @@ function unpackTrainOpts(trainOptions, net, data) {
     }
     totalThreads += threadCount;
 
-    types.push({type: netName, threadCount, partitions});
+    types.push({type, threadCount, partitions});
   }
 
   const unpartitioned = totalThreads - partitioned;
@@ -158,8 +219,8 @@ function unpackTrainOpts(trainOptions, net, data) {
 }
 
 function runTrainingSync(netType, netJSON, trainingData, trainOpts) {
-  const brainjs = require('./index').default;
-  const ctor = brainjs[netType];
+  const brainjs = require('./index');
+  const ctor = brainjs.get(netType);
   const trained = new ctor();
   trained.fromJSON(netJSON);
   const status = trained.train(trainingData, trainOpts);
@@ -174,7 +235,8 @@ function runTrainingWorker(netType, netJSON, trainingData, trainOpts) {
         return reject(error);
       }
 
-      const trained = new brainjs[netType]();
+      const ctor = brainjs.get(netType);
+      const trained = new ctor();
       trained.fromJSON(results.trainedNetJSON);
 
       resolve({trained, status: results.status});
