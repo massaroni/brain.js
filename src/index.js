@@ -49,6 +49,7 @@ const brain = {
     LSTM,
     GRU,
   },
+  get,
   utilities: {
     max,
     mse,
@@ -70,4 +71,12 @@ if (typeof window !== 'undefined') {
 
 if (typeof module !== 'undefined') {
   module.exports = brain;
+}
+
+function get(brainProp) {
+  return brainProp.split('.').reduce(index, brain);
+}
+
+function index(obj,i) {
+  return obj[i]
 }
