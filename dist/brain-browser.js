@@ -37662,34 +37662,74 @@ module.exports = {
   objectToFloat32Array: objectToFloat32Array
 };
 },{}],"5E9k":[function(require,module,exports) {
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 module.exports = function partition(array) {
   var partitions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-  var partitionSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
-  var stdSize = Math.floor(array.length / partitions);
-  var step = stdSize;
+  var partitionSize = arguments.length > 2 ? arguments[2] : undefined;
+  var shuffler = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : shuffleCopy;
 
-  if (partitionSize <= stdSize) {
-    partitionSize = stdSize;
-  } else {
-    step = partitionSize - stdSize;
+  if (!partitionSize || partitions * partitionSize < array.length) {
+    partitionSize = Math.ceil(array.length / partitions);
+  }
 
-    if (array.length / partitions > stdSize) {
-      step += 1;
+  if (partitionSize >= array.length) {
+    var _partitioned = [];
+
+    for (var p = 0; p < partitions; p++) {
+      _partitioned.push(array);
     }
+
+    return _partitioned;
   }
 
   var partitioned = [];
-  var from = 0;
+  var maxPartitions = array.length - partitionSize + 1;
 
-  for (var p = 0; p < partitions - 1; p++) {
-    partitioned.push(array.slice(from, Math.min(array.length, from + partitionSize)));
-    from += step;
+  while (partitioned.length < partitions) {
+    if (partitioned.length > 0) {
+      array = shuffler(array);
+    }
+
+    var remainingPartitions = partitions - partitioned.length;
+    var newPartitions = Math.min(remainingPartitions, maxPartitions);
+    appendPartitions(array, newPartitions, partitionSize, partitioned);
   }
 
-  var tailIdx = Math.min(array.length - partitionSize, from + partitionSize);
-  partitioned.push(array.slice(tailIdx));
   return partitioned;
 };
+
+function appendPartitions(array, partitions, partitionSize, partitioned) {
+  var gap = array.length - partitionSize;
+  var spacing = Math.max(1, Math.floor(gap / (partitions - 1)));
+
+  for (var p = 0; p < partitions - 1; p++) {
+    var from = p * spacing;
+    partitioned.push(array.slice(from, from + partitionSize));
+  }
+
+  var tailIdx = array.length - partitionSize;
+  partitioned.push(array.slice(tailIdx));
+}
+
+function shuffleCopy(array) {
+  var copy = _toConsumableArray(array);
+
+  for (var i = 0; i < copy.length; i++) {
+    var j = Math.floor(Math.random() * copy.length);
+    var swap = copy[i];
+    copy[i] = copy[j];
+    copy[j] = swap;
+  }
+
+  return copy;
+}
 },{}],"zv8z":[function(require,module,exports) {
 exports.endianness = function () { return 'LE' };
 
@@ -38603,7 +38643,66 @@ function end (api, callback) {
 module.exports     = farm
 module.exports.end = end
 
-},{"./farm":"vrQx","process":"pBGv"}],"IyGM":[function(require,module,exports) {
+},{"./farm":"vrQx","process":"pBGv"}],"jlVZ":[function(require,module,exports) {
+module.exports = function equalsShallow() {
+  for (var _len = arguments.length, arrays = new Array(_len), _key = 0; _key < _len; _key++) {
+    arrays[_key] = arguments[_key];
+  }
+
+  if (!!arrays && arrays.length) {
+    var len = arrays[0].length;
+
+    for (var a = 1; a < arrays.length; a++) {
+      if (arrays[a].length !== len) {
+        return false;
+      }
+    }
+
+    for (var i = 0; i < len; i++) {
+      var item = arrays[0][i];
+
+      for (var _a = 1; _a < arrays.length; _a++) {
+        if (item !== arrays[_a][i]) {
+          return false;
+        }
+      }
+    }
+  }
+
+  return true;
+};
+},{}],"moof":[function(require,module,exports) {
+module.exports = function objectEqualsShallow() {
+  for (var _len = arguments.length, objects = new Array(_len), _key = 0; _key < _len; _key++) {
+    objects[_key] = arguments[_key];
+  }
+
+  if (!!objects && objects.length > 1) {
+    var allPropNames = objects.map(function (o) {
+      return Object.getOwnPropertyNames(o);
+    });
+    var lhsPropNames = allPropNames[0];
+
+    for (var i = 1; i < allPropNames.length; i++) {
+      var rhsPropNames = allPropNames[i];
+
+      if (rhsPropNames.length !== lhsPropNames.length) {
+        return false;
+      }
+
+      for (var p = 0; p < lhsPropNames.length; p++) {
+        var name = lhsPropNames[i];
+
+        if (lhsPropNames[name] !== rhsPropNames[name]) {
+          return false;
+        }
+      }
+    }
+  }
+
+  return true;
+};
+},{}],"pfnC":[function(require,module,exports) {
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -38612,20 +38711,469 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
+var equalsShallow = require('./eq-shallow');
+
+var objectEqualsShallow = require('./obj-eq-shallow');
+/**
+ * Aggregate nodes among a set of RNNs.
+ * This could be used for averaging, multiplying, subtracting nets, etc.
+ * This aggregates corresponding weights across all given RNNs.
+ * RNNs must have matching architecture, or else this throws an error.
+ * 
+ * @param {*} aggregatorFactory callback function that returns a new aggregator
+ * @param  {...any} nets RNN instances
+ */
+
+
+function aggNetsRnn(aggregatorFactory) {
+  for (var _len = arguments.length, nets = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    nets[_key - 1] = arguments[_key];
+  }
+
+  if (!nets || !nets.length) {
+    return;
+  }
+
+  if (nets.length === 1) {
+    return nets[0];
+  }
+
+  var jsons = nets.map(function (net) {
+    return net.toJSON();
+  });
+  var avgJson = aggNetsRnnJson.apply(void 0, [aggregatorFactory].concat(_toConsumableArray(jsons)));
+  var netCtor = Object.getPrototypeOf(nets[0]).constructor;
+  var aggregated = new netCtor();
+  aggregated.fromJSON(avgJson);
+  return aggregated;
+}
+
+;
+
+function aggNetsRnnJson(aggregatorFactory) {
+  for (var _len2 = arguments.length, jsons = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+    jsons[_key2 - 1] = arguments[_key2];
+  }
+
+  checkCompatibility(jsons);
+  var input = aggLayer(aggregatorFactory, jsons.map(function (j) {
+    return j.input;
+  }));
+  var outputConnector = aggLayer(aggregatorFactory, jsons.map(function (j) {
+    return j.outputConnector;
+  }));
+  var output = aggLayer(aggregatorFactory, jsons.map(function (j) {
+    return j.output;
+  }));
+  var hiddenLayers = aggHiddenLayers(aggregatorFactory, jsons);
+  var options = jsons[0].options; // clone this?
+
+  var type = jsons[0].type;
+  return {
+    type: type,
+    options: options,
+    input: input,
+    hiddenLayers: hiddenLayers,
+    outputConnector: outputConnector,
+    output: output
+  };
+}
+
+function aggHiddenLayers(aggregatorFactory, jsons) {
+  var layerCount = (jsons[0].hiddenLayers || []).length;
+  var hiddenLayersAvg = [];
+
+  var _loop = function _loop(i) {
+    var layer = aggHiddenLayer(aggregatorFactory, jsons.map(function (j) {
+      return j.hiddenLayers[i];
+    }));
+    hiddenLayersAvg.push(layer);
+  };
+
+  for (var i = 0; i < layerCount; i++) {
+    _loop(i);
+  }
+
+  return hiddenLayersAvg;
+}
+
+function aggHiddenLayer(aggregatorFactory, layers) {
+  var weight = aggLayer(aggregatorFactory, layers.map(function (l) {
+    return l.weight;
+  }));
+  var transition = aggLayer(aggregatorFactory, layers.map(function (l) {
+    return l.transition;
+  }));
+  var bias = aggLayer(aggregatorFactory, layers.map(function (l) {
+    return l.bias;
+  }));
+  return {
+    weight: weight,
+    transition: transition,
+    bias: bias
+  };
+}
+
+function aggLayer(aggregatorFactory, layers) {
+  var rows = layers[0].rows;
+  var columns = layers[0].columns;
+  var weightCount = rows * columns;
+  var weights = {};
+
+  for (var w = 0; w < weightCount; w++) {
+    var aggregator = aggregatorFactory();
+
+    for (var j = 0; j < layers.length; j++) {
+      aggregator.agg(layers[j].weights[w]);
+    }
+
+    weights[w] = aggregator.build();
+  }
+
+  return {
+    rows: rows,
+    columns: columns,
+    weights: weights
+  };
+}
+
+function checkCompatibility(jsons) {
+  var refNet = jsons[0];
+  var type = refNet.type;
+
+  for (var j = 1; j < jsons.length; j++) {
+    var json = jsons[j];
+
+    if (json.type !== type) {
+      throw new Error('Mismatching nets: ' + type + ' / ' + json.type);
+    }
+
+    checkEq('inputSize', json.options, refNet.options);
+    checkEq('inputRange', json.options, refNet.options);
+    checkEq('outputSize', json.options, refNet.options);
+  }
+
+  var options = jsons.map(function (j) {
+    return j.options;
+  });
+  checkArraysEq('sizes', options);
+  checkArraysEq('hiddenLayers', options);
+  checkArraysEq('characters', options);
+  checkArraysEq('specialIndexes', options);
+  checkObjectsEq('indexTable', options);
+  checkObjectsEq('characterTable', options);
+}
+
+function checkArraysEq(propName, jsons) {
+  checkProp(propName, equalsShallow(jsons.map(function (json) {
+    return json[propName];
+  })));
+}
+
+function checkObjectsEq(propName, jsons) {
+  checkProp(propName, objectEqualsShallow(jsons.map(function (json) {
+    return json[propName];
+  })));
+}
+
+function checkEq(propName, lhsJson, rhsJson) {
+  checkProp(propName, lhsJson[propName] === rhsJson[propName]);
+}
+
+function checkProp(propName, condition) {
+  if (!condition) {
+    throw new Error('Incompatible nets: mismatching ' + propName);
+  }
+}
+
+module.exports = {
+  aggNetsRnn: aggNetsRnn,
+  aggNetsRnnJson: aggNetsRnnJson
+};
+},{"./eq-shallow":"jlVZ","./obj-eq-shallow":"moof"}],"NECL":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var _require = require('./aggregate-rnn'),
+    aggNetsRnn = _require.aggNetsRnn,
+    aggNetsRnnJson = _require.aggNetsRnnJson;
+/**
+ * Parameter averaging, supports all RNN net types.
+ * @param  {...any} nets 
+ */
+
+
+function avgNetsRnn() {
+  for (var _len = arguments.length, nets = new Array(_len), _key = 0; _key < _len; _key++) {
+    nets[_key] = arguments[_key];
+  }
+
+  return aggNetsRnn.apply(void 0, [avgFactory].concat(nets));
+}
+
+;
+
+function avgNetsRnnJson() {
+  for (var _len2 = arguments.length, jsons = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+    jsons[_key2] = arguments[_key2];
+  }
+
+  return aggNetsRnnJson.apply(void 0, [avgFactory].concat(jsons));
+}
+
+var Averager =
+/*#__PURE__*/
+function () {
+  function Averager() {
+    _classCallCheck(this, Averager);
+
+    this.avg = 0;
+    this.count = 0;
+  }
+
+  _createClass(Averager, [{
+    key: "agg",
+    value: function agg(n) {
+      this.avg = this.avg + (n - this.avg) / (this.count++ + 1);
+    }
+  }, {
+    key: "build",
+    value: function build() {
+      return this.avg;
+    }
+  }]);
+
+  return Averager;
+}();
+
+function avgFactory() {
+  return new Averager();
+}
+
+module.exports = {
+  avgNetsRnn: avgNetsRnn,
+  avgNetsRnnJson: avgNetsRnnJson
+};
+},{"./aggregate-rnn":"pfnC"}],"UXy8":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var _require = require('./aggregate-rnn'),
+    aggNetsRnn = _require.aggNetsRnn,
+    aggNetsRnnJson = _require.aggNetsRnnJson;
+
+function subtractNetsRnn() {
+  for (var _len = arguments.length, nets = new Array(_len), _key = 0; _key < _len; _key++) {
+    nets[_key] = arguments[_key];
+  }
+
+  return aggNetsRnn.apply(void 0, [subtractFactory].concat(nets));
+}
+
+;
+
+function subtractNetsRnnJson() {
+  for (var _len2 = arguments.length, jsons = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+    jsons[_key2] = arguments[_key2];
+  }
+
+  return aggNetsRnnJson.apply(void 0, [subtractFactory].concat(jsons));
+}
+
+var Subtractor =
+/*#__PURE__*/
+function () {
+  function Subtractor() {
+    _classCallCheck(this, Subtractor);
+
+    this.value = 0;
+    this.count = 0;
+  }
+
+  _createClass(Subtractor, [{
+    key: "agg",
+    value: function agg(n) {
+      if (this.count++ < 1) {
+        this.value = n;
+      } else {
+        this.value -= n;
+      }
+    }
+  }, {
+    key: "build",
+    value: function build() {
+      return this.value;
+    }
+  }]);
+
+  return Subtractor;
+}();
+
+function subtractFactory() {
+  return new Subtractor();
+}
+
+module.exports = {
+  subtractNetsRnn: subtractNetsRnn,
+  subtractNetsRnnJson: subtractNetsRnnJson
+};
+},{"./aggregate-rnn":"pfnC"}],"LKza":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var _require = require('./aggregate-rnn'),
+    aggNetsRnn = _require.aggNetsRnn,
+    aggNetsRnnJson = _require.aggNetsRnnJson;
+
+function multNetRnn(multiplier) {
+  for (var _len = arguments.length, nets = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    nets[_key - 1] = arguments[_key];
+  }
+
+  checkInputs(nets);
+  return aggNetsRnn.apply(void 0, [function () {
+    return new ScalarMultiplier(multiplier);
+  }].concat(nets));
+}
+
+function multNetRnnJson(multiplier) {
+  for (var _len2 = arguments.length, jsons = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+    jsons[_key2 - 1] = arguments[_key2];
+  }
+
+  checkInputs(jsons);
+  return aggNetsRnnJson.apply(void 0, [function () {
+    return new ScalarMultiplier(multiplier);
+  }].concat(jsons));
+}
+
+function checkInputs(inputs) {
+  if (inputs.length !== 1) {
+    throw new Error('Scalar multiplication requires exactly one input RNN.');
+  }
+}
+
+var ScalarMultiplier =
+/*#__PURE__*/
+function () {
+  function ScalarMultiplier(multiplier) {
+    _classCallCheck(this, ScalarMultiplier);
+
+    this.multiplier = multiplier;
+  }
+
+  _createClass(ScalarMultiplier, [{
+    key: "agg",
+    value: function agg(n) {
+      this.value = n * this.multiplier;
+    }
+  }, {
+    key: "build",
+    value: function build() {
+      return this.value;
+    }
+  }]);
+
+  return ScalarMultiplier;
+}();
+
+module.exports = {
+  multNetRnn: multNetRnn,
+  multNetRnnJson: multNetRnnJson
+};
+},{"./aggregate-rnn":"pfnC"}],"IyGM":[function(require,module,exports) {
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 var partition = require('./utilities/partition');
 
 var workerFarm = require('worker-farm');
 
 var workers = workerFarm(require.resolve('./parallel-trainer-worker'));
+
+var _require = require('./utilities/avg-nets-rnn'),
+    avgNetsRnnJson = _require.avgNetsRnnJson;
+
+var _require2 = require('./utilities/subtract-nets-rnn'),
+    subtractNetsRnnJson = _require2.subtractNetsRnnJson;
+
+var _require3 = require('./utilities/scalar-mult-rnn'),
+    multNetRnnJson = _require3.multNetRnnJson;
+
+var netNameToType = {
+  NeuralNetwork: 'NeuralNetwork',
+  NeuralNetworkGPU: 'NeuralNetworkGPU',
+  //RNNTimeStep: 'recurrent.RNNTimeStep',
+  //LSTMTimeStep: 'recurrent.LSTMTimeStep',
+  //GRUTimeStep: 'recurrent.GRUTimeStep',
+  //RNN: 'recurrent.RNN',
+  LSTM: 'recurrent.LSTM' //GRU: 'recurrent.GRU',
+
+};
+var aggregators = {
+  NeuralNetwork: aggregatorNN,
+  NeuralNetworkGPU: aggregatorNN,
+  LSTM: aggregatorRNN
+};
+
+function aggregatorNN(previousJson, trainOpts) {
+  var _trainedNets$;
+
+  for (var _len = arguments.length, trainedNets = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    trainedNets[_key - 2] = arguments[_key];
+  }
+
+  return (_trainedNets$ = trainedNets[0]).avg.apply(_trainedNets$, _toConsumableArray(trainedNets.slice(1))).toJSON();
+}
+/**
+ * RNN merging: V(t) = Va(t) - B*V(t-1)
+ * roughly based on this: https://arxiv.org/pdf/1708.05604.pdf
+ * 
+ * @param {*} previousJson 
+ * @param  {...any} trainedNets 
+ */
+
+
+function aggregatorRNN(previousJson, trainOpts) {
+  var parallel = trainOpts.parallel || {};
+  var rnnMergeBetaOpt = parallel.rnnMergeBeta;
+  var rnnMergeBeta = Number.isFinite(rnnMergeBetaOpt) ? rnnMergeBetaOpt : 0.000001;
+
+  for (var _len2 = arguments.length, trainedNets = new Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+    trainedNets[_key2 - 2] = arguments[_key2];
+  }
+
+  var jsons = trainedNets.map(function (n) {
+    return n.toJSON();
+  });
+  var avg = avgNetsRnnJson.apply(void 0, _toConsumableArray(jsons));
+  var previousJsonRescaled = multNetRnnJson(rnnMergeBeta, previousJson);
+  return subtractNetsRnnJson(avg, previousJsonRescaled);
+}
 /**
  * Multithreaded training, via simple parameter averaging.
  */
+
 
 function trainParallel(_x, _x2) {
   return _trainParallel.apply(this, arguments);
@@ -38642,6 +39190,8 @@ function _trainParallel() {
         parallel,
         threadLog,
         NetCtor,
+        netType,
+        aggregator,
         maxEpochs,
         errorThresh,
         threads,
@@ -38652,7 +39202,6 @@ function _trainParallel() {
         epochs,
         iterations,
         itemIterations,
-        _trainedNets$,
         promises,
         _iteratorNormalCompletion,
         _didIteratorError,
@@ -38660,7 +39209,7 @@ function _trainParallel() {
         _iterator,
         _step,
         thread,
-        result,
+        _result,
         results,
         maxError,
         minError,
@@ -38670,6 +39219,9 @@ function _trainParallel() {
         status,
         testnet,
         testResult,
+        testIterations,
+        testOpts,
+        result,
         endMs,
         elapsedMs,
         _args = arguments;
@@ -38687,6 +39239,8 @@ function _trainParallel() {
             parallel = trainOpts.parallel || {};
             threadLog = parallel.log === true ? console.log : parallel.log || false;
             NetCtor = Object.getPrototypeOf(net).constructor;
+            netType = NetCtor.name;
+            aggregator = aggregators[netType];
             maxEpochs = trainOpts.iterations || 1000;
             errorThresh = trainOpts.errorThresh || NetCtor.trainDefaults.errorThresh;
             threads = unpackTrainOpts(trainOpts, net, data);
@@ -38698,16 +39252,16 @@ function _trainParallel() {
             threadTrainOpts.log = threadLog;
             threadTrainOpts.logPeriod = parallel.logPeriod || 1;
             threadTrainOpts.timeout = !threadTrainOpts.timeout || threadTrainOpts.timeout === Infinity ? Number.MAX_SAFE_INTEGER : threadTrainOpts.timeout;
-            net.verifyIsInitialized(data);
+            net.prepTraining(data, trainOpts);
             globalWeights = net.toJSON();
             error = 1;
             epochs = 0;
             iterations = 0;
             itemIterations = 0;
 
-          case 24:
+          case 26:
             if (!(epochs < maxEpochs && error >= errorThresh)) {
-              _context.next = 58;
+              _context.next = 60;
               break;
             }
 
@@ -38715,57 +39269,57 @@ function _trainParallel() {
             _iteratorNormalCompletion = true;
             _didIteratorError = false;
             _iteratorError = undefined;
-            _context.prev = 29;
+            _context.prev = 31;
 
             for (_iterator = threads[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
               thread = _step.value;
 
               if (parallel.synchronous === true) {
-                result = runTrainingSync(thread.type, globalWeights, thread.partition, threadTrainOpts);
-                promises.push(Promise.resolve(result));
+                _result = runTrainingSync(thread.type, globalWeights, thread.partition, threadTrainOpts);
+                promises.push(Promise.resolve(_result));
               } else {
                 promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, threadTrainOpts));
               }
             }
 
-            _context.next = 37;
+            _context.next = 39;
             break;
 
-          case 33:
-            _context.prev = 33;
-            _context.t0 = _context["catch"](29);
+          case 35:
+            _context.prev = 35;
+            _context.t0 = _context["catch"](31);
             _didIteratorError = true;
             _iteratorError = _context.t0;
 
-          case 37:
-            _context.prev = 37;
-            _context.prev = 38;
+          case 39:
+            _context.prev = 39;
+            _context.prev = 40;
 
             if (!_iteratorNormalCompletion && _iterator.return != null) {
               _iterator.return();
             }
 
-          case 40:
-            _context.prev = 40;
+          case 42:
+            _context.prev = 42;
 
             if (!_didIteratorError) {
-              _context.next = 43;
+              _context.next = 45;
               break;
             }
 
             throw _iteratorError;
 
-          case 43:
-            return _context.finish(40);
-
-          case 44:
-            return _context.finish(37);
-
           case 45:
-            _context.next = 47;
-            return Promise.all(promises);
+            return _context.finish(42);
+
+          case 46:
+            return _context.finish(39);
 
           case 47:
+            _context.next = 49;
+            return Promise.all(promises);
+
+          case 49:
             results = _context.sent;
             maxError = void 0, minError = void 0;
             trainedNets = [];
@@ -38780,15 +39334,28 @@ function _trainParallel() {
               itemIterations += status.iterations * threads[t].partition.length;
             }
 
-            globalWeights = (_trainedNets$ = trainedNets[0]).avg.apply(_trainedNets$, _toConsumableArray(trainedNets.slice(1))).toJSON();
+            globalWeights = aggregator.apply(void 0, [globalWeights, trainOpts].concat(trainedNets));
             error = maxError;
 
             if (minError <= errorThresh) {
               if (parallel.errorMode === 'test') {
                 testnet = new NetCtor();
                 testnet.fromJSON(globalWeights);
-                testResult = testnet.test(data);
-                error = Math.max(error, testResult.error);
+
+                if (!!testnet.test) {
+                  testResult = testnet.test(data);
+                  error = Math.max(error, testResult.error); //} else if (maxError > errorThresh) {
+                  //  error = maxError;
+                } else {
+                  testIterations = 1;
+                  testOpts = Object.assign({}, trainOpts);
+                  testOpts.iterations = testIterations;
+                  result = testnet.train(data, testOpts);
+                  error = result.error;
+                  globalWeights = testnet.toJSON();
+                  iterations += testIterations;
+                  itemIterations += data.length * testIterations;
+                }
               } else {
                 error = minError;
               }
@@ -38807,10 +39374,10 @@ function _trainParallel() {
               });
             }
 
-            _context.next = 24;
+            _context.next = 26;
             break;
 
-          case 58:
+          case 60:
             net.fromJSON(globalWeights);
             endMs = Date.now();
             elapsedMs = endMs - startMs;
@@ -38824,12 +39391,12 @@ function _trainParallel() {
               elapsedMs: elapsedMs
             });
 
-          case 62:
+          case 64:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[29, 33, 37, 45], [38,, 40, 44]]);
+    }, _callee, null, [[31, 35, 39, 47], [40,, 42, 46]]);
   }));
   return _trainParallel.apply(this, arguments);
 }
@@ -38851,6 +39418,12 @@ function unpackTrainOpts(trainOptions, net, data) {
   var totalThreads = 0;
 
   for (var netName in threadsOpts) {
+    var type = netNameToType[netName];
+
+    if (!type) {
+      throw new Error('Unsupported net: ' + netName);
+    }
+
     var config = threadsOpts[netName];
     var threadCount = 1;
     var partitions = null;
@@ -38872,7 +39445,7 @@ function unpackTrainOpts(trainOptions, net, data) {
 
     totalThreads += threadCount;
     types.push({
-      type: netName,
+      type: type,
       threadCount: threadCount,
       partitions: partitions
     });
@@ -38888,10 +39461,10 @@ function unpackTrainOpts(trainOptions, net, data) {
     var _partitions = partition(remainingData, unpartitioned, _partitionSize);
 
     for (var _i = 0, _types = types; _i < _types.length; _i++) {
-      var type = _types[_i];
+      var _type = _types[_i];
 
-      if (!type.partitions) {
-        type.partitions = _partitions.splice(0, type.threadCount);
+      if (!_type.partitions) {
+        _type.partitions = _partitions.splice(0, _type.threadCount);
       }
     }
 
@@ -38903,12 +39476,12 @@ function unpackTrainOpts(trainOptions, net, data) {
   var threads = [];
 
   for (var _i2 = 0, _types2 = types; _i2 < _types2.length; _i2++) {
-    var _type = _types2[_i2];
-    var _partitions2 = _type.partitions;
+    var _type2 = _types2[_i2];
+    var _partitions2 = _type2.partitions;
 
-    for (var t = 0; t < _type.threadCount; t++) {
+    for (var t = 0; t < _type2.threadCount; t++) {
       threads.push({
-        type: _type.type,
+        type: _type2.type,
         partition: _partitions2.shift()
       });
     }
@@ -38918,9 +39491,9 @@ function unpackTrainOpts(trainOptions, net, data) {
 }
 
 function runTrainingSync(netType, netJSON, trainingData, trainOpts) {
-  var brainjs = require('./index').default;
+  var brainjs = require('./index');
 
-  var ctor = brainjs[netType];
+  var ctor = brainjs.get(netType);
   var trained = new ctor();
   trained.fromJSON(netJSON);
   var status = trained.train(trainingData, trainOpts);
@@ -38944,7 +39517,8 @@ function runTrainingWorker(netType, netJSON, trainingData, trainOpts) {
         return reject(error);
       }
 
-      var trained = new brainjs[netType]();
+      var ctor = brainjs.get(netType);
+      var trained = new ctor();
       trained.fromJSON(results.trainedNetJSON);
       resolve({
         trained: trained,
@@ -38958,11 +39532,14 @@ module.exports = {
   trainParallel: trainParallel,
   unpackTrainOpts: unpackTrainOpts
 };
-},{"./utilities/partition":"5E9k","worker-farm":"UCX9","./index":"Focm"}],"SLKQ":[function(require,module,exports) {
+},{"./utilities/partition":"5E9k","worker-farm":"UCX9","./utilities/avg-nets-rnn":"NECL","./utilities/subtract-nets-rnn":"UXy8","./utilities/scalar-mult-rnn":"LKza","./index":"Focm"}],"SLKQ":[function(require,module,exports) {
+var equalsShallow = require('./eq-shallow');
 /**
  * Parameter averaging, supports NeuralNetwork and NeuralNetworkGPU.
  * @param  {...any} nets 
  */
+
+
 module.exports = function avgNets() {
   for (var _len = arguments.length, nets = new Array(_len), _key = 0; _key < _len; _key++) {
     nets[_key] = arguments[_key];
@@ -39047,35 +39624,7 @@ module.exports = function avgNets() {
   merged.fromJSON(refNet);
   return merged;
 };
-
-function equalsShallow() {
-  for (var _len2 = arguments.length, arrays = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-    arrays[_key2] = arguments[_key2];
-  }
-
-  if (!!arrays && arrays.length) {
-    var len = arrays[0].length;
-
-    for (var a = 1; a < arrays.length; a++) {
-      if (arrays[a].length !== len) {
-        return false;
-      }
-    }
-
-    for (var i = 0; i < len; i++) {
-      var item = arrays[0][i];
-
-      for (var _a = 1; _a < arrays.length; _a++) {
-        if (item !== arrays[_a][i]) {
-          return false;
-        }
-      }
-    }
-  }
-
-  return true;
-}
-},{}],"8epZ":[function(require,module,exports) {
+},{"./eq-shallow":"jlVZ"}],"8epZ":[function(require,module,exports) {
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -42992,6 +43541,14 @@ function () {
 
 module.exports = DataFormatter;
 },{}],"gJGF":[function(require,module,exports) {
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -43020,6 +43577,18 @@ var zeros = require('../utilities/zeros');
 var DataFormatter = require('../utilities/data-formatter');
 
 var NeuralNetwork = require('../neural-network');
+
+var _require2 = require('../parallel-trainer'),
+    trainParallel = _require2.trainParallel;
+
+var _require3 = require('../utilities/avg-nets-rnn'),
+    avgNetsRnn = _require3.avgNetsRnn;
+
+var _require4 = require('../utilities/subtract-nets-rnn'),
+    subtractNetsRnn = _require4.subtractNetsRnn;
+
+var _require5 = require('../utilities/scalar-mult-rnn'),
+    multNetRnn = _require5.multNetRnn;
 
 var RNN =
 /*#__PURE__*/
@@ -43473,6 +44042,47 @@ function () {
         endTime: endTime
       };
     }
+  }, {
+    key: "formatData",
+    value: function formatData(data) {
+      if (this.hasOwnProperty('setupData')) {
+        this.setupData(data);
+      }
+
+      this.verifyIsInitialized(data);
+    }
+    /**
+     * Trains in multithreaded mode, given the "parallel" training option.
+     * 
+     * @param data
+     * @param options
+     * @returns {Promise}
+     * @resolves {{error: number, iterations: number}}
+     * @rejects {{trainError: string, status: {error: number, iterations: number}}
+     */
+
+  }, {
+    key: "trainAsync",
+    value: function trainAsync(data) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      this.updateTrainingOptions(options);
+
+      if (this.trainOpts.parallel) {
+        return trainParallel(data, this, this.trainOpts);
+      }
+
+      var self = this;
+      return new Promise(function (resolve, reject) {
+        try {
+          resolve(self.train(rawData, options));
+        } catch (trainError) {
+          reject({
+            trainError: trainError,
+            status: status
+          });
+        }
+      });
+    }
     /**
      *
      * @param {Object[]|String[]} data an array of objects: `{input: 'string', output: 'string'}` or an array of strings
@@ -43532,6 +44142,65 @@ function () {
     key: "addFormat",
     value: function addFormat() {
       throw new Error('not yet implemented');
+    }
+    /**
+     * Merge these nets via parameter averaging.
+     * 
+     * @param  {...any} nets other nets of the same type, to average with this one
+     */
+
+  }, {
+    key: "avg",
+    value: function avg() {
+      for (var _len = arguments.length, nets = new Array(_len), _key = 0; _key < _len; _key++) {
+        nets[_key] = arguments[_key];
+      }
+
+      if (!nets || !nets.length) {
+        return this;
+      }
+
+      return avgNetsRnn.apply(void 0, _toConsumableArray([this].concat(nets)));
+    }
+    /**
+     * Get the difference of two nets.
+     * 
+     * @param {*} rhsNet another RNN of the same type
+     * @returns the difference of this and rhsNet
+     */
+
+  }, {
+    key: "subtract",
+    value: function subtract(rhsNet) {
+      if (!rhsNet) {
+        return this;
+      }
+
+      return subtractNetsRnn(this, rhsNet);
+    }
+    /**
+     * Multiply this net by a scalar value.
+     * 
+     * @param {*} multiplier scalar value
+     * @return the multiplied net
+     */
+
+  }, {
+    key: "multiplyScalar",
+    value: function multiplyScalar(multiplier) {
+      return multNetRnn(multiplier, this);
+    }
+    /**
+     * Divide this net by a scalar value.
+     * 
+     * @param {*} divisor scalar value
+     * @return the divided net
+     */
+
+  }, {
+    key: "divideScalar",
+    value: function divideScalar(divisor) {
+      return this.multiplyScalar(1 / divisor);
     }
     /**
      *
@@ -43853,11 +44522,12 @@ RNN.trainDefaults = {
   log: false,
   logPeriod: 10,
   learningRate: 0.01,
+  parallel: null,
   callback: null,
   callbackPeriod: 10
 };
 module.exports = RNN;
-},{"./matrix":"v84l","./matrix/random-matrix":"zGuK","./matrix/equation":"ytIu","./matrix/sample-i":"lOwB","./matrix/max-i":"2wnU","./matrix/softmax":"Ens1","./matrix/copy":"SjoR","../utilities/random":"Sd27","../utilities/zeros":"M4LY","../utilities/data-formatter":"91u3","../neural-network":"8epZ"}],"V51U":[function(require,module,exports) {
+},{"./matrix":"v84l","./matrix/random-matrix":"zGuK","./matrix/equation":"ytIu","./matrix/sample-i":"lOwB","./matrix/max-i":"2wnU","./matrix/softmax":"Ens1","./matrix/copy":"SjoR","../utilities/random":"Sd27","../utilities/zeros":"M4LY","../utilities/data-formatter":"91u3","../neural-network":"8epZ","../parallel-trainer":"IyGM","../utilities/avg-nets-rnn":"NECL","../utilities/subtract-nets-rnn":"UXy8","../utilities/scalar-mult-rnn":"LKza"}],"V51U":[function(require,module,exports) {
 function ArrayLookupTable(data, prop) {
   this.length = 0;
   this.prop = prop;
@@ -45677,6 +46347,7 @@ var brain = {
     LSTM: LSTM,
     GRU: GRU
   },
+  get: get,
   utilities: {
     max: max,
     mse: mse,
@@ -45698,6 +46369,14 @@ if (typeof window !== 'undefined') {
 
 if (typeof module !== 'undefined') {
   module.exports = brain;
+}
+
+function get(brainProp) {
+  return brainProp.split('.').reduce(index, brain);
+}
+
+function index(obj, i) {
+  return obj[i];
 }
 },{"./activation":"l4U/","./cross-validate":"+wYj","./layer":"X3lc","./likely":"dfGl","./lookup":"Q1a6","./praxis":"4P9L","./feed-forward":"eqC7","./neural-network":"8epZ","./neural-network-gpu":"6trg","./train-stream":"vEEq","./recurrent":"JVtt","./recurrent/rnn-time-step":"zri4","./recurrent/lstm-time-step":"hEPI","./recurrent/gru-time-step":"+7gC","./recurrent/rnn":"gJGF","./recurrent/lstm":"e2+i","./recurrent/gru":"wLPK","./utilities/max":"UFcl","./utilities/mse":"YGn7","./utilities/ones":"f7P8","./utilities/random":"Sd27","./utilities/random-weight":"TX07","./utilities/randos":"S8tM","./utilities/range":"YhH7","./utilities/to-array":"HBY8","./utilities/data-formatter":"91u3","./utilities/zeros":"M4LY","./utilities/to-svg":"UFo7"}]},{},["Focm"], null)
 //# sourceMappingURL=/brain-browser.js.map
