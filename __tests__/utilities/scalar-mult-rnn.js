@@ -1,5 +1,7 @@
 const assert = require('assert');
 const multNetRnnJson = require('../../src/utilities/scalar-mult-rnn').multNetRnnJson;
+const brain = require('../../src');
+const LSTM = brain.recurrent.LSTM;
 
 describe('scalar-mult-rnn', () => {
 
@@ -12,6 +14,25 @@ describe('scalar-mult-rnn', () => {
       assert.deepEqual(jsonExpected, jsonActual);
     });
 
+    it('identity multiplication', () => {
+      const trainingData = [
+        "0+0=0",
+        "0+1=1",
+        "1+0=1",
+      ];
+
+      const net = new LSTM();
+      net.train(trainingData, {iterations: 1, log: false});
+      const exported = net.toJSON();
+      const exportedJson = jsonCycle(exported);
+      const identity = multNetRnnJson(1, exported);
+      const identityJson = jsonCycle(identity);
+      assert.deepStrictEqual(identityJson, exportedJson);
+    });
+
+    function jsonCycle(x) {
+      return JSON.parse(JSON.stringify(x));
+    }
   });
 
   /**
