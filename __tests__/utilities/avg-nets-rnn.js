@@ -14,6 +14,22 @@ describe('avg-nets-rnn', () => {
       assert.deepEqual(jsonExpected, jsonActual);
     });
 
+    it('averages the weights of many nets with high precision', () => {
+      const values = [
+        0.058879022977933286, 
+        -0.02431313682690635, 
+        -0.05476195790180191, 
+        0.06875984469657391,
+        0.014194271046724636,
+        0.0935367434210442
+      ];
+      const jsons = values.map((v) => newNet(v));
+      const jsonActual = avgNetsRnnJson(...jsons);
+      const expectedAvg = values.reduce((v, t) => v + t, 0) / values.length;
+      const jsonExpected = newNet(expectedAvg);
+      assert.deepEqual(jsonExpected, jsonActual);
+    });
+
   });
 
   /**
