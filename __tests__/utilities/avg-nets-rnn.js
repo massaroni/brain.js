@@ -1,16 +1,47 @@
 const assert = require('assert');
 const avgNetsRnnJson = require('../../src/utilities/avg-nets-rnn').avgNetsRnnJson;
+const brain = require('../../src');
+const LSTMTimeStep = brain.recurrent.LSTMTimeStep;
 
 describe('avg-nets-rnn', () => {
+
+  describe('LSTMTimeStep', () => {
+
+    it('averages two nets, smoke test', () => {
+      const trainingData = [
+        [0, 1, 2],
+        [1, 2, 0],
+        [2, 0, 1],
+      ];
+
+      const net = new LSTMTimeStep();
+      net.train(trainingData, {iterations: 1, log: false});
+      const net2 = new LSTMTimeStep();
+      net2.train(trainingData.slice(1), {iterations: 1, log: false});
+
+      const avg = net.avg(net2);
+      const prediction = avg.run([1, 2]);
+      assert.equal(true, prediction < 1 && prediction > -1);
+
+      const avgJson = avg.toJSON();
+      const netJson = net.toJSON();
+      const net2Json = net2.toJSON();
+      assert.equal(
+        Math.fround((netJson.hiddenLayers[0].weight.weights[0] + net2Json.hiddenLayers[0].weight.weights[0]) / 2),
+        avgJson.hiddenLayers[0].weight.weights[0]
+      );
+    });
+
+  });
 
   describe('LSTM', () => {
 
     it('averages the weights of three nets', () => {
-      const jsonA = newNet(0.5);
-      const jsonB = newNet(0.1);
-      const jsonC = newNet(0.6);
+      const jsonA = newLstmJson(0.5);
+      const jsonB = newLstmJson(0.1);
+      const jsonC = newLstmJson(0.6);
       const jsonActual = avgNetsRnnJson(jsonA, jsonB, jsonC);
-      const jsonExpected = newNet((0.5 + 0.1 + 0.6) / 3);
+      const jsonExpected = newLstmJson((0.5 + 0.1 + 0.6) / 3);
       assert.deepEqual(jsonExpected, jsonActual);
     });
 
@@ -23,10 +54,10 @@ describe('avg-nets-rnn', () => {
         0.014194271046724636,
         0.0935367434210442
       ];
-      const jsons = values.map((v) => newNet(v));
+      const jsons = values.map((v) => newLstmJson(v));
       const jsonActual = avgNetsRnnJson(...jsons);
       const expectedAvg = values.reduce((v, t) => v + t, 0) / values.length;
-      const jsonExpected = newNet(expectedAvg);
+      const jsonExpected = newLstmJson(expectedAvg);
       assert.deepEqual(jsonExpected, jsonActual);
     });
 
@@ -36,7 +67,7 @@ describe('avg-nets-rnn', () => {
    * Generate a json blob of an RNN for testing purposes with all the same weights.
    * @param {*} weight 
    */
-  function newNet(weight) {
+  function newLstmJson(weight) {
     return {
       "type": "LSTM",
       "options": {
