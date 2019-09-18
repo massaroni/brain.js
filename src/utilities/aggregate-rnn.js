@@ -29,13 +29,20 @@ function aggNetsRnn(aggregatorFactory, ...nets) {
 
 function aggNetsRnnJson(aggregatorFactory, ...jsons) {
   checkCompatibility(jsons);
-  const input = aggLayer(aggregatorFactory, jsons.map((j) => j.input));
+
   const outputConnector = aggLayer(aggregatorFactory, jsons.map((j) => j.outputConnector));
   const output = aggLayer(aggregatorFactory, jsons.map((j) => j.output));
   const hiddenLayers = aggHiddenLayers(aggregatorFactory, jsons);
   const options = jsons[0].options; // clone this?
   const type = jsons[0].type;
-  return {type, options, input, hiddenLayers, outputConnector, output};
+
+  const aggregated = { type, options, hiddenLayers, outputConnector, output };
+  if (jsons[0].input) {
+    const input = aggLayer(aggregatorFactory, jsons.map((j) => j.input));
+    aggregated.input = input;
+  }
+
+  return aggregated;
 }
 
 function aggHiddenLayers(aggregatorFactory, jsons) {
