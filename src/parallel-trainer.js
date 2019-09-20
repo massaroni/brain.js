@@ -9,7 +9,7 @@ const netNameToType = {
   NeuralNetwork: 'NeuralNetwork',
   NeuralNetworkGPU: 'NeuralNetworkGPU',
   //RNNTimeStep: 'recurrent.RNNTimeStep',
-  //LSTMTimeStep: 'recurrent.LSTMTimeStep',
+  LSTMTimeStep: 'recurrent.LSTMTimeStep',
   //GRUTimeStep: 'recurrent.GRUTimeStep',
   //RNN: 'recurrent.RNN',
   LSTM: 'recurrent.LSTM',
@@ -20,6 +20,7 @@ const aggregators = {
   NeuralNetwork: aggregatorNN,
   NeuralNetworkGPU: aggregatorNN,
   LSTM: aggregatorRNN,
+  LSTMTimeStep: aggregatorRNN,
 }
 
 function aggregatorNN(previousJson, trainOpts, ...trainedNets) {
