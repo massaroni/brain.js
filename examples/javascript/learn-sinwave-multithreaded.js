@@ -3,7 +3,6 @@ const { makeSerieses, testTimeStep } = require('../../benchmark/timestep-rnn-uti
 
 //// Configurable ////
 const curves = makeSerieses(200, 10, 'sin(x/6.5)', 1, 1, 0);
-const multithreaded = true;
 const options = {
   parallel: {
     threads: 7,
@@ -27,7 +26,7 @@ const LSTMTimeStep = brain.recurrent.LSTMTimeStep;
 const net = new LSTMTimeStep(options);
 let trainedJson;
 
-if (multithreaded) {
+if (options.parallel) {
   net.trainAsync(curves, options).then(function (status) {
     console.log('DONE');
     logAsync(status);
