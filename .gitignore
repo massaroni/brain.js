@@ -13,3 +13,7 @@ yarn.lock
 
 # code coverage
 __coverage__
+
+# VS Code IDE
+.vscode
+
