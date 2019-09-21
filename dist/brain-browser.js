@@ -38756,9 +38756,6 @@ function aggNetsRnnJson(aggregatorFactory) {
   }
 
   checkCompatibility(jsons);
-  var input = aggLayer(aggregatorFactory, jsons.map(function (j) {
-    return j.input;
-  }));
   var outputConnector = aggLayer(aggregatorFactory, jsons.map(function (j) {
     return j.outputConnector;
   }));
@@ -38769,14 +38766,22 @@ function aggNetsRnnJson(aggregatorFactory) {
   var options = jsons[0].options; // clone this?
 
   var type = jsons[0].type;
-  return {
+  var aggregated = {
     type: type,
     options: options,
-    input: input,
     hiddenLayers: hiddenLayers,
     outputConnector: outputConnector,
     output: output
   };
+
+  if (jsons[0].input) {
+    var input = aggLayer(aggregatorFactory, jsons.map(function (j) {
+      return j.input;
+    }));
+    aggregated.input = input;
+  }
+
+  return aggregated;
 }
 
 function aggHiddenLayers(aggregatorFactory, jsons) {
@@ -39124,7 +39129,7 @@ var netNameToType = {
   NeuralNetwork: 'NeuralNetwork',
   NeuralNetworkGPU: 'NeuralNetworkGPU',
   //RNNTimeStep: 'recurrent.RNNTimeStep',
-  //LSTMTimeStep: 'recurrent.LSTMTimeStep',
+  LSTMTimeStep: 'recurrent.LSTMTimeStep',
   //GRUTimeStep: 'recurrent.GRUTimeStep',
   //RNN: 'recurrent.RNN',
   LSTM: 'recurrent.LSTM' //GRU: 'recurrent.GRU',
@@ -39133,7 +39138,8 @@ var netNameToType = {
 var aggregators = {
   NeuralNetwork: aggregatorNN,
   NeuralNetworkGPU: aggregatorNN,
-  LSTM: aggregatorRNN
+  LSTM: aggregatorRNN,
+  LSTMTimeStep: aggregatorRNN
 };
 
 function aggregatorNN(previousJson, trainOpts) {
