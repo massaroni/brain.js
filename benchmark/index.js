@@ -1,33 +1,70 @@
 const brainjs = require('../src');
 const mathGenerator = require('./math-db-generator');
 const shuffle = require('./shuffle-deterministic');
+const { makeSerieses, testTimeStep } = require('./timestep-rnn-utils');
 
-const brainTrainingSet = mathGenerator(5000, 'sin(x/3) + (0.5 * cos(x/2))', 1, -120, 120, true);
-shuffle(brainTrainingSet, (x) => JSON.stringify(x.input));
-console.log('Loaded', brainTrainingSet.length, 'training items.');
-console.log(brainTrainingSet[0].input.length, 'Input neurons.');
+const timestepTrainingSet = makeSerieses(200, 10, 'sin(x/6.5)', 1, 1, 0);
+const neuralNetTrainingSet = mathGenerator(5000, 'sin(x/3) + (0.5 * cos(x/2))', 1, -120, 120, true);
+shuffle(neuralNetTrainingSet, (x) => JSON.stringify(x.input));
+console.log(`Loaded ${neuralNetTrainingSet.length} neural net training items.`);
+console.log(neuralNetTrainingSet[0].input.length, 'Input neurons.');
 
 const configs = [
   {
-    name: 'Single-thread 0.0001 LR',
+    name: 'LSTMTimeStep 3 Threads 0.00005 LR',
+    net: 'LSTMTimeStep',
     config: {
-      iterations: 10000,
-      learningRate: 0.0001,
-      hiddenLayers: [50, 50],
-      errorThresh: 0.005,
-      activation: 'tanh',
-      momentum: 0.5,
-      binaryThresh: 0.5,
-      beta1: 0.9,
-      beta2: 0.999,
-      epsilon: 1e-8,
+      parallel: {
+        threads: 3,
+        iterationsPerThread: 4,
+        errorMode: 'test',
+        partitionSize: 50,
+        log: false
+      },
+      iterations: 1000,
+      hiddenLayers: [150],
+      learningRate: 0.00005,
+      errorThresh: 0.0002,
+      log: true,
       logPeriod: 1,
-      log: true
     }
   },
 
   {
+    name: 'LSTMTimeStep Single Thread 0.00005 LR',
+    net: 'LSTMTimeStep',
+    config: {
+      iterations: 10000,
+      hiddenLayers: [150],
+      learningRate: 0.00005,
+      errorThresh: 0.0002,
+      log: true,
+      logPeriod: 1,
+    }
+  },
+
+  // {
+  //   name: 'Single-thread 0.0001 LR',
+  //   net: 'NeuralNetwork',
+  //   config: {
+  //     iterations: 10000,
+  //     learningRate: 0.0001,
+  //     hiddenLayers: [50, 50],
+  //     errorThresh: 0.005,
+  //     activation: 'tanh',
+  //     momentum: 0.5,
+  //     binaryThresh: 0.5,
+  //     beta1: 0.9,
+  //     beta2: 0.999,
+  //     epsilon: 1e-8,
+  //     logPeriod: 1,
+  //     log: true
+  //   }
+  // },
+
+  {
     name: '2 Threads 0.0001 LR Overlapping Partitions',
+    net: 'NeuralNetwork',
     config: {
       parallel: {
         threads: 2,
@@ -53,6 +90,7 @@ const configs = [
 
   {
     name: '4 Threads 0.0001 LR Overlapping Partitions',
+    net: 'NeuralNetwork',
     config: {
       parallel: {
         threads: 4,
@@ -78,6 +116,7 @@ const configs = [
 
   {
     name: 'Single-thread 0.001 LR',
+    net: 'NeuralNetwork',
     config: {
       iterations: 10000,
       learningRate: 0.001,
@@ -96,6 +135,7 @@ const configs = [
 
   {
     name: '2 Threads 0.001 LR Overlapping Partitions',
+    net: 'NeuralNetwork',
     config: {
       parallel: {
         threads: 2,
@@ -121,6 +161,7 @@ const configs = [
 
   {
     name: 'Single-thread 0.01 LR',
+    net: 'NeuralNetwork',
     config: {
       iterations: 10000,
       learningRate: 0.01,
@@ -139,6 +180,7 @@ const configs = [
 
   {
     name: '2 Threads 0.01 LR Overlapping Partitions',
+    net: 'NeuralNetwork',
     config: {
       parallel: {
         threads: 2,
@@ -164,6 +206,32 @@ const configs = [
 
 ];
 
+const netNameToTestUtils = {
+  NeuralNetwork: {
+    ctor: brainjs.NeuralNetwork,
+    tester: neuralNetTester,
+    data: neuralNetTrainingSet,
+  },
+  NeuralNetworkGPU: {
+    ctor: brainjs.NeuralNetwork,
+    tester: neuralNetTester,
+    data: neuralNetTrainingSet,
+  },
+  LSTMTimeStep: {
+    ctor: brainjs.recurrent.LSTMTimeStep,
+    tester: timestepTester,
+    data: timestepTrainingSet,
+  },
+};
+
+function timestepTester(net) {
+  return testTimeStep(net, timestepTrainingSet).error;
+}
+
+function neuralNetTester(net) {
+  return net.test(neuralNetTrainingSet).error;
+}
+
 let allResults = [];
 let c = 0;
 function processNext() {
@@ -181,7 +249,9 @@ function runTraining(config) {
   console.log('////// STARTING ' + name + ' //////');
 
   const parallel = config.config.parallel;
-  const net = new brainjs.NeuralNetwork(config.config);
+  const NetCtor = netNameToTestUtils[config.net].ctor;
+  const net = new NetCtor(config.config);
+  const trainingSet = netNameToTestUtils[config.net].data;
   let itemIterations = 0;
   let threadCount = 0;
   const startMs = Date.now();
@@ -190,7 +260,8 @@ function runTraining(config) {
     const endMs = Date.now();
     const durationS = Math.floor((endMs - startMs) / 1000);
     const error = status.error;
-    const testError = net.test(brainTrainingSet).error;
+    const tester = netNameToTestUtils[config.net].tester;
+    const testError = tester(net);
     const itemIterationsPerThread = Math.ceil(itemIterations / threadCount);
     allResults.push({config, durationS, error, testError, threadCount, itemIterationsPerThread, itemIterations});
     console.log('////// DONE ' + name + ' //////');
@@ -208,7 +279,7 @@ function runTraining(config) {
       console.log('[' + name + '] error =', status.error);
       console.log('[' + name + '] item iterations =', itemIterations);
     };
-    return net.trainAsync(brainTrainingSet, config.config).then(done, fail);
+    return net.trainAsync(trainingSet, config.config).then(done, fail);
   }
 
   threadCount = 1;
@@ -218,11 +289,11 @@ function runTraining(config) {
     const status = statusRegex.exec(statusStr);
     if (!!status) {
       const iterations = parseInt(status[1]);
-      itemIterations += iterations * brainTrainingSet.length;
+      itemIterations += iterations * trainingSet.length;
       console.log('[' + name + '] item iterations =', itemIterations);
     }
   };
-  done(net.train(brainTrainingSet, config.config));
+  done(net.train(trainingSet, config.config));
   return Promise.resolve();
 }
 
