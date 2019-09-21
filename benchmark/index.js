@@ -11,6 +11,26 @@ console.log(neuralNetTrainingSet[0].input.length, 'Input neurons.');
 
 const configs = [
   {
+    name: 'LSTMTimeStep 4 Threads 0.00005 LR',
+    net: 'LSTMTimeStep',
+    config: {
+      parallel: {
+        threads: 4,
+        iterationsPerThread: 4,
+        errorMode: 'test',
+        partitionSize: 70,
+        log: false
+      },
+      iterations: 1000,
+      hiddenLayers: [150],
+      learningRate: 0.00005,
+      errorThresh: 0.0002,
+      log: true,
+      logPeriod: 1,
+    }
+  },
+
+  {
     name: 'LSTMTimeStep 3 Threads 0.00005 LR',
     net: 'LSTMTimeStep',
     config: {
@@ -18,7 +38,27 @@ const configs = [
         threads: 3,
         iterationsPerThread: 4,
         errorMode: 'test',
-        partitionSize: 50,
+        partitionSize: 90,
+        log: false
+      },
+      iterations: 1000,
+      hiddenLayers: [150],
+      learningRate: 0.00005,
+      errorThresh: 0.0002,
+      log: true,
+      logPeriod: 1,
+    }
+  },
+
+  {
+    name: 'LSTMTimeStep 2 Threads 0.00005 LR',
+    net: 'LSTMTimeStep',
+    config: {
+      parallel: {
+        threads: 2,
+        iterationsPerThread: 4,
+        errorMode: 'test',
+        partitionSize: 120,
         log: false
       },
       iterations: 1000,
