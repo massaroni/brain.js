@@ -10,3 +10,7 @@ yarn.lock
 
 # parcel bundler cache
 .cache
+
+# VS Code IDE
+.vscode
+
