@@ -459,7 +459,7 @@ function () {
 }();
 
 module.exports = CrossValidate;
-},{}],"qN/c":[function(require,module,exports) {
+},{}],"/T23":[function(require,module,exports) {
 function setupArguments(args) {
   const newArguments = new Array(args.length);
   for (let i = 0; i < args.length; i++) {
@@ -7040,7 +7040,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -7191,7 +7191,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -12845,7 +12845,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -13452,9 +13452,7 @@ function (_Kernel) {
 module.exports = {
   CPUKernel: CPUKernel
 };
-},{"../kernel":"JYjN","../function-builder":"HOQD","./function-node":"JBVu","../../utils":"9h1E","./kernel-string":"71XX"}],"dVPj":[function(require,module,exports) {
-'use strict';
-
+},{"../kernel":"JYjN","../function-builder":"HOQD","./function-node":"JBVu","../../utils":"9h1E","./kernel-string":"71XX"}],"boSK":[function(require,module,exports) {
 function createContext(width, height, options) {
   width = width | 0;
   height = height | 0;
@@ -13526,7 +13524,9451 @@ function createContext(width, height, options) {
 }
 
 module.exports = createContext;
-},{}],"pGKr":[function(require,module,exports) {
+},{}],"gXRl":[function(require,module,exports) {
+/**
+ * Bit twiddling hacks for JavaScript.
+ *
+ * Author: Mikola Lysenko
+ *
+ * Ported from Stanford bit twiddling hack library:
+ *    http://graphics.stanford.edu/~seander/bithacks.html
+ */
+
+"use strict"; "use restrict";
+
+//Number of bits in an integer
+var INT_BITS = 32;
+
+//Constants
+exports.INT_BITS  = INT_BITS;
+exports.INT_MAX   =  0x7fffffff;
+exports.INT_MIN   = -1<<(INT_BITS-1);
+
+//Returns -1, 0, +1 depending on sign of x
+exports.sign = function(v) {
+  return (v > 0) - (v < 0);
+}
+
+//Computes absolute value of integer
+exports.abs = function(v) {
+  var mask = v >> (INT_BITS-1);
+  return (v ^ mask) - mask;
+}
+
+//Computes minimum of integers x and y
+exports.min = function(x, y) {
+  return y ^ ((x ^ y) & -(x < y));
+}
+
+//Computes maximum of integers x and y
+exports.max = function(x, y) {
+  return x ^ ((x ^ y) & -(x < y));
+}
+
+//Checks if a number is a power of two
+exports.isPow2 = function(v) {
+  return !(v & (v-1)) && (!!v);
+}
+
+//Computes log base 2 of v
+exports.log2 = function(v) {
+  var r, shift;
+  r =     (v > 0xFFFF) << 4; v >>>= r;
+  shift = (v > 0xFF  ) << 3; v >>>= shift; r |= shift;
+  shift = (v > 0xF   ) << 2; v >>>= shift; r |= shift;
+  shift = (v > 0x3   ) << 1; v >>>= shift; r |= shift;
+  return r | (v >> 1);
+}
+
+//Computes log base 10 of v
+exports.log10 = function(v) {
+  return  (v >= 1000000000) ? 9 : (v >= 100000000) ? 8 : (v >= 10000000) ? 7 :
+          (v >= 1000000) ? 6 : (v >= 100000) ? 5 : (v >= 10000) ? 4 :
+          (v >= 1000) ? 3 : (v >= 100) ? 2 : (v >= 10) ? 1 : 0;
+}
+
+//Counts number of bits
+exports.popCount = function(v) {
+  v = v - ((v >>> 1) & 0x55555555);
+  v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
+  return ((v + (v >>> 4) & 0xF0F0F0F) * 0x1010101) >>> 24;
+}
+
+//Counts number of trailing zeros
+function countTrailingZeros(v) {
+  var c = 32;
+  v &= -v;
+  if (v) c--;
+  if (v & 0x0000FFFF) c -= 16;
+  if (v & 0x00FF00FF) c -= 8;
+  if (v & 0x0F0F0F0F) c -= 4;
+  if (v & 0x33333333) c -= 2;
+  if (v & 0x55555555) c -= 1;
+  return c;
+}
+exports.countTrailingZeros = countTrailingZeros;
+
+//Rounds to next power of 2
+exports.nextPow2 = function(v) {
+  v += v === 0;
+  --v;
+  v |= v >>> 1;
+  v |= v >>> 2;
+  v |= v >>> 4;
+  v |= v >>> 8;
+  v |= v >>> 16;
+  return v + 1;
+}
+
+//Rounds down to previous power of 2
+exports.prevPow2 = function(v) {
+  v |= v >>> 1;
+  v |= v >>> 2;
+  v |= v >>> 4;
+  v |= v >>> 8;
+  v |= v >>> 16;
+  return v - (v>>>1);
+}
+
+//Computes parity of word
+exports.parity = function(v) {
+  v ^= v >>> 16;
+  v ^= v >>> 8;
+  v ^= v >>> 4;
+  v &= 0xf;
+  return (0x6996 >>> v) & 1;
+}
+
+var REVERSE_TABLE = new Array(256);
+
+(function(tab) {
+  for(var i=0; i<256; ++i) {
+    var v = i, r = i, s = 7;
+    for (v >>>= 1; v; v >>>= 1) {
+      r <<= 1;
+      r |= v & 1;
+      --s;
+    }
+    tab[i] = (r << s) & 0xff;
+  }
+})(REVERSE_TABLE);
+
+//Reverse bits in a 32 bit word
+exports.reverse = function(v) {
+  return  (REVERSE_TABLE[ v         & 0xff] << 24) |
+          (REVERSE_TABLE[(v >>> 8)  & 0xff] << 16) |
+          (REVERSE_TABLE[(v >>> 16) & 0xff] << 8)  |
+           REVERSE_TABLE[(v >>> 24) & 0xff];
+}
+
+//Interleave bits of 2 coordinates with 16 bits.  Useful for fast quadtree codes
+exports.interleave2 = function(x, y) {
+  x &= 0xFFFF;
+  x = (x | (x << 8)) & 0x00FF00FF;
+  x = (x | (x << 4)) & 0x0F0F0F0F;
+  x = (x | (x << 2)) & 0x33333333;
+  x = (x | (x << 1)) & 0x55555555;
+
+  y &= 0xFFFF;
+  y = (y | (y << 8)) & 0x00FF00FF;
+  y = (y | (y << 4)) & 0x0F0F0F0F;
+  y = (y | (y << 2)) & 0x33333333;
+  y = (y | (y << 1)) & 0x55555555;
+
+  return x | (y << 1);
+}
+
+//Extracts the nth interleaved component
+exports.deinterleave2 = function(v, n) {
+  v = (v >>> n) & 0x55555555;
+  v = (v | (v >>> 1))  & 0x33333333;
+  v = (v | (v >>> 2))  & 0x0F0F0F0F;
+  v = (v | (v >>> 4))  & 0x00FF00FF;
+  v = (v | (v >>> 16)) & 0x000FFFF;
+  return (v << 16) >> 16;
+}
+
+
+//Interleave bits of 3 coordinates, each with 10 bits.  Useful for fast octree codes
+exports.interleave3 = function(x, y, z) {
+  x &= 0x3FF;
+  x  = (x | (x<<16)) & 4278190335;
+  x  = (x | (x<<8))  & 251719695;
+  x  = (x | (x<<4))  & 3272356035;
+  x  = (x | (x<<2))  & 1227133513;
+
+  y &= 0x3FF;
+  y  = (y | (y<<16)) & 4278190335;
+  y  = (y | (y<<8))  & 251719695;
+  y  = (y | (y<<4))  & 3272356035;
+  y  = (y | (y<<2))  & 1227133513;
+  x |= (y << 1);
+  
+  z &= 0x3FF;
+  z  = (z | (z<<16)) & 4278190335;
+  z  = (z | (z<<8))  & 251719695;
+  z  = (z | (z<<4))  & 3272356035;
+  z  = (z | (z<<2))  & 1227133513;
+  
+  return x | (z << 2);
+}
+
+//Extracts nth interleaved component of a 3-tuple
+exports.deinterleave3 = function(v, n) {
+  v = (v >>> n)       & 1227133513;
+  v = (v | (v>>>2))   & 3272356035;
+  v = (v | (v>>>4))   & 251719695;
+  v = (v | (v>>>8))   & 4278190335;
+  v = (v | (v>>>16))  & 0x3FF;
+  return (v<<22)>>22;
+}
+
+//Computes next combination in colexicographic order (this is mistakenly called nextPermutation on the bit twiddling hacks page)
+exports.nextCombination = function(v) {
+  var t = v | (v - 1);
+  return (t + 1) | (((~t & -~t) - 1) >>> (countTrailingZeros(v) + 1));
+}
+
+
+},{}],"TR9e":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var WebGLContextAttributes = function WebGLContextAttributes(alpha, depth, stencil, antialias, premultipliedAlpha, preserveDrawingBuffer, preferLowPowerToHighPerformance, failIfMajorPerformanceCaveat) {
+  _classCallCheck(this, WebGLContextAttributes);
+
+  this.alpha = alpha;
+  this.depth = depth;
+  this.stencil = stencil;
+  this.antialias = antialias;
+  this.premultipliedAlpha = premultipliedAlpha;
+  this.preserveDrawingBuffer = preserveDrawingBuffer;
+  this.preferLowPowerToHighPerformance = preferLowPowerToHighPerformance;
+  this.failIfMajorPerformanceCaveat = failIfMajorPerformanceCaveat;
+};
+
+module.exports = {
+  WebGLContextAttributes: WebGLContextAttributes
+};
+},{}],"1+Ac":[function(require,module,exports) {
+module.exports = [
+  // current
+    'precision'
+  , 'highp'
+  , 'mediump'
+  , 'lowp'
+  , 'attribute'
+  , 'const'
+  , 'uniform'
+  , 'varying'
+  , 'break'
+  , 'continue'
+  , 'do'
+  , 'for'
+  , 'while'
+  , 'if'
+  , 'else'
+  , 'in'
+  , 'out'
+  , 'inout'
+  , 'float'
+  , 'int'
+  , 'uint'
+  , 'void'
+  , 'bool'
+  , 'true'
+  , 'false'
+  , 'discard'
+  , 'return'
+  , 'mat2'
+  , 'mat3'
+  , 'mat4'
+  , 'vec2'
+  , 'vec3'
+  , 'vec4'
+  , 'ivec2'
+  , 'ivec3'
+  , 'ivec4'
+  , 'bvec2'
+  , 'bvec3'
+  , 'bvec4'
+  , 'sampler1D'
+  , 'sampler2D'
+  , 'sampler3D'
+  , 'samplerCube'
+  , 'sampler1DShadow'
+  , 'sampler2DShadow'
+  , 'struct'
+
+  // future
+  , 'asm'
+  , 'class'
+  , 'union'
+  , 'enum'
+  , 'typedef'
+  , 'template'
+  , 'this'
+  , 'packed'
+  , 'goto'
+  , 'switch'
+  , 'default'
+  , 'inline'
+  , 'noinline'
+  , 'volatile'
+  , 'public'
+  , 'static'
+  , 'extern'
+  , 'external'
+  , 'interface'
+  , 'long'
+  , 'short'
+  , 'double'
+  , 'half'
+  , 'fixed'
+  , 'unsigned'
+  , 'input'
+  , 'output'
+  , 'hvec2'
+  , 'hvec3'
+  , 'hvec4'
+  , 'dvec2'
+  , 'dvec3'
+  , 'dvec4'
+  , 'fvec2'
+  , 'fvec3'
+  , 'fvec4'
+  , 'sampler2DRect'
+  , 'sampler3DRect'
+  , 'sampler2DRectShadow'
+  , 'sizeof'
+  , 'cast'
+  , 'namespace'
+  , 'using'
+]
+
+},{}],"Upv1":[function(require,module,exports) {
+module.exports = [
+    '<<='
+  , '>>='
+  , '++'
+  , '--'
+  , '<<'
+  , '>>'
+  , '<='
+  , '>='
+  , '=='
+  , '!='
+  , '&&'
+  , '||'
+  , '+='
+  , '-='
+  , '*='
+  , '/='
+  , '%='
+  , '&='
+  , '^^'
+  , '^='
+  , '|='
+  , '('
+  , ')'
+  , '['
+  , ']'
+  , '.'
+  , '!'
+  , '~'
+  , '*'
+  , '/'
+  , '%'
+  , '+'
+  , '-'
+  , '<'
+  , '>'
+  , '&'
+  , '^'
+  , '|'
+  , '?'
+  , ':'
+  , '='
+  , ','
+  , ';'
+  , '{'
+  , '}'
+]
+
+},{}],"7RDA":[function(require,module,exports) {
+module.exports = [
+  // Keep this list sorted
+  'abs'
+  , 'acos'
+  , 'all'
+  , 'any'
+  , 'asin'
+  , 'atan'
+  , 'ceil'
+  , 'clamp'
+  , 'cos'
+  , 'cross'
+  , 'dFdx'
+  , 'dFdy'
+  , 'degrees'
+  , 'distance'
+  , 'dot'
+  , 'equal'
+  , 'exp'
+  , 'exp2'
+  , 'faceforward'
+  , 'floor'
+  , 'fract'
+  , 'gl_BackColor'
+  , 'gl_BackLightModelProduct'
+  , 'gl_BackLightProduct'
+  , 'gl_BackMaterial'
+  , 'gl_BackSecondaryColor'
+  , 'gl_ClipPlane'
+  , 'gl_ClipVertex'
+  , 'gl_Color'
+  , 'gl_DepthRange'
+  , 'gl_DepthRangeParameters'
+  , 'gl_EyePlaneQ'
+  , 'gl_EyePlaneR'
+  , 'gl_EyePlaneS'
+  , 'gl_EyePlaneT'
+  , 'gl_Fog'
+  , 'gl_FogCoord'
+  , 'gl_FogFragCoord'
+  , 'gl_FogParameters'
+  , 'gl_FragColor'
+  , 'gl_FragCoord'
+  , 'gl_FragData'
+  , 'gl_FragDepth'
+  , 'gl_FragDepthEXT'
+  , 'gl_FrontColor'
+  , 'gl_FrontFacing'
+  , 'gl_FrontLightModelProduct'
+  , 'gl_FrontLightProduct'
+  , 'gl_FrontMaterial'
+  , 'gl_FrontSecondaryColor'
+  , 'gl_LightModel'
+  , 'gl_LightModelParameters'
+  , 'gl_LightModelProducts'
+  , 'gl_LightProducts'
+  , 'gl_LightSource'
+  , 'gl_LightSourceParameters'
+  , 'gl_MaterialParameters'
+  , 'gl_MaxClipPlanes'
+  , 'gl_MaxCombinedTextureImageUnits'
+  , 'gl_MaxDrawBuffers'
+  , 'gl_MaxFragmentUniformComponents'
+  , 'gl_MaxLights'
+  , 'gl_MaxTextureCoords'
+  , 'gl_MaxTextureImageUnits'
+  , 'gl_MaxTextureUnits'
+  , 'gl_MaxVaryingFloats'
+  , 'gl_MaxVertexAttribs'
+  , 'gl_MaxVertexTextureImageUnits'
+  , 'gl_MaxVertexUniformComponents'
+  , 'gl_ModelViewMatrix'
+  , 'gl_ModelViewMatrixInverse'
+  , 'gl_ModelViewMatrixInverseTranspose'
+  , 'gl_ModelViewMatrixTranspose'
+  , 'gl_ModelViewProjectionMatrix'
+  , 'gl_ModelViewProjectionMatrixInverse'
+  , 'gl_ModelViewProjectionMatrixInverseTranspose'
+  , 'gl_ModelViewProjectionMatrixTranspose'
+  , 'gl_MultiTexCoord0'
+  , 'gl_MultiTexCoord1'
+  , 'gl_MultiTexCoord2'
+  , 'gl_MultiTexCoord3'
+  , 'gl_MultiTexCoord4'
+  , 'gl_MultiTexCoord5'
+  , 'gl_MultiTexCoord6'
+  , 'gl_MultiTexCoord7'
+  , 'gl_Normal'
+  , 'gl_NormalMatrix'
+  , 'gl_NormalScale'
+  , 'gl_ObjectPlaneQ'
+  , 'gl_ObjectPlaneR'
+  , 'gl_ObjectPlaneS'
+  , 'gl_ObjectPlaneT'
+  , 'gl_Point'
+  , 'gl_PointCoord'
+  , 'gl_PointParameters'
+  , 'gl_PointSize'
+  , 'gl_Position'
+  , 'gl_ProjectionMatrix'
+  , 'gl_ProjectionMatrixInverse'
+  , 'gl_ProjectionMatrixInverseTranspose'
+  , 'gl_ProjectionMatrixTranspose'
+  , 'gl_SecondaryColor'
+  , 'gl_TexCoord'
+  , 'gl_TextureEnvColor'
+  , 'gl_TextureMatrix'
+  , 'gl_TextureMatrixInverse'
+  , 'gl_TextureMatrixInverseTranspose'
+  , 'gl_TextureMatrixTranspose'
+  , 'gl_Vertex'
+  , 'greaterThan'
+  , 'greaterThanEqual'
+  , 'inversesqrt'
+  , 'length'
+  , 'lessThan'
+  , 'lessThanEqual'
+  , 'log'
+  , 'log2'
+  , 'matrixCompMult'
+  , 'max'
+  , 'min'
+  , 'mix'
+  , 'mod'
+  , 'normalize'
+  , 'not'
+  , 'notEqual'
+  , 'pow'
+  , 'radians'
+  , 'reflect'
+  , 'refract'
+  , 'sign'
+  , 'sin'
+  , 'smoothstep'
+  , 'sqrt'
+  , 'step'
+  , 'tan'
+  , 'texture2D'
+  , 'texture2DLod'
+  , 'texture2DProj'
+  , 'texture2DProjLod'
+  , 'textureCube'
+  , 'textureCubeLod'
+  , 'texture2DLodEXT'
+  , 'texture2DProjLodEXT'
+  , 'textureCubeLodEXT'
+  , 'texture2DGradEXT'
+  , 'texture2DProjGradEXT'
+  , 'textureCubeGradEXT'
+]
+
+},{}],"zeoU":[function(require,module,exports) {
+var v100 = require('./literals')
+
+module.exports = v100.slice().concat([
+   'layout'
+  , 'centroid'
+  , 'smooth'
+  , 'case'
+  , 'mat2x2'
+  , 'mat2x3'
+  , 'mat2x4'
+  , 'mat3x2'
+  , 'mat3x3'
+  , 'mat3x4'
+  , 'mat4x2'
+  , 'mat4x3'
+  , 'mat4x4'
+  , 'uvec2'
+  , 'uvec3'
+  , 'uvec4'
+  , 'samplerCubeShadow'
+  , 'sampler2DArray'
+  , 'sampler2DArrayShadow'
+  , 'isampler2D'
+  , 'isampler3D'
+  , 'isamplerCube'
+  , 'isampler2DArray'
+  , 'usampler2D'
+  , 'usampler3D'
+  , 'usamplerCube'
+  , 'usampler2DArray'
+  , 'coherent'
+  , 'restrict'
+  , 'readonly'
+  , 'writeonly'
+  , 'resource'
+  , 'atomic_uint'
+  , 'noperspective'
+  , 'patch'
+  , 'sample'
+  , 'subroutine'
+  , 'common'
+  , 'partition'
+  , 'active'
+  , 'filter'
+  , 'image1D'
+  , 'image2D'
+  , 'image3D'
+  , 'imageCube'
+  , 'iimage1D'
+  , 'iimage2D'
+  , 'iimage3D'
+  , 'iimageCube'
+  , 'uimage1D'
+  , 'uimage2D'
+  , 'uimage3D'
+  , 'uimageCube'
+  , 'image1DArray'
+  , 'image2DArray'
+  , 'iimage1DArray'
+  , 'iimage2DArray'
+  , 'uimage1DArray'
+  , 'uimage2DArray'
+  , 'image1DShadow'
+  , 'image2DShadow'
+  , 'image1DArrayShadow'
+  , 'image2DArrayShadow'
+  , 'imageBuffer'
+  , 'iimageBuffer'
+  , 'uimageBuffer'
+  , 'sampler1DArray'
+  , 'sampler1DArrayShadow'
+  , 'isampler1D'
+  , 'isampler1DArray'
+  , 'usampler1D'
+  , 'usampler1DArray'
+  , 'isampler2DRect'
+  , 'usampler2DRect'
+  , 'samplerBuffer'
+  , 'isamplerBuffer'
+  , 'usamplerBuffer'
+  , 'sampler2DMS'
+  , 'isampler2DMS'
+  , 'usampler2DMS'
+  , 'sampler2DMSArray'
+  , 'isampler2DMSArray'
+  , 'usampler2DMSArray'
+])
+
+},{"./literals":"1+Ac"}],"xM6f":[function(require,module,exports) {
+// 300es builtins/reserved words that were previously valid in v100
+var v100 = require('./builtins')
+
+// The texture2D|Cube functions have been removed
+// And the gl_ features are updated
+v100 = v100.slice().filter(function (b) {
+  return !/^(gl\_|texture)/.test(b)
+})
+
+module.exports = v100.concat([
+  // the updated gl_ constants
+    'gl_VertexID'
+  , 'gl_InstanceID'
+  , 'gl_Position'
+  , 'gl_PointSize'
+  , 'gl_FragCoord'
+  , 'gl_FrontFacing'
+  , 'gl_FragDepth'
+  , 'gl_PointCoord'
+  , 'gl_MaxVertexAttribs'
+  , 'gl_MaxVertexUniformVectors'
+  , 'gl_MaxVertexOutputVectors'
+  , 'gl_MaxFragmentInputVectors'
+  , 'gl_MaxVertexTextureImageUnits'
+  , 'gl_MaxCombinedTextureImageUnits'
+  , 'gl_MaxTextureImageUnits'
+  , 'gl_MaxFragmentUniformVectors'
+  , 'gl_MaxDrawBuffers'
+  , 'gl_MinProgramTexelOffset'
+  , 'gl_MaxProgramTexelOffset'
+  , 'gl_DepthRangeParameters'
+  , 'gl_DepthRange'
+
+  // other builtins
+  , 'trunc'
+  , 'round'
+  , 'roundEven'
+  , 'isnan'
+  , 'isinf'
+  , 'floatBitsToInt'
+  , 'floatBitsToUint'
+  , 'intBitsToFloat'
+  , 'uintBitsToFloat'
+  , 'packSnorm2x16'
+  , 'unpackSnorm2x16'
+  , 'packUnorm2x16'
+  , 'unpackUnorm2x16'
+  , 'packHalf2x16'
+  , 'unpackHalf2x16'
+  , 'outerProduct'
+  , 'transpose'
+  , 'determinant'
+  , 'inverse'
+  , 'texture'
+  , 'textureSize'
+  , 'textureProj'
+  , 'textureLod'
+  , 'textureOffset'
+  , 'texelFetch'
+  , 'texelFetchOffset'
+  , 'textureProjOffset'
+  , 'textureLodOffset'
+  , 'textureProjLod'
+  , 'textureProjLodOffset'
+  , 'textureGrad'
+  , 'textureGradOffset'
+  , 'textureProjGrad'
+  , 'textureProjGradOffset'
+])
+
+},{"./builtins":"7RDA"}],"2Np4":[function(require,module,exports) {
+module.exports = tokenize
+
+var literals100 = require('./lib/literals')
+  , operators = require('./lib/operators')
+  , builtins100 = require('./lib/builtins')
+  , literals300es = require('./lib/literals-300es')
+  , builtins300es = require('./lib/builtins-300es')
+
+var NORMAL = 999          // <-- never emitted
+  , TOKEN = 9999          // <-- never emitted
+  , BLOCK_COMMENT = 0
+  , LINE_COMMENT = 1
+  , PREPROCESSOR = 2
+  , OPERATOR = 3
+  , INTEGER = 4
+  , FLOAT = 5
+  , IDENT = 6
+  , BUILTIN = 7
+  , KEYWORD = 8
+  , WHITESPACE = 9
+  , EOF = 10
+  , HEX = 11
+
+var map = [
+    'block-comment'
+  , 'line-comment'
+  , 'preprocessor'
+  , 'operator'
+  , 'integer'
+  , 'float'
+  , 'ident'
+  , 'builtin'
+  , 'keyword'
+  , 'whitespace'
+  , 'eof'
+  , 'integer'
+]
+
+function tokenize(opt) {
+  var i = 0
+    , total = 0
+    , mode = NORMAL
+    , c
+    , last
+    , content = []
+    , tokens = []
+    , token_idx = 0
+    , token_offs = 0
+    , line = 1
+    , col = 0
+    , start = 0
+    , isnum = false
+    , isoperator = false
+    , input = ''
+    , len
+
+  opt = opt || {}
+  var allBuiltins = builtins100
+  var allLiterals = literals100
+  if (opt.version === '300 es') {
+    allBuiltins = builtins300es
+    allLiterals = literals300es
+  }
+
+  // cache by name
+  var builtinsDict = {}, literalsDict = {}
+  for (var i = 0; i < allBuiltins.length; i++) {
+    builtinsDict[allBuiltins[i]] = true
+  }
+  for (var i = 0; i < allLiterals.length; i++) {
+    literalsDict[allLiterals[i]] = true
+  }
+
+  return function(data) {
+    tokens = []
+    if (data !== null) return write(data)
+    return end()
+  }
+
+  function token(data) {
+    if (data.length) {
+      tokens.push({
+        type: map[mode]
+      , data: data
+      , position: start
+      , line: line
+      , column: col
+      })
+    }
+  }
+
+  function write(chunk) {
+    i = 0
+
+    if (chunk.toString) chunk = chunk.toString()
+
+    input += chunk.replace(/\r\n/g, '\n')
+    len = input.length
+
+
+    var last
+
+    while(c = input[i], i < len) {
+      last = i
+
+      switch(mode) {
+        case BLOCK_COMMENT: i = block_comment(); break
+        case LINE_COMMENT: i = line_comment(); break
+        case PREPROCESSOR: i = preprocessor(); break
+        case OPERATOR: i = operator(); break
+        case INTEGER: i = integer(); break
+        case HEX: i = hex(); break
+        case FLOAT: i = decimal(); break
+        case TOKEN: i = readtoken(); break
+        case WHITESPACE: i = whitespace(); break
+        case NORMAL: i = normal(); break
+      }
+
+      if(last !== i) {
+        switch(input[last]) {
+          case '\n': col = 0; ++line; break
+          default: ++col; break
+        }
+      }
+    }
+
+    total += i
+    input = input.slice(i)
+    return tokens
+  }
+
+  function end(chunk) {
+    if(content.length) {
+      token(content.join(''))
+    }
+
+    mode = EOF
+    token('(eof)')
+    return tokens
+  }
+
+  function normal() {
+    content = content.length ? [] : content
+
+    if(last === '/' && c === '*') {
+      start = total + i - 1
+      mode = BLOCK_COMMENT
+      last = c
+      return i + 1
+    }
+
+    if(last === '/' && c === '/') {
+      start = total + i - 1
+      mode = LINE_COMMENT
+      last = c
+      return i + 1
+    }
+
+    if(c === '#') {
+      mode = PREPROCESSOR
+      start = total + i
+      return i
+    }
+
+    if(/\s/.test(c)) {
+      mode = WHITESPACE
+      start = total + i
+      return i
+    }
+
+    isnum = /\d/.test(c)
+    isoperator = /[^\w_]/.test(c)
+
+    start = total + i
+    mode = isnum ? INTEGER : isoperator ? OPERATOR : TOKEN
+    return i
+  }
+
+  function whitespace() {
+    if(/[^\s]/g.test(c)) {
+      token(content.join(''))
+      mode = NORMAL
+      return i
+    }
+    content.push(c)
+    last = c
+    return i + 1
+  }
+
+  function preprocessor() {
+    if((c === '\r' || c === '\n') && last !== '\\') {
+      token(content.join(''))
+      mode = NORMAL
+      return i
+    }
+    content.push(c)
+    last = c
+    return i + 1
+  }
+
+  function line_comment() {
+    return preprocessor()
+  }
+
+  function block_comment() {
+    if(c === '/' && last === '*') {
+      content.push(c)
+      token(content.join(''))
+      mode = NORMAL
+      return i + 1
+    }
+
+    content.push(c)
+    last = c
+    return i + 1
+  }
+
+  function operator() {
+    if(last === '.' && /\d/.test(c)) {
+      mode = FLOAT
+      return i
+    }
+
+    if(last === '/' && c === '*') {
+      mode = BLOCK_COMMENT
+      return i
+    }
+
+    if(last === '/' && c === '/') {
+      mode = LINE_COMMENT
+      return i
+    }
+
+    if(c === '.' && content.length) {
+      while(determine_operator(content));
+
+      mode = FLOAT
+      return i
+    }
+
+    if(c === ';' || c === ')' || c === '(') {
+      if(content.length) while(determine_operator(content));
+      token(c)
+      mode = NORMAL
+      return i + 1
+    }
+
+    var is_composite_operator = content.length === 2 && c !== '='
+    if(/[\w_\d\s]/.test(c) || is_composite_operator) {
+      while(determine_operator(content));
+      mode = NORMAL
+      return i
+    }
+
+    content.push(c)
+    last = c
+    return i + 1
+  }
+
+  function determine_operator(buf) {
+    var j = 0
+      , idx
+      , res
+
+    do {
+      idx = operators.indexOf(buf.slice(0, buf.length + j).join(''))
+      res = operators[idx]
+
+      if(idx === -1) {
+        if(j-- + buf.length > 0) continue
+        res = buf.slice(0, 1).join('')
+      }
+
+      token(res)
+
+      start += res.length
+      content = content.slice(res.length)
+      return content.length
+    } while(1)
+  }
+
+  function hex() {
+    if(/[^a-fA-F0-9]/.test(c)) {
+      token(content.join(''))
+      mode = NORMAL
+      return i
+    }
+
+    content.push(c)
+    last = c
+    return i + 1
+  }
+
+  function integer() {
+    if(c === '.') {
+      content.push(c)
+      mode = FLOAT
+      last = c
+      return i + 1
+    }
+
+    if(/[eE]/.test(c)) {
+      content.push(c)
+      mode = FLOAT
+      last = c
+      return i + 1
+    }
+
+    if(c === 'x' && content.length === 1 && content[0] === '0') {
+      mode = HEX
+      content.push(c)
+      last = c
+      return i + 1
+    }
+
+    if(/[^\d]/.test(c)) {
+      token(content.join(''))
+      mode = NORMAL
+      return i
+    }
+
+    content.push(c)
+    last = c
+    return i + 1
+  }
+
+  function decimal() {
+    if(c === 'f') {
+      content.push(c)
+      last = c
+      i += 1
+    }
+
+    if(/[eE]/.test(c)) {
+      content.push(c)
+      last = c
+      return i + 1
+    }
+
+    if ((c === '-' || c === '+') && /[eE]/.test(last)) {
+      content.push(c)
+      last = c
+      return i + 1
+    }
+
+    if(/[^\d]/.test(c)) {
+      token(content.join(''))
+      mode = NORMAL
+      return i
+    }
+
+    content.push(c)
+    last = c
+    return i + 1
+  }
+
+  function readtoken() {
+    if(/[^\d\w_]/.test(c)) {
+      var contentstr = content.join('')
+      if(literalsDict[contentstr]) {
+        mode = KEYWORD
+      } else if(builtinsDict[contentstr]) {
+        mode = BUILTIN
+      } else {
+        mode = IDENT
+      }
+      token(content.join(''))
+      mode = NORMAL
+      return i
+    }
+    content.push(c)
+    last = c
+    return i + 1
+  }
+}
+
+},{"./lib/literals":"1+Ac","./lib/operators":"Upv1","./lib/builtins":"7RDA","./lib/literals-300es":"zeoU","./lib/builtins-300es":"xM6f"}],"qTvY":[function(require,module,exports) {
+var tokenize = require('./index')
+
+module.exports = tokenizeString
+
+function tokenizeString(str, opt) {
+  var generator = tokenize(opt)
+  var tokens = []
+
+  tokens = tokens.concat(generator(str))
+  tokens = tokens.concat(generator(null))
+
+  return tokens
+}
+
+},{"./index":"2Np4"}],"u+Fl":[function(require,module,exports) {
+module.exports = {
+  "_args": [["gl@4.4.0", "/Users/kevin/dev/klm/projects/trading/brain.js"]],
+  "_from": "gl@4.4.0",
+  "_id": "gl@4.4.0",
+  "_inBundle": false,
+  "_integrity": "sha512-4FIq5tqiltTsadrLh6DGY4R9+aQwj25OM2WlXEv81N6YN1q1C0qR7ct0SKp1uUJdnBqbKhUJP3zQ1td40AVeJg==",
+  "_location": "/gl",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "gl@4.4.0",
+    "name": "gl",
+    "escapedName": "gl",
+    "rawSpec": "4.4.0",
+    "saveSpec": null,
+    "fetchSpec": "4.4.0"
+  },
+  "_requiredBy": ["/gpu.js"],
+  "_resolved": "https://registry.npmjs.org/gl/-/gl-4.4.0.tgz",
+  "_spec": "4.4.0",
+  "_where": "/Users/kevin/dev/klm/projects/trading/brain.js",
+  "author": {
+    "name": "Mikola Lysenko"
+  },
+  "browser": "browser_index.js",
+  "bugs": {
+    "url": "https://github.com/stackgl/headless-gl/issues"
+  },
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "bit-twiddle": "^1.0.2",
+    "glsl-tokenizer": "^2.0.2",
+    "nan": "^2.14.0",
+    "node-gyp": "^4.0.0",
+    "prebuild-install": "^5.1.0"
+  },
+  "description": "Creates a WebGL context without a window",
+  "devDependencies": {
+    "angle-normals": "^1.0.0",
+    "bunny": "^1.0.1",
+    "faucet": "0.0.1",
+    "gl-conformance": "^2.0.9",
+    "prebuild": "^8.0.1",
+    "snazzy": "^8.0.0",
+    "standard": "^12.0.1",
+    "tape": "^4.7.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "gypfile": true,
+  "homepage": "https://github.com/stackgl/headless-gl#readme",
+  "keywords": ["webgl", "opengl", "gl", "headless", "server", "gpgpu"],
+  "license": "BSD-2-Clause",
+  "main": "index.js",
+  "name": "gl",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/stackgl/headless-gl.git"
+  },
+  "scripts": {
+    "install": "prebuild-install || node-gyp rebuild",
+    "prebuild": "prebuild --all --strip",
+    "rebuild": "node-gyp rebuild --verbose",
+    "test": "standard | snazzy && tape test/*.js | faucet"
+  },
+  "version": "4.4.0"
+};
+},{}],"70rD":[function(require,module,exports) {
+
+},{}],"pBGv":[function(require,module,exports) {
+
+// shim for using process in browser
+var process = module.exports = {}; // cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+  throw new Error('setTimeout has not been defined');
+}
+
+function defaultClearTimeout() {
+  throw new Error('clearTimeout has not been defined');
+}
+
+(function () {
+  try {
+    if (typeof setTimeout === 'function') {
+      cachedSetTimeout = setTimeout;
+    } else {
+      cachedSetTimeout = defaultSetTimout;
+    }
+  } catch (e) {
+    cachedSetTimeout = defaultSetTimout;
+  }
+
+  try {
+    if (typeof clearTimeout === 'function') {
+      cachedClearTimeout = clearTimeout;
+    } else {
+      cachedClearTimeout = defaultClearTimeout;
+    }
+  } catch (e) {
+    cachedClearTimeout = defaultClearTimeout;
+  }
+})();
+
+function runTimeout(fun) {
+  if (cachedSetTimeout === setTimeout) {
+    //normal enviroments in sane situations
+    return setTimeout(fun, 0);
+  } // if setTimeout wasn't available but was latter defined
+
+
+  if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+    cachedSetTimeout = setTimeout;
+    return setTimeout(fun, 0);
+  }
+
+  try {
+    // when when somebody has screwed with setTimeout but no I.E. maddness
+    return cachedSetTimeout(fun, 0);
+  } catch (e) {
+    try {
+      // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+      return cachedSetTimeout.call(null, fun, 0);
+    } catch (e) {
+      // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+      return cachedSetTimeout.call(this, fun, 0);
+    }
+  }
+}
+
+function runClearTimeout(marker) {
+  if (cachedClearTimeout === clearTimeout) {
+    //normal enviroments in sane situations
+    return clearTimeout(marker);
+  } // if clearTimeout wasn't available but was latter defined
+
+
+  if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+    cachedClearTimeout = clearTimeout;
+    return clearTimeout(marker);
+  }
+
+  try {
+    // when when somebody has screwed with setTimeout but no I.E. maddness
+    return cachedClearTimeout(marker);
+  } catch (e) {
+    try {
+      // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+      return cachedClearTimeout.call(null, marker);
+    } catch (e) {
+      // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+      // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+      return cachedClearTimeout.call(this, marker);
+    }
+  }
+}
+
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+  if (!draining || !currentQueue) {
+    return;
+  }
+
+  draining = false;
+
+  if (currentQueue.length) {
+    queue = currentQueue.concat(queue);
+  } else {
+    queueIndex = -1;
+  }
+
+  if (queue.length) {
+    drainQueue();
+  }
+}
+
+function drainQueue() {
+  if (draining) {
+    return;
+  }
+
+  var timeout = runTimeout(cleanUpNextTick);
+  draining = true;
+  var len = queue.length;
+
+  while (len) {
+    currentQueue = queue;
+    queue = [];
+
+    while (++queueIndex < len) {
+      if (currentQueue) {
+        currentQueue[queueIndex].run();
+      }
+    }
+
+    queueIndex = -1;
+    len = queue.length;
+  }
+
+  currentQueue = null;
+  draining = false;
+  runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+  var args = new Array(arguments.length - 1);
+
+  if (arguments.length > 1) {
+    for (var i = 1; i < arguments.length; i++) {
+      args[i - 1] = arguments[i];
+    }
+  }
+
+  queue.push(new Item(fun, args));
+
+  if (queue.length === 1 && !draining) {
+    runTimeout(drainQueue);
+  }
+}; // v8 likes predictible objects
+
+
+function Item(fun, array) {
+  this.fun = fun;
+  this.array = array;
+}
+
+Item.prototype.run = function () {
+  this.fun.apply(null, this.array);
+};
+
+process.title = 'browser';
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) {
+  return [];
+};
+
+process.binding = function (name) {
+  throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () {
+  return '/';
+};
+
+process.chdir = function (dir) {
+  throw new Error('process.chdir is not supported');
+};
+
+process.umask = function () {
+  return 0;
+};
+},{}],"UUq2":[function(require,module,exports) {
+var process = require("process");
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+},{"process":"pBGv"}],"bNvF":[function(require,module,exports) {
+
+/**
+ * Module dependencies.
+ */
+
+var sep = require('path').sep || '/';
+
+/**
+ * Module exports.
+ */
+
+module.exports = fileUriToPath;
+
+/**
+ * File URI to Path function.
+ *
+ * @param {String} uri
+ * @return {String} path
+ * @api public
+ */
+
+function fileUriToPath (uri) {
+  if ('string' != typeof uri ||
+      uri.length <= 7 ||
+      'file://' != uri.substring(0, 7)) {
+    throw new TypeError('must pass in a file:// URI to convert to a file path');
+  }
+
+  var rest = decodeURI(uri.substring(7));
+  var firstSlash = rest.indexOf('/');
+  var host = rest.substring(0, firstSlash);
+  var path = rest.substring(firstSlash + 1);
+
+  // 2.  Scheme Definition
+  // As a special case, <host> can be the string "localhost" or the empty
+  // string; this is interpreted as "the machine from which the URL is
+  // being interpreted".
+  if ('localhost' == host) host = '';
+
+  if (host) {
+    host = sep + sep + host;
+  }
+
+  // 3.2  Drives, drive letters, mount points, file system root
+  // Drive letters are mapped into the top of a file URI in various ways,
+  // depending on the implementation; some applications substitute
+  // vertical bar ("|") for the colon after the drive letter, yielding
+  // "file:///c|/tmp/test.txt".  In some cases, the colon is left
+  // unchanged, as in "file:///c:/tmp/test.txt".  In other cases, the
+  // colon is simply omitted, as in "file:///c/tmp/test.txt".
+  path = path.replace(/^(.+)\|/, '$1:');
+
+  // for Windows, we need to invert the path separators from what a URI uses
+  if (sep == '\\') {
+    path = path.replace(/\//g, '\\');
+  }
+
+  if (/^.+\:/.test(path)) {
+    // has Windows drive at beginning of path
+  } else {
+    // unix path…
+    path = sep + path;
+  }
+
+  return host + path;
+}
+
+},{"path":"UUq2"}],"HoWR":[function(require,module,exports) {
+var process = require("process");
+var __filename = "/Users/kevin/dev/klm/projects/trading/brain.js/node_modules/bindings/bindings.js";
+/**
+ * Module dependencies.
+ */
+var fs = require('fs'),
+    path = require('path'),
+    fileURLToPath = require('file-uri-to-path'),
+    join = path.join,
+    dirname = path.dirname,
+    exists = fs.accessSync && function (path) {
+  try {
+    fs.accessSync(path);
+  } catch (e) {
+    return false;
+  }
+
+  return true;
+} || fs.existsSync || path.existsSync,
+    defaults = {
+  arrow: undefined || ' → ',
+  compiled: undefined || 'compiled',
+  platform: process.platform,
+  arch: process.arch,
+  nodePreGyp: 'node-v' + process.versions.modules + '-' + process.platform + '-' + process.arch,
+  version: process.versions.node,
+  bindings: 'bindings.node',
+  try: [// node-gyp's linked version in the "build" dir
+  ['module_root', 'build', 'bindings'], // node-waf and gyp_addon (a.k.a node-gyp)
+  ['module_root', 'build', 'Debug', 'bindings'], ['module_root', 'build', 'Release', 'bindings'], // Debug files, for development (legacy behavior, remove for node v0.9)
+  ['module_root', 'out', 'Debug', 'bindings'], ['module_root', 'Debug', 'bindings'], // Release files, but manually compiled (legacy behavior, remove for node v0.9)
+  ['module_root', 'out', 'Release', 'bindings'], ['module_root', 'Release', 'bindings'], // Legacy from node-waf, node <= 0.4.x
+  ['module_root', 'build', 'default', 'bindings'], // Production "Release" buildtype binary (meh...)
+  ['module_root', 'compiled', 'version', 'platform', 'arch', 'bindings'], // node-qbs builds
+  ['module_root', 'addon-build', 'release', 'install-root', 'bindings'], ['module_root', 'addon-build', 'debug', 'install-root', 'bindings'], ['module_root', 'addon-build', 'default', 'install-root', 'bindings'], // node-pre-gyp path ./lib/binding/{node_abi}-{platform}-{arch}
+  ['module_root', 'lib', 'binding', 'nodePreGyp', 'bindings']]
+};
+/**
+ * The main `bindings()` function loads the compiled bindings for a given module.
+ * It uses V8's Error API to determine the parent filename that this function is
+ * being invoked from, which is then used to find the root directory.
+ */
+
+
+function bindings(opts) {
+  // Argument surgery
+  if (typeof opts == 'string') {
+    opts = {
+      bindings: opts
+    };
+  } else if (!opts) {
+    opts = {};
+  } // maps `defaults` onto `opts` object
+
+
+  Object.keys(defaults).map(function (i) {
+    if (!(i in opts)) opts[i] = defaults[i];
+  }); // Get the module root
+
+  if (!opts.module_root) {
+    opts.module_root = exports.getRoot(exports.getFileName());
+  } // Ensure the given bindings name ends with .node
+
+
+  if (path.extname(opts.bindings) != '.node') {
+    opts.bindings += '.node';
+  } // https://github.com/webpack/webpack/issues/4175#issuecomment-342931035
+
+
+  var requireFunc = typeof __webpack_require__ === 'function' ? __non_webpack_require__ : require;
+  var tries = [],
+      i = 0,
+      l = opts.try.length,
+      n,
+      b,
+      err;
+
+  for (; i < l; i++) {
+    n = join.apply(null, opts.try[i].map(function (p) {
+      return opts[p] || p;
+    }));
+    tries.push(n);
+
+    try {
+      b = opts.path ? requireFunc.resolve(n) : requireFunc(n);
+
+      if (!opts.path) {
+        b.path = n;
+      }
+
+      return b;
+    } catch (e) {
+      if (e.code !== 'MODULE_NOT_FOUND' && e.code !== 'QUALIFIED_PATH_RESOLUTION_FAILED' && !/not find/i.test(e.message)) {
+        throw e;
+      }
+    }
+  }
+
+  err = new Error('Could not locate the bindings file. Tried:\n' + tries.map(function (a) {
+    return opts.arrow + a;
+  }).join('\n'));
+  err.tries = tries;
+  throw err;
+}
+
+module.exports = exports = bindings;
+/**
+ * Gets the filename of the JavaScript file that invokes this function.
+ * Used to help find the root directory of a module.
+ * Optionally accepts an filename argument to skip when searching for the invoking filename
+ */
+
+exports.getFileName = function getFileName(calling_file) {
+  var origPST = Error.prepareStackTrace,
+      origSTL = Error.stackTraceLimit,
+      dummy = {},
+      fileName;
+  Error.stackTraceLimit = 10;
+
+  Error.prepareStackTrace = function (e, st) {
+    for (var i = 0, l = st.length; i < l; i++) {
+      fileName = st[i].getFileName();
+
+      if (fileName !== __filename) {
+        if (calling_file) {
+          if (fileName !== calling_file) {
+            return;
+          }
+        } else {
+          return;
+        }
+      }
+    }
+  }; // run the 'prepareStackTrace' function above
+
+
+  Error.captureStackTrace(dummy);
+  dummy.stack; // cleanup
+
+  Error.prepareStackTrace = origPST;
+  Error.stackTraceLimit = origSTL; // handle filename that starts with "file://"
+
+  var fileSchema = 'file://';
+
+  if (fileName.indexOf(fileSchema) === 0) {
+    fileName = fileURLToPath(fileName);
+  }
+
+  return fileName;
+};
+/**
+ * Gets the root directory of a module, given an arbitrary filename
+ * somewhere in the module tree. The "root directory" is the directory
+ * containing the `package.json` file.
+ *
+ *   In:  /home/nate/node-native-module/lib/index.js
+ *   Out: /home/nate/node-native-module
+ */
+
+
+exports.getRoot = function getRoot(file) {
+  var dir = dirname(file),
+      prev;
+
+  while (true) {
+    if (dir === '.') {
+      // Avoids an infinite loop in rare cases, like the REPL
+      dir = process.cwd();
+    }
+
+    if (exists(join(dir, 'package.json')) || exists(join(dir, 'node_modules'))) {
+      // Found the 'package.json' file or 'node_modules' dir; we're done
+      return dir;
+    }
+
+    if (prev === dir) {
+      // Got to the top
+      throw new Error('Could not find module root given file: "' + file + '". Do you have a `package.json` file? ');
+    } // Try the parent dir next
+
+
+    prev = dir;
+    dir = join(dir, '..');
+  }
+};
+},{"fs":"70rD","path":"UUq2","file-uri-to-path":"bNvF","process":"pBGv"}],"sKEg":[function(require,module,exports) {
+var process = require("process");
+var NativeWebGL = require('bindings')('webgl');
+
+var NativeWebGLRenderingContext = NativeWebGL.WebGLRenderingContext;
+process.on('exit', NativeWebGL.cleanup);
+var gl = NativeWebGLRenderingContext.prototype; // from binding.gyp
+
+delete gl['1.0.0']; // from binding.gyp
+
+delete NativeWebGLRenderingContext['1.0.0'];
+module.exports = {
+  gl: gl,
+  NativeWebGL: NativeWebGL,
+  NativeWebGLRenderingContext: NativeWebGLRenderingContext
+};
+},{"bindings":"HoWR","process":"pBGv"}],"tW9K":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var WebGLUniformLocation = function WebGLUniformLocation(_, program, info) {
+  _classCallCheck(this, WebGLUniformLocation);
+
+  this._ = _;
+  this._program = program;
+  this._linkCount = program._linkCount;
+  this._activeInfo = info;
+  this._array = null;
+};
+
+module.exports = {
+  WebGLUniformLocation: WebGLUniformLocation
+};
+},{}],"yh9p":[function(require,module,exports) {
+'use strict'
+
+exports.byteLength = byteLength
+exports.toByteArray = toByteArray
+exports.fromByteArray = fromByteArray
+
+var lookup = []
+var revLookup = []
+var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
+
+var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+for (var i = 0, len = code.length; i < len; ++i) {
+  lookup[i] = code[i]
+  revLookup[code.charCodeAt(i)] = i
+}
+
+// Support decoding URL-safe base64 strings, as Node.js does.
+// See: https://en.wikipedia.org/wiki/Base64#URL_applications
+revLookup['-'.charCodeAt(0)] = 62
+revLookup['_'.charCodeAt(0)] = 63
+
+function getLens (b64) {
+  var len = b64.length
+
+  if (len % 4 > 0) {
+    throw new Error('Invalid string. Length must be a multiple of 4')
+  }
+
+  // Trim off extra bytes after placeholder bytes are found
+  // See: https://github.com/beatgammit/base64-js/issues/42
+  var validLen = b64.indexOf('=')
+  if (validLen === -1) validLen = len
+
+  var placeHoldersLen = validLen === len
+    ? 0
+    : 4 - (validLen % 4)
+
+  return [validLen, placeHoldersLen]
+}
+
+// base64 is 4/3 + up to two characters of the original data
+function byteLength (b64) {
+  var lens = getLens(b64)
+  var validLen = lens[0]
+  var placeHoldersLen = lens[1]
+  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
+}
+
+function _byteLength (b64, validLen, placeHoldersLen) {
+  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
+}
+
+function toByteArray (b64) {
+  var tmp
+  var lens = getLens(b64)
+  var validLen = lens[0]
+  var placeHoldersLen = lens[1]
+
+  var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen))
+
+  var curByte = 0
+
+  // if there are placeholders, only get up to the last complete 4 chars
+  var len = placeHoldersLen > 0
+    ? validLen - 4
+    : validLen
+
+  for (var i = 0; i < len; i += 4) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 18) |
+      (revLookup[b64.charCodeAt(i + 1)] << 12) |
+      (revLookup[b64.charCodeAt(i + 2)] << 6) |
+      revLookup[b64.charCodeAt(i + 3)]
+    arr[curByte++] = (tmp >> 16) & 0xFF
+    arr[curByte++] = (tmp >> 8) & 0xFF
+    arr[curByte++] = tmp & 0xFF
+  }
+
+  if (placeHoldersLen === 2) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 2) |
+      (revLookup[b64.charCodeAt(i + 1)] >> 4)
+    arr[curByte++] = tmp & 0xFF
+  }
+
+  if (placeHoldersLen === 1) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 10) |
+      (revLookup[b64.charCodeAt(i + 1)] << 4) |
+      (revLookup[b64.charCodeAt(i + 2)] >> 2)
+    arr[curByte++] = (tmp >> 8) & 0xFF
+    arr[curByte++] = tmp & 0xFF
+  }
+
+  return arr
+}
+
+function tripletToBase64 (num) {
+  return lookup[num >> 18 & 0x3F] +
+    lookup[num >> 12 & 0x3F] +
+    lookup[num >> 6 & 0x3F] +
+    lookup[num & 0x3F]
+}
+
+function encodeChunk (uint8, start, end) {
+  var tmp
+  var output = []
+  for (var i = start; i < end; i += 3) {
+    tmp =
+      ((uint8[i] << 16) & 0xFF0000) +
+      ((uint8[i + 1] << 8) & 0xFF00) +
+      (uint8[i + 2] & 0xFF)
+    output.push(tripletToBase64(tmp))
+  }
+  return output.join('')
+}
+
+function fromByteArray (uint8) {
+  var tmp
+  var len = uint8.length
+  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
+  var parts = []
+  var maxChunkLength = 16383 // must be multiple of 3
+
+  // go through the array every three bytes, we'll deal with trailing stuff later
+  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+    parts.push(encodeChunk(
+      uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)
+    ))
+  }
+
+  // pad the end with zeros, but make sure to not forget the extra bytes
+  if (extraBytes === 1) {
+    tmp = uint8[len - 1]
+    parts.push(
+      lookup[tmp >> 2] +
+      lookup[(tmp << 4) & 0x3F] +
+      '=='
+    )
+  } else if (extraBytes === 2) {
+    tmp = (uint8[len - 2] << 8) + uint8[len - 1]
+    parts.push(
+      lookup[tmp >> 10] +
+      lookup[(tmp >> 4) & 0x3F] +
+      lookup[(tmp << 2) & 0x3F] +
+      '='
+    )
+  }
+
+  return parts.join('')
+}
+
+},{}],"JgNJ":[function(require,module,exports) {
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = (nBytes * 8) - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = (nBytes * 8) - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = ((value * c) - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
+},{}],"seLU":[function(require,module,exports) {
+var toString = {}.toString;
+
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
+},{}],"dskh":[function(require,module,exports) {
+
+var global = arguments[3];
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+/* eslint-disable no-proto */
+
+'use strict'
+
+var base64 = require('base64-js')
+var ieee754 = require('ieee754')
+var isArray = require('isarray')
+
+exports.Buffer = Buffer
+exports.SlowBuffer = SlowBuffer
+exports.INSPECT_MAX_BYTES = 50
+
+/**
+ * If `Buffer.TYPED_ARRAY_SUPPORT`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Use Object implementation (most compatible, even IE6)
+ *
+ * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+ * Opera 11.6+, iOS 4.2+.
+ *
+ * Due to various browser bugs, sometimes the Object implementation will be used even
+ * when the browser supports typed arrays.
+ *
+ * Note:
+ *
+ *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
+ *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+ *
+ *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+ *
+ *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+ *     incorrect length in some situations.
+
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
+ * get the Object implementation, which is slower but behaves correctly.
+ */
+Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
+  ? global.TYPED_ARRAY_SUPPORT
+  : typedArraySupport()
+
+/*
+ * Export kMaxLength after typed array support is determined.
+ */
+exports.kMaxLength = kMaxLength()
+
+function typedArraySupport () {
+  try {
+    var arr = new Uint8Array(1)
+    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
+    return arr.foo() === 42 && // typed array instances can be augmented
+        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
+        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
+  } catch (e) {
+    return false
+  }
+}
+
+function kMaxLength () {
+  return Buffer.TYPED_ARRAY_SUPPORT
+    ? 0x7fffffff
+    : 0x3fffffff
+}
+
+function createBuffer (that, length) {
+  if (kMaxLength() < length) {
+    throw new RangeError('Invalid typed array length')
+  }
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = new Uint8Array(length)
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    if (that === null) {
+      that = new Buffer(length)
+    }
+    that.length = length
+  }
+
+  return that
+}
+
+/**
+ * The Buffer constructor returns instances of `Uint8Array` that have their
+ * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
+ * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
+ * and the `Uint8Array` methods. Square bracket notation works as expected -- it
+ * returns a single octet.
+ *
+ * The `Uint8Array` prototype remains unmodified.
+ */
+
+function Buffer (arg, encodingOrOffset, length) {
+  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
+    return new Buffer(arg, encodingOrOffset, length)
+  }
+
+  // Common case.
+  if (typeof arg === 'number') {
+    if (typeof encodingOrOffset === 'string') {
+      throw new Error(
+        'If encoding is specified then the first argument must be a string'
+      )
+    }
+    return allocUnsafe(this, arg)
+  }
+  return from(this, arg, encodingOrOffset, length)
+}
+
+Buffer.poolSize = 8192 // not used by this implementation
+
+// TODO: Legacy, not needed anymore. Remove in next major version.
+Buffer._augment = function (arr) {
+  arr.__proto__ = Buffer.prototype
+  return arr
+}
+
+function from (that, value, encodingOrOffset, length) {
+  if (typeof value === 'number') {
+    throw new TypeError('"value" argument must not be a number')
+  }
+
+  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
+    return fromArrayBuffer(that, value, encodingOrOffset, length)
+  }
+
+  if (typeof value === 'string') {
+    return fromString(that, value, encodingOrOffset)
+  }
+
+  return fromObject(that, value)
+}
+
+/**
+ * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
+ * if value is a number.
+ * Buffer.from(str[, encoding])
+ * Buffer.from(array)
+ * Buffer.from(buffer)
+ * Buffer.from(arrayBuffer[, byteOffset[, length]])
+ **/
+Buffer.from = function (value, encodingOrOffset, length) {
+  return from(null, value, encodingOrOffset, length)
+}
+
+if (Buffer.TYPED_ARRAY_SUPPORT) {
+  Buffer.prototype.__proto__ = Uint8Array.prototype
+  Buffer.__proto__ = Uint8Array
+  if (typeof Symbol !== 'undefined' && Symbol.species &&
+      Buffer[Symbol.species] === Buffer) {
+    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
+    Object.defineProperty(Buffer, Symbol.species, {
+      value: null,
+      configurable: true
+    })
+  }
+}
+
+function assertSize (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('"size" argument must be a number')
+  } else if (size < 0) {
+    throw new RangeError('"size" argument must not be negative')
+  }
+}
+
+function alloc (that, size, fill, encoding) {
+  assertSize(size)
+  if (size <= 0) {
+    return createBuffer(that, size)
+  }
+  if (fill !== undefined) {
+    // Only pay attention to encoding if it's a string. This
+    // prevents accidentally sending in a number that would
+    // be interpretted as a start offset.
+    return typeof encoding === 'string'
+      ? createBuffer(that, size).fill(fill, encoding)
+      : createBuffer(that, size).fill(fill)
+  }
+  return createBuffer(that, size)
+}
+
+/**
+ * Creates a new filled Buffer instance.
+ * alloc(size[, fill[, encoding]])
+ **/
+Buffer.alloc = function (size, fill, encoding) {
+  return alloc(null, size, fill, encoding)
+}
+
+function allocUnsafe (that, size) {
+  assertSize(size)
+  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < size; ++i) {
+      that[i] = 0
+    }
+  }
+  return that
+}
+
+/**
+ * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
+ * */
+Buffer.allocUnsafe = function (size) {
+  return allocUnsafe(null, size)
+}
+/**
+ * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
+ */
+Buffer.allocUnsafeSlow = function (size) {
+  return allocUnsafe(null, size)
+}
+
+function fromString (that, string, encoding) {
+  if (typeof encoding !== 'string' || encoding === '') {
+    encoding = 'utf8'
+  }
+
+  if (!Buffer.isEncoding(encoding)) {
+    throw new TypeError('"encoding" must be a valid string encoding')
+  }
+
+  var length = byteLength(string, encoding) | 0
+  that = createBuffer(that, length)
+
+  var actual = that.write(string, encoding)
+
+  if (actual !== length) {
+    // Writing a hex string, for example, that contains invalid characters will
+    // cause everything after the first invalid character to be ignored. (e.g.
+    // 'abxxcd' will be treated as 'ab')
+    that = that.slice(0, actual)
+  }
+
+  return that
+}
+
+function fromArrayLike (that, array) {
+  var length = array.length < 0 ? 0 : checked(array.length) | 0
+  that = createBuffer(that, length)
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+function fromArrayBuffer (that, array, byteOffset, length) {
+  array.byteLength // this throws if `array` is not a valid ArrayBuffer
+
+  if (byteOffset < 0 || array.byteLength < byteOffset) {
+    throw new RangeError('\'offset\' is out of bounds')
+  }
+
+  if (array.byteLength < byteOffset + (length || 0)) {
+    throw new RangeError('\'length\' is out of bounds')
+  }
+
+  if (byteOffset === undefined && length === undefined) {
+    array = new Uint8Array(array)
+  } else if (length === undefined) {
+    array = new Uint8Array(array, byteOffset)
+  } else {
+    array = new Uint8Array(array, byteOffset, length)
+  }
+
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = array
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    that = fromArrayLike(that, array)
+  }
+  return that
+}
+
+function fromObject (that, obj) {
+  if (Buffer.isBuffer(obj)) {
+    var len = checked(obj.length) | 0
+    that = createBuffer(that, len)
+
+    if (that.length === 0) {
+      return that
+    }
+
+    obj.copy(that, 0, 0, len)
+    return that
+  }
+
+  if (obj) {
+    if ((typeof ArrayBuffer !== 'undefined' &&
+        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
+      if (typeof obj.length !== 'number' || isnan(obj.length)) {
+        return createBuffer(that, 0)
+      }
+      return fromArrayLike(that, obj)
+    }
+
+    if (obj.type === 'Buffer' && isArray(obj.data)) {
+      return fromArrayLike(that, obj.data)
+    }
+  }
+
+  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
+}
+
+function checked (length) {
+  // Note: cannot use `length < kMaxLength()` here because that fails when
+  // length is NaN (which is otherwise coerced to zero.)
+  if (length >= kMaxLength()) {
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
+  }
+  return length | 0
+}
+
+function SlowBuffer (length) {
+  if (+length != length) { // eslint-disable-line eqeqeq
+    length = 0
+  }
+  return Buffer.alloc(+length)
+}
+
+Buffer.isBuffer = function isBuffer (b) {
+  return !!(b != null && b._isBuffer)
+}
+
+Buffer.compare = function compare (a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
+    throw new TypeError('Arguments must be Buffers')
+  }
+
+  if (a === b) return 0
+
+  var x = a.length
+  var y = b.length
+
+  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+    if (a[i] !== b[i]) {
+      x = a[i]
+      y = b[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+Buffer.isEncoding = function isEncoding (encoding) {
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'latin1':
+    case 'binary':
+    case 'base64':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
+  }
+}
+
+Buffer.concat = function concat (list, length) {
+  if (!isArray(list)) {
+    throw new TypeError('"list" argument must be an Array of Buffers')
+  }
+
+  if (list.length === 0) {
+    return Buffer.alloc(0)
+  }
+
+  var i
+  if (length === undefined) {
+    length = 0
+    for (i = 0; i < list.length; ++i) {
+      length += list[i].length
+    }
+  }
+
+  var buffer = Buffer.allocUnsafe(length)
+  var pos = 0
+  for (i = 0; i < list.length; ++i) {
+    var buf = list[i]
+    if (!Buffer.isBuffer(buf)) {
+      throw new TypeError('"list" argument must be an Array of Buffers')
+    }
+    buf.copy(buffer, pos)
+    pos += buf.length
+  }
+  return buffer
+}
+
+function byteLength (string, encoding) {
+  if (Buffer.isBuffer(string)) {
+    return string.length
+  }
+  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
+      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
+    return string.byteLength
+  }
+  if (typeof string !== 'string') {
+    string = '' + string
+  }
+
+  var len = string.length
+  if (len === 0) return 0
+
+  // Use a for loop to avoid recursion
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'ascii':
+      case 'latin1':
+      case 'binary':
+        return len
+      case 'utf8':
+      case 'utf-8':
+      case undefined:
+        return utf8ToBytes(string).length
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return len * 2
+      case 'hex':
+        return len >>> 1
+      case 'base64':
+        return base64ToBytes(string).length
+      default:
+        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+Buffer.byteLength = byteLength
+
+function slowToString (encoding, start, end) {
+  var loweredCase = false
+
+  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
+  // property of a typed array.
+
+  // This behaves neither like String nor Uint8Array in that we set start/end
+  // to their upper/lower bounds if the value passed is out of range.
+  // undefined is handled specially as per ECMA-262 6th Edition,
+  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
+  if (start === undefined || start < 0) {
+    start = 0
+  }
+  // Return early if start > this.length. Done here to prevent potential uint32
+  // coercion fail below.
+  if (start > this.length) {
+    return ''
+  }
+
+  if (end === undefined || end > this.length) {
+    end = this.length
+  }
+
+  if (end <= 0) {
+    return ''
+  }
+
+  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
+  end >>>= 0
+  start >>>= 0
+
+  if (end <= start) {
+    return ''
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  while (true) {
+    switch (encoding) {
+      case 'hex':
+        return hexSlice(this, start, end)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Slice(this, start, end)
+
+      case 'ascii':
+        return asciiSlice(this, start, end)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Slice(this, start, end)
+
+      case 'base64':
+        return base64Slice(this, start, end)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return utf16leSlice(this, start, end)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = (encoding + '').toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
+// Buffer instances.
+Buffer.prototype._isBuffer = true
+
+function swap (b, n, m) {
+  var i = b[n]
+  b[n] = b[m]
+  b[m] = i
+}
+
+Buffer.prototype.swap16 = function swap16 () {
+  var len = this.length
+  if (len % 2 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 16-bits')
+  }
+  for (var i = 0; i < len; i += 2) {
+    swap(this, i, i + 1)
+  }
+  return this
+}
+
+Buffer.prototype.swap32 = function swap32 () {
+  var len = this.length
+  if (len % 4 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 32-bits')
+  }
+  for (var i = 0; i < len; i += 4) {
+    swap(this, i, i + 3)
+    swap(this, i + 1, i + 2)
+  }
+  return this
+}
+
+Buffer.prototype.swap64 = function swap64 () {
+  var len = this.length
+  if (len % 8 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 64-bits')
+  }
+  for (var i = 0; i < len; i += 8) {
+    swap(this, i, i + 7)
+    swap(this, i + 1, i + 6)
+    swap(this, i + 2, i + 5)
+    swap(this, i + 3, i + 4)
+  }
+  return this
+}
+
+Buffer.prototype.toString = function toString () {
+  var length = this.length | 0
+  if (length === 0) return ''
+  if (arguments.length === 0) return utf8Slice(this, 0, length)
+  return slowToString.apply(this, arguments)
+}
+
+Buffer.prototype.equals = function equals (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (this === b) return true
+  return Buffer.compare(this, b) === 0
+}
+
+Buffer.prototype.inspect = function inspect () {
+  var str = ''
+  var max = exports.INSPECT_MAX_BYTES
+  if (this.length > 0) {
+    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
+    if (this.length > max) str += ' ... '
+  }
+  return '<Buffer ' + str + '>'
+}
+
+Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
+  if (!Buffer.isBuffer(target)) {
+    throw new TypeError('Argument must be a Buffer')
+  }
+
+  if (start === undefined) {
+    start = 0
+  }
+  if (end === undefined) {
+    end = target ? target.length : 0
+  }
+  if (thisStart === undefined) {
+    thisStart = 0
+  }
+  if (thisEnd === undefined) {
+    thisEnd = this.length
+  }
+
+  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
+    throw new RangeError('out of range index')
+  }
+
+  if (thisStart >= thisEnd && start >= end) {
+    return 0
+  }
+  if (thisStart >= thisEnd) {
+    return -1
+  }
+  if (start >= end) {
+    return 1
+  }
+
+  start >>>= 0
+  end >>>= 0
+  thisStart >>>= 0
+  thisEnd >>>= 0
+
+  if (this === target) return 0
+
+  var x = thisEnd - thisStart
+  var y = end - start
+  var len = Math.min(x, y)
+
+  var thisCopy = this.slice(thisStart, thisEnd)
+  var targetCopy = target.slice(start, end)
+
+  for (var i = 0; i < len; ++i) {
+    if (thisCopy[i] !== targetCopy[i]) {
+      x = thisCopy[i]
+      y = targetCopy[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
+// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
+//
+// Arguments:
+// - buffer - a Buffer to search
+// - val - a string, Buffer, or number
+// - byteOffset - an index into `buffer`; will be clamped to an int32
+// - encoding - an optional encoding, relevant is val is a string
+// - dir - true for indexOf, false for lastIndexOf
+function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
+  // Empty buffer means no match
+  if (buffer.length === 0) return -1
+
+  // Normalize byteOffset
+  if (typeof byteOffset === 'string') {
+    encoding = byteOffset
+    byteOffset = 0
+  } else if (byteOffset > 0x7fffffff) {
+    byteOffset = 0x7fffffff
+  } else if (byteOffset < -0x80000000) {
+    byteOffset = -0x80000000
+  }
+  byteOffset = +byteOffset  // Coerce to Number.
+  if (isNaN(byteOffset)) {
+    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
+    byteOffset = dir ? 0 : (buffer.length - 1)
+  }
+
+  // Normalize byteOffset: negative offsets start from the end of the buffer
+  if (byteOffset < 0) byteOffset = buffer.length + byteOffset
+  if (byteOffset >= buffer.length) {
+    if (dir) return -1
+    else byteOffset = buffer.length - 1
+  } else if (byteOffset < 0) {
+    if (dir) byteOffset = 0
+    else return -1
+  }
+
+  // Normalize val
+  if (typeof val === 'string') {
+    val = Buffer.from(val, encoding)
+  }
+
+  // Finally, search either indexOf (if dir is true) or lastIndexOf
+  if (Buffer.isBuffer(val)) {
+    // Special case: looking for empty string/buffer always fails
+    if (val.length === 0) {
+      return -1
+    }
+    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
+  } else if (typeof val === 'number') {
+    val = val & 0xFF // Search for a byte value [0-255]
+    if (Buffer.TYPED_ARRAY_SUPPORT &&
+        typeof Uint8Array.prototype.indexOf === 'function') {
+      if (dir) {
+        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
+      } else {
+        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
+      }
+    }
+    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
+  }
+
+  throw new TypeError('val must be string, number or Buffer')
+}
+
+function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
+  var indexSize = 1
+  var arrLength = arr.length
+  var valLength = val.length
+
+  if (encoding !== undefined) {
+    encoding = String(encoding).toLowerCase()
+    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
+        encoding === 'utf16le' || encoding === 'utf-16le') {
+      if (arr.length < 2 || val.length < 2) {
+        return -1
+      }
+      indexSize = 2
+      arrLength /= 2
+      valLength /= 2
+      byteOffset /= 2
+    }
+  }
+
+  function read (buf, i) {
+    if (indexSize === 1) {
+      return buf[i]
+    } else {
+      return buf.readUInt16BE(i * indexSize)
+    }
+  }
+
+  var i
+  if (dir) {
+    var foundIndex = -1
+    for (i = byteOffset; i < arrLength; i++) {
+      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+        if (foundIndex === -1) foundIndex = i
+        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
+      } else {
+        if (foundIndex !== -1) i -= i - foundIndex
+        foundIndex = -1
+      }
+    }
+  } else {
+    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength
+    for (i = byteOffset; i >= 0; i--) {
+      var found = true
+      for (var j = 0; j < valLength; j++) {
+        if (read(arr, i + j) !== read(val, j)) {
+          found = false
+          break
+        }
+      }
+      if (found) return i
+    }
+  }
+
+  return -1
+}
+
+Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
+  return this.indexOf(val, byteOffset, encoding) !== -1
+}
+
+Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
+}
+
+Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
+}
+
+function hexWrite (buf, string, offset, length) {
+  offset = Number(offset) || 0
+  var remaining = buf.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+
+  // must be an even number of digits
+  var strLen = string.length
+  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
+
+  if (length > strLen / 2) {
+    length = strLen / 2
+  }
+  for (var i = 0; i < length; ++i) {
+    var parsed = parseInt(string.substr(i * 2, 2), 16)
+    if (isNaN(parsed)) return i
+    buf[offset + i] = parsed
+  }
+  return i
+}
+
+function utf8Write (buf, string, offset, length) {
+  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+function asciiWrite (buf, string, offset, length) {
+  return blitBuffer(asciiToBytes(string), buf, offset, length)
+}
+
+function latin1Write (buf, string, offset, length) {
+  return asciiWrite(buf, string, offset, length)
+}
+
+function base64Write (buf, string, offset, length) {
+  return blitBuffer(base64ToBytes(string), buf, offset, length)
+}
+
+function ucs2Write (buf, string, offset, length) {
+  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+Buffer.prototype.write = function write (string, offset, length, encoding) {
+  // Buffer#write(string)
+  if (offset === undefined) {
+    encoding = 'utf8'
+    length = this.length
+    offset = 0
+  // Buffer#write(string, encoding)
+  } else if (length === undefined && typeof offset === 'string') {
+    encoding = offset
+    length = this.length
+    offset = 0
+  // Buffer#write(string, offset[, length][, encoding])
+  } else if (isFinite(offset)) {
+    offset = offset | 0
+    if (isFinite(length)) {
+      length = length | 0
+      if (encoding === undefined) encoding = 'utf8'
+    } else {
+      encoding = length
+      length = undefined
+    }
+  // legacy write(string, encoding, offset, length) - remove in v0.13
+  } else {
+    throw new Error(
+      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
+    )
+  }
+
+  var remaining = this.length - offset
+  if (length === undefined || length > remaining) length = remaining
+
+  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
+    throw new RangeError('Attempt to write outside buffer bounds')
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'hex':
+        return hexWrite(this, string, offset, length)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Write(this, string, offset, length)
+
+      case 'ascii':
+        return asciiWrite(this, string, offset, length)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Write(this, string, offset, length)
+
+      case 'base64':
+        // Warning: maxLength not taken into account in base64Write
+        return base64Write(this, string, offset, length)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return ucs2Write(this, string, offset, length)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+Buffer.prototype.toJSON = function toJSON () {
+  return {
+    type: 'Buffer',
+    data: Array.prototype.slice.call(this._arr || this, 0)
+  }
+}
+
+function base64Slice (buf, start, end) {
+  if (start === 0 && end === buf.length) {
+    return base64.fromByteArray(buf)
+  } else {
+    return base64.fromByteArray(buf.slice(start, end))
+  }
+}
+
+function utf8Slice (buf, start, end) {
+  end = Math.min(buf.length, end)
+  var res = []
+
+  var i = start
+  while (i < end) {
+    var firstByte = buf[i]
+    var codePoint = null
+    var bytesPerSequence = (firstByte > 0xEF) ? 4
+      : (firstByte > 0xDF) ? 3
+      : (firstByte > 0xBF) ? 2
+      : 1
+
+    if (i + bytesPerSequence <= end) {
+      var secondByte, thirdByte, fourthByte, tempCodePoint
+
+      switch (bytesPerSequence) {
+        case 1:
+          if (firstByte < 0x80) {
+            codePoint = firstByte
+          }
+          break
+        case 2:
+          secondByte = buf[i + 1]
+          if ((secondByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
+            if (tempCodePoint > 0x7F) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 3:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
+            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 4:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          fourthByte = buf[i + 3]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
+            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+              codePoint = tempCodePoint
+            }
+          }
+      }
+    }
+
+    if (codePoint === null) {
+      // we did not generate a valid codePoint so insert a
+      // replacement char (U+FFFD) and advance only 1 byte
+      codePoint = 0xFFFD
+      bytesPerSequence = 1
+    } else if (codePoint > 0xFFFF) {
+      // encode to utf16 (surrogate pair dance)
+      codePoint -= 0x10000
+      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
+      codePoint = 0xDC00 | codePoint & 0x3FF
+    }
+
+    res.push(codePoint)
+    i += bytesPerSequence
+  }
+
+  return decodeCodePointsArray(res)
+}
+
+// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+// the lowest limit is Chrome, with 0x10000 args.
+// We go 1 magnitude less, for safety
+var MAX_ARGUMENTS_LENGTH = 0x1000
+
+function decodeCodePointsArray (codePoints) {
+  var len = codePoints.length
+  if (len <= MAX_ARGUMENTS_LENGTH) {
+    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
+  }
+
+  // Decode in chunks to avoid "call stack size exceeded".
+  var res = ''
+  var i = 0
+  while (i < len) {
+    res += String.fromCharCode.apply(
+      String,
+      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
+    )
+  }
+  return res
+}
+
+function asciiSlice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i] & 0x7F)
+  }
+  return ret
+}
+
+function latin1Slice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i])
+  }
+  return ret
+}
+
+function hexSlice (buf, start, end) {
+  var len = buf.length
+
+  if (!start || start < 0) start = 0
+  if (!end || end < 0 || end > len) end = len
+
+  var out = ''
+  for (var i = start; i < end; ++i) {
+    out += toHex(buf[i])
+  }
+  return out
+}
+
+function utf16leSlice (buf, start, end) {
+  var bytes = buf.slice(start, end)
+  var res = ''
+  for (var i = 0; i < bytes.length; i += 2) {
+    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
+  }
+  return res
+}
+
+Buffer.prototype.slice = function slice (start, end) {
+  var len = this.length
+  start = ~~start
+  end = end === undefined ? len : ~~end
+
+  if (start < 0) {
+    start += len
+    if (start < 0) start = 0
+  } else if (start > len) {
+    start = len
+  }
+
+  if (end < 0) {
+    end += len
+    if (end < 0) end = 0
+  } else if (end > len) {
+    end = len
+  }
+
+  if (end < start) end = start
+
+  var newBuf
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    newBuf = this.subarray(start, end)
+    newBuf.__proto__ = Buffer.prototype
+  } else {
+    var sliceLen = end - start
+    newBuf = new Buffer(sliceLen, undefined)
+    for (var i = 0; i < sliceLen; ++i) {
+      newBuf[i] = this[i + start]
+    }
+  }
+
+  return newBuf
+}
+
+/*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+function checkOffset (offset, ext, length) {
+  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
+  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
+}
+
+Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    checkOffset(offset, byteLength, this.length)
+  }
+
+  var val = this[offset + --byteLength]
+  var mul = 1
+  while (byteLength > 0 && (mul *= 0x100)) {
+    val += this[offset + --byteLength] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  return this[offset]
+}
+
+Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return this[offset] | (this[offset + 1] << 8)
+}
+
+Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return (this[offset] << 8) | this[offset + 1]
+}
+
+Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return ((this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16)) +
+      (this[offset + 3] * 0x1000000)
+}
+
+Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] * 0x1000000) +
+    ((this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    this[offset + 3])
+}
+
+Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var i = byteLength
+  var mul = 1
+  var val = this[offset + --i]
+  while (i > 0 && (mul *= 0x100)) {
+    val += this[offset + --i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  if (!(this[offset] & 0x80)) return (this[offset])
+  return ((0xff - this[offset] + 1) * -1)
+}
+
+Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset] | (this[offset + 1] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset + 1] | (this[offset] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset]) |
+    (this[offset + 1] << 8) |
+    (this[offset + 2] << 16) |
+    (this[offset + 3] << 24)
+}
+
+Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] << 24) |
+    (this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    (this[offset + 3])
+}
+
+Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, true, 23, 4)
+}
+
+Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, false, 23, 4)
+}
+
+Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, true, 52, 8)
+}
+
+Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, false, 52, 8)
+}
+
+function checkInt (buf, value, offset, ext, max, min) {
+  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
+  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+}
+
+Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  var mul = 1
+  var i = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+function objectWriteUInt16 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
+    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+      (littleEndian ? i : 1 - i) * 8
+  }
+}
+
+Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+function objectWriteUInt32 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffffffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
+    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+  }
+}
+
+Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset + 3] = (value >>> 24)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 1] = (value >>> 8)
+    this[offset] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = 0
+  var mul = 1
+  var sub = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  var sub = 0
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  if (value < 0) value = 0xff + value + 1
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 3] = (value >>> 24)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (value < 0) value = 0xffffffff + value + 1
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+function checkIEEE754 (buf, value, offset, ext, max, min) {
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+  if (offset < 0) throw new RangeError('Index out of range')
+}
+
+function writeFloat (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+  return offset + 4
+}
+
+Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, false, noAssert)
+}
+
+function writeDouble (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+  return offset + 8
+}
+
+Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, false, noAssert)
+}
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function copy (target, targetStart, start, end) {
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (targetStart >= target.length) targetStart = target.length
+  if (!targetStart) targetStart = 0
+  if (end > 0 && end < start) end = start
+
+  // Copy 0 bytes; we're done
+  if (end === start) return 0
+  if (target.length === 0 || this.length === 0) return 0
+
+  // Fatal error conditions
+  if (targetStart < 0) {
+    throw new RangeError('targetStart out of bounds')
+  }
+  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
+  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length) end = this.length
+  if (target.length - targetStart < end - start) {
+    end = target.length - targetStart + start
+  }
+
+  var len = end - start
+  var i
+
+  if (this === target && start < targetStart && targetStart < end) {
+    // descending copy from end
+    for (i = len - 1; i >= 0; --i) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+    // ascending copy from start
+    for (i = 0; i < len; ++i) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else {
+    Uint8Array.prototype.set.call(
+      target,
+      this.subarray(start, start + len),
+      targetStart
+    )
+  }
+
+  return len
+}
+
+// Usage:
+//    buffer.fill(number[, offset[, end]])
+//    buffer.fill(buffer[, offset[, end]])
+//    buffer.fill(string[, offset[, end]][, encoding])
+Buffer.prototype.fill = function fill (val, start, end, encoding) {
+  // Handle string cases:
+  if (typeof val === 'string') {
+    if (typeof start === 'string') {
+      encoding = start
+      start = 0
+      end = this.length
+    } else if (typeof end === 'string') {
+      encoding = end
+      end = this.length
+    }
+    if (val.length === 1) {
+      var code = val.charCodeAt(0)
+      if (code < 256) {
+        val = code
+      }
+    }
+    if (encoding !== undefined && typeof encoding !== 'string') {
+      throw new TypeError('encoding must be a string')
+    }
+    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
+      throw new TypeError('Unknown encoding: ' + encoding)
+    }
+  } else if (typeof val === 'number') {
+    val = val & 255
+  }
+
+  // Invalid ranges are not set to a default, so can range check early.
+  if (start < 0 || this.length < start || this.length < end) {
+    throw new RangeError('Out of range index')
+  }
+
+  if (end <= start) {
+    return this
+  }
+
+  start = start >>> 0
+  end = end === undefined ? this.length : end >>> 0
+
+  if (!val) val = 0
+
+  var i
+  if (typeof val === 'number') {
+    for (i = start; i < end; ++i) {
+      this[i] = val
+    }
+  } else {
+    var bytes = Buffer.isBuffer(val)
+      ? val
+      : utf8ToBytes(new Buffer(val, encoding).toString())
+    var len = bytes.length
+    for (i = 0; i < end - start; ++i) {
+      this[i + start] = bytes[i % len]
+    }
+  }
+
+  return this
+}
+
+// HELPER FUNCTIONS
+// ================
+
+var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
+
+function base64clean (str) {
+  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
+  // Node converts strings with length < 2 to ''
+  if (str.length < 2) return ''
+  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+  while (str.length % 4 !== 0) {
+    str = str + '='
+  }
+  return str
+}
+
+function stringtrim (str) {
+  if (str.trim) return str.trim()
+  return str.replace(/^\s+|\s+$/g, '')
+}
+
+function toHex (n) {
+  if (n < 16) return '0' + n.toString(16)
+  return n.toString(16)
+}
+
+function utf8ToBytes (string, units) {
+  units = units || Infinity
+  var codePoint
+  var length = string.length
+  var leadSurrogate = null
+  var bytes = []
+
+  for (var i = 0; i < length; ++i) {
+    codePoint = string.charCodeAt(i)
+
+    // is surrogate component
+    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+      // last char was a lead
+      if (!leadSurrogate) {
+        // no lead yet
+        if (codePoint > 0xDBFF) {
+          // unexpected trail
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        } else if (i + 1 === length) {
+          // unpaired lead
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        }
+
+        // valid lead
+        leadSurrogate = codePoint
+
+        continue
+      }
+
+      // 2 leads in a row
+      if (codePoint < 0xDC00) {
+        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+        leadSurrogate = codePoint
+        continue
+      }
+
+      // valid surrogate pair
+      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
+    } else if (leadSurrogate) {
+      // valid bmp char, but last char was a lead
+      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+    }
+
+    leadSurrogate = null
+
+    // encode utf8
+    if (codePoint < 0x80) {
+      if ((units -= 1) < 0) break
+      bytes.push(codePoint)
+    } else if (codePoint < 0x800) {
+      if ((units -= 2) < 0) break
+      bytes.push(
+        codePoint >> 0x6 | 0xC0,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x10000) {
+      if ((units -= 3) < 0) break
+      bytes.push(
+        codePoint >> 0xC | 0xE0,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x110000) {
+      if ((units -= 4) < 0) break
+      bytes.push(
+        codePoint >> 0x12 | 0xF0,
+        codePoint >> 0xC & 0x3F | 0x80,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else {
+      throw new Error('Invalid code point')
+    }
+  }
+
+  return bytes
+}
+
+function asciiToBytes (str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; ++i) {
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push(str.charCodeAt(i) & 0xFF)
+  }
+  return byteArray
+}
+
+function utf16leToBytes (str, units) {
+  var c, hi, lo
+  var byteArray = []
+  for (var i = 0; i < str.length; ++i) {
+    if ((units -= 2) < 0) break
+
+    c = str.charCodeAt(i)
+    hi = c >> 8
+    lo = c % 256
+    byteArray.push(lo)
+    byteArray.push(hi)
+  }
+
+  return byteArray
+}
+
+function base64ToBytes (str) {
+  return base64.toByteArray(base64clean(str))
+}
+
+function blitBuffer (src, dst, offset, length) {
+  for (var i = 0; i < length; ++i) {
+    if ((i + offset >= dst.length) || (i >= src.length)) break
+    dst[i + offset] = src[i]
+  }
+  return i
+}
+
+function isnan (val) {
+  return val !== val // eslint-disable-line no-self-compare
+}
+
+},{"base64-js":"yh9p","ieee754":"JgNJ","isarray":"seLU","buffer":"dskh"}],"nGyt":[function(require,module,exports) {
+var Buffer = require("buffer").Buffer;
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+var _require = require('./native-gl'),
+    gl = _require.gl;
+
+var _require2 = require('./webgl-uniform-location'),
+    WebGLUniformLocation = _require2.WebGLUniformLocation;
+
+function bindPublics(props, wrapper, privateInstance, privateMethods) {
+  for (var i = 0; i < props.length; i++) {
+    var prop = props[i];
+    var value = privateInstance[prop];
+
+    if (typeof value === 'function') {
+      if (privateMethods.indexOf(prop) === -1) {
+        wrapper[prop] = value.bind(privateInstance);
+      }
+    } else {
+      if (prop[0] === '_' || prop[0] === '0' || prop[0] === '1') {
+        continue;
+      }
+
+      wrapper[prop] = value;
+    }
+  }
+}
+
+function checkObject(object) {
+  return _typeof(object) === 'object' || object === void 0;
+}
+
+function checkUniform(program, location) {
+  return location instanceof WebGLUniformLocation && location._program === program && location._linkCount === program._linkCount;
+}
+
+function isTypedArray(data) {
+  return data instanceof Uint8Array || data instanceof Uint8ClampedArray || data instanceof Int8Array || data instanceof Uint16Array || data instanceof Int16Array || data instanceof Uint32Array || data instanceof Int32Array || data instanceof Float32Array || data instanceof Float64Array;
+} // Don't allow: ", $, `, @, \, ', \0
+
+
+function isValidString(str) {
+  // Remove comments first
+  var c = str.replace(/(?:\/\*(?:[\s\S]*?)\*\/)|(?:([\s;])+\/\/(?:.*)$)/gm, '');
+  return !/["$`@\\'\0]/.test(c);
+}
+
+function vertexCount(primitive, count) {
+  switch (primitive) {
+    case gl.TRIANGLES:
+      return count - count % 3;
+
+    case gl.LINES:
+      return count - count % 2;
+
+    case gl.LINE_LOOP:
+    case gl.POINTS:
+      return count;
+
+    case gl.TRIANGLE_FAN:
+    case gl.LINE_STRIP:
+      if (count < 2) {
+        return 0;
+      }
+
+      return count;
+
+    case gl.TRIANGLE_STRIP:
+      if (count < 3) {
+        return 0;
+      }
+
+      return count;
+
+    default:
+      return -1;
+  }
+}
+
+function typeSize(type) {
+  switch (type) {
+    case gl.UNSIGNED_BYTE:
+    case gl.BYTE:
+      return 1;
+
+    case gl.UNSIGNED_SHORT:
+    case gl.SHORT:
+      return 2;
+
+    case gl.UNSIGNED_INT:
+    case gl.INT:
+    case gl.FLOAT:
+      return 4;
+  }
+
+  return 0;
+}
+
+function uniformTypeSize(type) {
+  switch (type) {
+    case gl.BOOL_VEC4:
+    case gl.INT_VEC4:
+    case gl.FLOAT_VEC4:
+      return 4;
+
+    case gl.BOOL_VEC3:
+    case gl.INT_VEC3:
+    case gl.FLOAT_VEC3:
+      return 3;
+
+    case gl.BOOL_VEC2:
+    case gl.INT_VEC2:
+    case gl.FLOAT_VEC2:
+      return 2;
+
+    case gl.BOOL:
+    case gl.INT:
+    case gl.FLOAT:
+    case gl.SAMPLER_2D:
+    case gl.SAMPLER_CUBE:
+      return 1;
+
+    default:
+      return 0;
+  }
+}
+
+function unpackTypedArray(array) {
+  return new Uint8Array(array.buffer).subarray(array.byteOffset, array.byteLength + array.byteOffset);
+}
+
+function extractImageData(pixels) {
+  if (_typeof(pixels) === 'object' && typeof pixels.width !== 'undefined' && typeof pixels.height !== 'undefined') {
+    if (typeof pixels.data !== 'undefined') {
+      return pixels;
+    }
+
+    var context = null;
+
+    if (typeof pixels.getContext === 'function') {
+      context = pixels.getContext('2d');
+    } else if (typeof pixels.src !== 'undefined' && (typeof document === "undefined" ? "undefined" : _typeof(document)) === 'object' && typeof document.createElement === 'function') {
+      var canvas = document.createElement('canvas');
+
+      if (_typeof(canvas) === 'object' && typeof canvas.getContext === 'function') {
+        context = canvas.getContext('2d');
+
+        if (context !== null) {
+          context.drawImage(pixels, 0, 0);
+        }
+      }
+    }
+
+    if (context !== null) {
+      return context.getImageData(0, 0, pixels.width, pixels.height);
+    }
+  }
+
+  return null;
+}
+
+function formatSize(internalFormat) {
+  switch (internalFormat) {
+    case gl.ALPHA:
+    case gl.LUMINANCE:
+      return 1;
+
+    case gl.LUMINANCE_ALPHA:
+      return 2;
+
+    case gl.RGB:
+      return 3;
+
+    case gl.RGBA:
+      return 4;
+  }
+
+  return 0;
+}
+
+function convertPixels(pixels) {
+  if (_typeof(pixels) === 'object' && pixels !== null) {
+    if (pixels instanceof ArrayBuffer) {
+      return new Uint8Array(pixels);
+    } else if (pixels instanceof Uint8Array || pixels instanceof Uint16Array || pixels instanceof Uint8ClampedArray || pixels instanceof Float32Array) {
+      return unpackTypedArray(pixels);
+    } else if (pixels instanceof Buffer) {
+      return new Uint8Array(pixels);
+    }
+  }
+
+  return null;
+}
+
+function checkFormat(format) {
+  return format === gl.ALPHA || format === gl.LUMINANCE_ALPHA || format === gl.LUMINANCE || format === gl.RGB || format === gl.RGBA;
+}
+
+function validCubeTarget(target) {
+  return target === gl.TEXTURE_CUBE_MAP_POSITIVE_X || target === gl.TEXTURE_CUBE_MAP_NEGATIVE_X || target === gl.TEXTURE_CUBE_MAP_POSITIVE_Y || target === gl.TEXTURE_CUBE_MAP_NEGATIVE_Y || target === gl.TEXTURE_CUBE_MAP_POSITIVE_Z || target === gl.TEXTURE_CUBE_MAP_NEGATIVE_Z;
+}
+
+module.exports = {
+  bindPublics: bindPublics,
+  checkObject: checkObject,
+  isTypedArray: isTypedArray,
+  isValidString: isValidString,
+  vertexCount: vertexCount,
+  typeSize: typeSize,
+  uniformTypeSize: uniformTypeSize,
+  unpackTypedArray: unpackTypedArray,
+  extractImageData: extractImageData,
+  formatSize: formatSize,
+  checkFormat: checkFormat,
+  checkUniform: checkUniform,
+  convertPixels: convertPixels,
+  validCubeTarget: validCubeTarget
+};
+},{"./native-gl":"sKEg","./webgl-uniform-location":"tW9K","buffer":"dskh"}],"szyx":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var _require = require('../native-gl'),
+    gl = _require.gl;
+
+var _require2 = require('../utils'),
+    vertexCount = _require2.vertexCount;
+
+var ANGLEInstancedArrays =
+/*#__PURE__*/
+function () {
+  function ANGLEInstancedArrays(ctx) {
+    _classCallCheck(this, ANGLEInstancedArrays);
+
+    this.VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE = 0x88fe;
+    this.ctx = ctx;
+    this._drawArraysInstanced = gl._drawArraysInstanced.bind(ctx);
+    this._drawElementsInstanced = gl._drawElementsInstanced.bind(ctx);
+    this._vertexAttribDivisor = gl._vertexAttribDivisor.bind(ctx);
+  }
+
+  _createClass(ANGLEInstancedArrays, [{
+    key: "drawArraysInstancedANGLE",
+    value: function drawArraysInstancedANGLE(mode, first, count, primCount) {
+      var ctx = this.ctx;
+      mode |= 0;
+      first |= 0;
+      count |= 0;
+      primCount |= 0;
+
+      if (first < 0 || count < 0 || primCount < 0) {
+        ctx.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      if (!ctx._checkStencilState()) {
+        return;
+      }
+
+      var reducedCount = vertexCount(mode, count);
+
+      if (reducedCount < 0) {
+        ctx.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (!ctx._framebufferOk()) {
+        return;
+      }
+
+      if (count === 0 || primCount === 0) {
+        return;
+      }
+
+      var maxIndex = first;
+
+      if (count > 0) {
+        maxIndex = count + first - 1 >>> 0;
+      }
+
+      if (this.checkInstancedVertexAttribState(maxIndex, primCount)) {
+        return this._drawArraysInstanced(mode, first, reducedCount, primCount);
+      }
+    }
+  }, {
+    key: "drawElementsInstancedANGLE",
+    value: function drawElementsInstancedANGLE(mode, count, type, ioffset, primCount) {
+      var ctx = this.ctx;
+      mode |= 0;
+      count |= 0;
+      type |= 0;
+      ioffset |= 0;
+      primCount |= 0;
+
+      if (count < 0 || ioffset < 0 || primCount < 0) {
+        ctx.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      if (!ctx._checkStencilState()) {
+        return;
+      }
+
+      var elementBuffer = ctx._activeElementArrayBuffer;
+
+      if (!elementBuffer) {
+        ctx.setError(gl.INVALID_OPERATION);
+        return;
+      } // Unpack element data
+
+
+      var elementData = null;
+      var offset = ioffset;
+
+      if (type === gl.UNSIGNED_SHORT) {
+        if (offset % 2) {
+          ctx.setError(gl.INVALID_OPERATION);
+          return;
+        }
+
+        offset >>= 1;
+        elementData = new Uint16Array(elementBuffer._elements.buffer);
+      } else if (ctx._extensions.oes_element_index_uint && type === gl.UNSIGNED_INT) {
+        if (offset % 4) {
+          ctx.setError(gl.INVALID_OPERATION);
+          return;
+        }
+
+        offset >>= 2;
+        elementData = new Uint32Array(elementBuffer._elements.buffer);
+      } else if (type === gl.UNSIGNED_BYTE) {
+        elementData = elementBuffer._elements;
+      } else {
+        ctx.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      var reducedCount = count;
+
+      switch (mode) {
+        case gl.TRIANGLES:
+          if (count % 3) {
+            reducedCount -= count % 3;
+          }
+
+          break;
+
+        case gl.LINES:
+          if (count % 2) {
+            reducedCount -= count % 2;
+          }
+
+          break;
+
+        case gl.POINTS:
+          break;
+
+        case gl.LINE_LOOP:
+        case gl.LINE_STRIP:
+          if (count < 2) {
+            ctx.setError(gl.INVALID_OPERATION);
+            return;
+          }
+
+          break;
+
+        case gl.TRIANGLE_FAN:
+        case gl.TRIANGLE_STRIP:
+          if (count < 3) {
+            ctx.setError(gl.INVALID_OPERATION);
+            return;
+          }
+
+          break;
+
+        default:
+          ctx.setError(gl.INVALID_ENUM);
+          return;
+      }
+
+      if (!ctx._framebufferOk()) {
+        return;
+      }
+
+      if (count === 0 || primCount === 0) {
+        this.checkInstancedVertexAttribState(0, 0);
+        return;
+      }
+
+      if (count + offset >>> 0 > elementData.length) {
+        ctx.setError(gl.INVALID_OPERATION);
+        return;
+      } // Compute max index
+
+
+      var maxIndex = -1;
+
+      for (var i = offset; i < offset + count; ++i) {
+        maxIndex = Math.max(maxIndex, elementData[i]);
+      }
+
+      if (maxIndex < 0) {
+        this.checkInstancedVertexAttribState(0, 0);
+        return;
+      }
+
+      if (this.checkInstancedVertexAttribState(maxIndex, primCount)) {
+        if (reducedCount > 0) {
+          this._drawElementsInstanced(mode, reducedCount, type, ioffset, primCount);
+        }
+      }
+    }
+  }, {
+    key: "vertexAttribDivisorANGLE",
+    value: function vertexAttribDivisorANGLE(index, divisor) {
+      var ctx = this.ctx;
+      index |= 0;
+      divisor |= 0;
+
+      if (divisor < 0 || index < 0 || index >= ctx._vertexAttribs.length) {
+        ctx.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      var attrib = ctx._vertexAttribs[index];
+      attrib._divisor = divisor;
+
+      this._vertexAttribDivisor(index, divisor);
+    }
+  }, {
+    key: "checkInstancedVertexAttribState",
+    value: function checkInstancedVertexAttribState(maxIndex, primCount) {
+      var ctx = this.ctx;
+      var program = ctx._activeProgram;
+
+      if (!program) {
+        ctx.setError(gl.INVALID_OPERATION);
+        return false;
+      }
+
+      var attribs = ctx._vertexAttribs;
+      var hasZero = false;
+
+      for (var i = 0; i < attribs.length; ++i) {
+        var attrib = attribs[i];
+
+        if (attrib._isPointer) {
+          var buffer = attrib._pointerBuffer;
+
+          if (program._attributes.indexOf(i) >= 0) {
+            if (!buffer) {
+              ctx.setError(gl.INVALID_OPERATION);
+              return false;
+            }
+
+            var maxByte = 0;
+
+            if (attrib._divisor === 0) {
+              hasZero = true;
+              maxByte = attrib._pointerStride * maxIndex + attrib._pointerSize + attrib._pointerOffset;
+            } else {
+              maxByte = attrib._pointerStride * (Math.ceil(primCount / attrib._divisor) - 1) + attrib._pointerSize + attrib._pointerOffset;
+            }
+
+            if (maxByte > buffer._size) {
+              ctx.setError(gl.INVALID_OPERATION);
+              return false;
+            }
+          }
+        }
+      }
+
+      if (!hasZero) {
+        ctx.setError(gl.INVALID_OPERATION);
+        return false;
+      }
+
+      return true;
+    }
+  }]);
+
+  return ANGLEInstancedArrays;
+}();
+
+function getANGLEInstancedArrays(ctx) {
+  return new ANGLEInstancedArrays(ctx);
+}
+
+module.exports = {
+  ANGLEInstancedArrays: ANGLEInstancedArrays,
+  getANGLEInstancedArrays: getANGLEInstancedArrays
+};
+},{"../native-gl":"sKEg","../utils":"nGyt"}],"4tF8":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var OESElementIndexUint = function OESElementIndexUint() {
+  _classCallCheck(this, OESElementIndexUint);
+};
+
+function getOESElementIndexUint(context) {
+  var result = null;
+  var exts = context.getSupportedExtensions();
+
+  if (exts && exts.indexOf('OES_element_index_uint') >= 0) {
+    result = new OESElementIndexUint();
+  }
+
+  return result;
+}
+
+module.exports = {
+  getOESElementIndexUint: getOESElementIndexUint,
+  OESElementIndexUint: OESElementIndexUint
+};
+},{}],"1jl5":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var OESTextureFloat = function OESTextureFloat() {
+  _classCallCheck(this, OESTextureFloat);
+};
+
+function getOESTextureFloat(context) {
+  var result = null;
+  var exts = context.getSupportedExtensions();
+
+  if (exts && exts.indexOf('OES_texture_float') >= 0) {
+    result = new OESTextureFloat();
+  }
+
+  return result;
+}
+
+module.exports = {
+  getOESTextureFloat: getOESTextureFloat,
+  OESTextureFloat: OESTextureFloat
+};
+},{}],"Y2uY":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var STACKGLDestroyContext = function STACKGLDestroyContext(ctx) {
+  _classCallCheck(this, STACKGLDestroyContext);
+
+  this.destroy = ctx.destroy.bind(ctx);
+};
+
+function getSTACKGLDestroyContext(ctx) {
+  return new STACKGLDestroyContext(ctx);
+}
+
+module.exports = {
+  getSTACKGLDestroyContext: getSTACKGLDestroyContext,
+  STACKGLDestroyContext: STACKGLDestroyContext
+};
+},{}],"LPDT":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var STACKGLResizeDrawingBuffer = function STACKGLResizeDrawingBuffer(ctx) {
+  _classCallCheck(this, STACKGLResizeDrawingBuffer);
+
+  this.resize = ctx.resize.bind(ctx);
+};
+
+function getSTACKGLResizeDrawingBuffer(ctx) {
+  return new STACKGLResizeDrawingBuffer(ctx);
+}
+
+module.exports = {
+  getSTACKGLResizeDrawingBuffer: getSTACKGLResizeDrawingBuffer,
+  STACKGLResizeDrawingBuffer: STACKGLResizeDrawingBuffer
+};
+},{}],"nmtm":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var _require = require('../native-gl'),
+    gl = _require.gl;
+
+var WebGLDrawBuffers =
+/*#__PURE__*/
+function () {
+  function WebGLDrawBuffers(ctx) {
+    _classCallCheck(this, WebGLDrawBuffers);
+
+    this.ctx = ctx;
+    var exts = ctx.getSupportedExtensions();
+
+    if (exts && exts.indexOf('WEBGL_draw_buffers') >= 0) {
+      Object.assign(this, ctx.extWEBGL_draw_buffers());
+      this._buffersState = [ctx.BACK];
+      this._maxDrawBuffers = ctx._getParameterDirect(this.MAX_DRAW_BUFFERS_WEBGL);
+      this._ALL_ATTACHMENTS = [];
+      this._ALL_COLOR_ATTACHMENTS = [];
+      var allColorAttachments = [this.COLOR_ATTACHMENT0_WEBGL, this.COLOR_ATTACHMENT1_WEBGL, this.COLOR_ATTACHMENT2_WEBGL, this.COLOR_ATTACHMENT3_WEBGL, this.COLOR_ATTACHMENT4_WEBGL, this.COLOR_ATTACHMENT5_WEBGL, this.COLOR_ATTACHMENT6_WEBGL, this.COLOR_ATTACHMENT7_WEBGL, this.COLOR_ATTACHMENT8_WEBGL, this.COLOR_ATTACHMENT9_WEBGL, this.COLOR_ATTACHMENT10_WEBGL, this.COLOR_ATTACHMENT11_WEBGL, this.COLOR_ATTACHMENT12_WEBGL, this.COLOR_ATTACHMENT13_WEBGL, this.COLOR_ATTACHMENT14_WEBGL, this.COLOR_ATTACHMENT15_WEBGL];
+
+      while (this._ALL_ATTACHMENTS.length < this._maxDrawBuffers) {
+        var colorAttachment = allColorAttachments.shift();
+
+        this._ALL_ATTACHMENTS.push(colorAttachment);
+
+        this._ALL_COLOR_ATTACHMENTS.push(colorAttachment);
+      }
+
+      this._ALL_ATTACHMENTS.push(gl.DEPTH_ATTACHMENT, gl.STENCIL_ATTACHMENT, gl.DEPTH_STENCIL_ATTACHMENT);
+    }
+  }
+
+  _createClass(WebGLDrawBuffers, [{
+    key: "drawBuffersWEBGL",
+    value: function drawBuffersWEBGL(buffers) {
+      var ctx = this.ctx;
+
+      if (buffers.length < 1) {
+        ctx.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      if (buffers.length === 1 && buffers[0] === gl.BACK) {
+        this._buffersState = buffers;
+        ctx.drawBuffersWEBGL([this.COLOR_ATTACHMENT0_WEBGL]);
+        return;
+      } else if (!ctx._activeFramebuffer) {
+        if (buffers.length > 1) {
+          ctx.setError(gl.INVALID_OPERATION);
+          return;
+        }
+
+        for (var i = 0; i < buffers.length; i++) {
+          if (buffers[i] > gl.NONE) {
+            ctx.setError(gl.INVALID_OPERATION);
+            return;
+          }
+        }
+      }
+
+      this._buffersState = buffers;
+      ctx.drawBuffersWEBGL(buffers);
+    }
+  }]);
+
+  return WebGLDrawBuffers;
+}();
+
+function getWebGLDrawBuffers(ctx) {
+  var exts = ctx.getSupportedExtensions();
+
+  if (exts && exts.indexOf('WEBGL_draw_buffers') >= 0) {
+    return new WebGLDrawBuffers(ctx);
+  } else {
+    return null;
+  }
+}
+
+module.exports = {
+  getWebGLDrawBuffers: getWebGLDrawBuffers,
+  WebGLDrawBuffers: WebGLDrawBuffers
+};
+},{"../native-gl":"sKEg"}],"IW4i":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var WebGLActiveInfo = function WebGLActiveInfo(_) {
+  _classCallCheck(this, WebGLActiveInfo);
+
+  this.size = _.size;
+  this.type = _.type;
+  this.name = _.name;
+};
+
+module.exports = {
+  WebGLActiveInfo: WebGLActiveInfo
+};
+},{}],"B+NL":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Linkable =
+/*#__PURE__*/
+function () {
+  function Linkable(_) {
+    _classCallCheck(this, Linkable);
+
+    this._ = _;
+    this._references = [];
+    this._refCount = 0;
+    this._pendingDelete = false;
+    this._binding = 0;
+  }
+
+  _createClass(Linkable, [{
+    key: "_link",
+    value: function _link(b) {
+      this._references.push(b);
+
+      b._refCount += 1;
+      return true;
+    }
+  }, {
+    key: "_unlink",
+    value: function _unlink(b) {
+      var idx = this._references.indexOf(b);
+
+      if (idx < 0) {
+        return false;
+      }
+
+      while (idx >= 0) {
+        this._references[idx] = this._references[this._references.length - 1];
+
+        this._references.pop();
+
+        b._refCount -= 1;
+
+        b._checkDelete();
+
+        idx = this._references.indexOf(b);
+      }
+
+      return true;
+    }
+  }, {
+    key: "_linked",
+    value: function _linked(b) {
+      return this._references.indexOf(b) >= 0;
+    }
+  }, {
+    key: "_checkDelete",
+    value: function _checkDelete() {
+      if (this._refCount <= 0 && this._pendingDelete && this._ !== 0) {
+        while (this._references.length > 0) {
+          this._unlink(this._references[0]);
+        }
+
+        this._performDelete();
+
+        this._ = 0;
+      }
+    }
+  }, {
+    key: "_performDelete",
+    value: function _performDelete() {}
+  }]);
+
+  return Linkable;
+}();
+
+module.exports = {
+  Linkable: Linkable
+};
+},{}],"gerX":[function(require,module,exports) {
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var _require = require('./linkable'),
+    Linkable = _require.Linkable;
+
+var _require2 = require('./native-gl'),
+    gl = _require2.gl;
+
+var WebGLFramebuffer =
+/*#__PURE__*/
+function (_Linkable) {
+  _inherits(WebGLFramebuffer, _Linkable);
+
+  function WebGLFramebuffer(_, ctx) {
+    var _this;
+
+    _classCallCheck(this, WebGLFramebuffer);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(WebGLFramebuffer).call(this, _));
+    _this._ctx = ctx;
+    _this._binding = 0;
+    _this._width = 0;
+    _this._height = 0;
+    _this._status = null;
+    _this._attachments = {};
+    _this._attachments[gl.COLOR_ATTACHMENT0] = null;
+    _this._attachments[gl.DEPTH_ATTACHMENT] = null;
+    _this._attachments[gl.STENCIL_ATTACHMENT] = null;
+    _this._attachments[gl.DEPTH_STENCIL_ATTACHMENT] = null;
+    _this._attachmentLevel = {};
+    _this._attachmentLevel[gl.COLOR_ATTACHMENT0] = 0;
+    _this._attachmentLevel[gl.DEPTH_ATTACHMENT] = 0;
+    _this._attachmentLevel[gl.STENCIL_ATTACHMENT] = 0;
+    _this._attachmentLevel[gl.DEPTH_STENCIL_ATTACHMENT] = 0;
+    _this._attachmentFace = {};
+    _this._attachmentFace[gl.COLOR_ATTACHMENT0] = 0;
+    _this._attachmentFace[gl.DEPTH_ATTACHMENT] = 0;
+    _this._attachmentFace[gl.STENCIL_ATTACHMENT] = 0;
+    _this._attachmentFace[gl.DEPTH_STENCIL_ATTACHMENT] = 0;
+
+    if (ctx._extensions.webgl_draw_buffers) {
+      var webgl_draw_buffers = ctx._extensions.webgl_draw_buffers; // eslint-disable-line
+
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT1_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT2_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT3_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT4_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT5_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT6_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT7_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT8_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT9_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT10_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT11_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT12_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT13_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT14_WEBGL] = null;
+      _this._attachments[webgl_draw_buffers.COLOR_ATTACHMENT15_WEBGL] = null;
+      _this._attachments[gl.NONE] = null;
+      _this._attachments[gl.BACK] = null;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT1_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT2_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT3_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT4_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT5_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT6_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT7_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT8_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT9_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT10_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT11_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT12_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT13_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT14_WEBGL] = 0;
+      _this._attachmentLevel[webgl_draw_buffers.COLOR_ATTACHMENT15_WEBGL] = 0;
+      _this._attachmentLevel[gl.NONE] = null;
+      _this._attachmentLevel[gl.BACK] = null;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT1_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT2_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT3_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT4_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT5_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT6_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT7_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT8_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT9_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT10_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT11_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT12_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT13_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT14_WEBGL] = 0;
+      _this._attachmentFace[webgl_draw_buffers.COLOR_ATTACHMENT15_WEBGL] = 0;
+      _this._attachmentFace[gl.NONE] = null;
+      _this._attachmentFace[gl.BACK] = null;
+    }
+
+    return _this;
+  }
+
+  _createClass(WebGLFramebuffer, [{
+    key: "_clearAttachment",
+    value: function _clearAttachment(attachment) {
+      var object = this._attachments[attachment];
+
+      if (!object) {
+        return;
+      }
+
+      this._attachments[attachment] = null;
+
+      this._unlink(object);
+    }
+  }, {
+    key: "_setAttachment",
+    value: function _setAttachment(object, attachment) {
+      var prevObject = this._attachments[attachment];
+
+      if (prevObject === object) {
+        return;
+      }
+
+      this._clearAttachment(attachment);
+
+      if (!object) {
+        return;
+      }
+
+      this._attachments[attachment] = object;
+
+      this._link(object);
+    }
+  }, {
+    key: "_performDelete",
+    value: function _performDelete() {
+      var ctx = this._ctx;
+      delete ctx._framebuffers[this._ | 0];
+      gl.deleteFramebuffer.call(ctx, this._ | 0);
+    }
+  }]);
+
+  return WebGLFramebuffer;
+}(Linkable);
+
+module.exports = {
+  WebGLFramebuffer: WebGLFramebuffer
+};
+},{"./linkable":"B+NL","./native-gl":"sKEg"}],"KfrC":[function(require,module,exports) {
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var _require = require('./linkable'),
+    Linkable = _require.Linkable;
+
+var _require2 = require('./native-gl'),
+    gl = _require2.gl;
+
+var WebGLBuffer =
+/*#__PURE__*/
+function (_Linkable) {
+  _inherits(WebGLBuffer, _Linkable);
+
+  function WebGLBuffer(_, ctx) {
+    var _this;
+
+    _classCallCheck(this, WebGLBuffer);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(WebGLBuffer).call(this, _));
+    _this._ctx = ctx;
+    _this._size = 0;
+    _this._elements = new Uint8Array(0);
+    return _this;
+  }
+
+  _createClass(WebGLBuffer, [{
+    key: "_performDelete",
+    value: function _performDelete() {
+      var ctx = this._ctx;
+      delete ctx._buffers[this._ | 0];
+      gl.deleteBuffer.call(ctx, this._ | 0);
+    }
+  }]);
+
+  return WebGLBuffer;
+}(Linkable);
+
+module.exports = {
+  WebGLBuffer: WebGLBuffer
+};
+},{"./linkable":"B+NL","./native-gl":"sKEg"}],"k8Ir":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var WebGLDrawingBufferWrapper = function WebGLDrawingBufferWrapper(framebuffer, color, depthStencil) {
+  _classCallCheck(this, WebGLDrawingBufferWrapper);
+
+  this._framebuffer = framebuffer;
+  this._color = color;
+  this._depthStencil = depthStencil;
+};
+
+module.exports = {
+  WebGLDrawingBufferWrapper: WebGLDrawingBufferWrapper
+};
+},{}],"eJRH":[function(require,module,exports) {
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var _require = require('./linkable'),
+    Linkable = _require.Linkable;
+
+var _require2 = require('./native-gl'),
+    gl = _require2.gl;
+
+var WebGLProgram =
+/*#__PURE__*/
+function (_Linkable) {
+  _inherits(WebGLProgram, _Linkable);
+
+  function WebGLProgram(_, ctx) {
+    var _this;
+
+    _classCallCheck(this, WebGLProgram);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(WebGLProgram).call(this, _));
+    _this._ctx = ctx;
+    _this._linkCount = 0;
+    _this._linkStatus = false;
+    _this._linkInfoLog = 'not linked';
+    _this._attributes = [];
+    _this._uniforms = [];
+    return _this;
+  }
+
+  _createClass(WebGLProgram, [{
+    key: "_performDelete",
+    value: function _performDelete() {
+      var ctx = this._ctx;
+      delete ctx._programs[this._ | 0];
+      gl.deleteProgram.call(ctx, this._ | 0);
+    }
+  }]);
+
+  return WebGLProgram;
+}(Linkable);
+
+module.exports = {
+  WebGLProgram: WebGLProgram
+};
+},{"./linkable":"B+NL","./native-gl":"sKEg"}],"hFzp":[function(require,module,exports) {
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var _require = require('./linkable'),
+    Linkable = _require.Linkable;
+
+var _require2 = require('./native-gl'),
+    gl = _require2.gl;
+
+var WebGLRenderbuffer =
+/*#__PURE__*/
+function (_Linkable) {
+  _inherits(WebGLRenderbuffer, _Linkable);
+
+  function WebGLRenderbuffer(_, ctx) {
+    var _this;
+
+    _classCallCheck(this, WebGLRenderbuffer);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(WebGLRenderbuffer).call(this, _));
+    _this._ctx = ctx;
+    _this._binding = 0;
+    _this._width = 0;
+    _this._height = 0;
+    _this._format = 0;
+    return _this;
+  }
+
+  _createClass(WebGLRenderbuffer, [{
+    key: "_performDelete",
+    value: function _performDelete() {
+      var ctx = this._ctx;
+      delete ctx._renderbuffers[this._ | 0];
+      gl.deleteRenderbuffer.call(ctx, this._ | 0);
+    }
+  }]);
+
+  return WebGLRenderbuffer;
+}(Linkable);
+
+module.exports = {
+  WebGLRenderbuffer: WebGLRenderbuffer
+};
+},{"./linkable":"B+NL","./native-gl":"sKEg"}],"KtH9":[function(require,module,exports) {
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var _require = require('./native-gl'),
+    gl = _require.gl;
+
+var _require2 = require('./linkable'),
+    Linkable = _require2.Linkable;
+
+var WebGLShader =
+/*#__PURE__*/
+function (_Linkable) {
+  _inherits(WebGLShader, _Linkable);
+
+  function WebGLShader(_, ctx, type) {
+    var _this;
+
+    _classCallCheck(this, WebGLShader);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(WebGLShader).call(this, _));
+    _this._type = type;
+    _this._ctx = ctx;
+    _this._source = '';
+    _this._compileStatus = false;
+    _this._compileInfo = '';
+    return _this;
+  }
+
+  _createClass(WebGLShader, [{
+    key: "_performDelete",
+    value: function _performDelete() {
+      var ctx = this._ctx;
+      delete ctx._shaders[this._ | 0];
+      gl.deleteShader.call(ctx, this._ | 0);
+    }
+  }]);
+
+  return WebGLShader;
+}(Linkable);
+
+module.exports = {
+  WebGLShader: WebGLShader
+};
+},{"./native-gl":"sKEg","./linkable":"B+NL"}],"Xj5G":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var WebGLShaderPrecisionFormat = function WebGLShaderPrecisionFormat(_) {
+  _classCallCheck(this, WebGLShaderPrecisionFormat);
+
+  this.rangeMin = _.rangeMin;
+  this.rangeMax = _.rangeMax;
+  this.precision = _.precision;
+};
+
+module.exports = {
+  WebGLShaderPrecisionFormat: WebGLShaderPrecisionFormat
+};
+},{}],"qlOf":[function(require,module,exports) {
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var _require = require('./linkable'),
+    Linkable = _require.Linkable;
+
+var _require2 = require('./native-gl'),
+    gl = _require2.gl;
+
+var WebGLTexture =
+/*#__PURE__*/
+function (_Linkable) {
+  _inherits(WebGLTexture, _Linkable);
+
+  function WebGLTexture(_, ctx) {
+    var _this;
+
+    _classCallCheck(this, WebGLTexture);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(WebGLTexture).call(this, _));
+    _this._ctx = ctx;
+    _this._binding = 0;
+    _this._levelWidth = new Int32Array(32);
+    _this._levelHeight = new Int32Array(32);
+    _this._format = 0;
+    _this._type = 0;
+    _this._complete = true;
+    return _this;
+  }
+
+  _createClass(WebGLTexture, [{
+    key: "_performDelete",
+    value: function _performDelete() {
+      var ctx = this._ctx;
+      delete ctx._textures[this._ | 0];
+      gl.deleteTexture.call(ctx, this._ | 0);
+    }
+  }]);
+
+  return WebGLTexture;
+}(Linkable);
+
+module.exports = {
+  WebGLTexture: WebGLTexture
+};
+},{"./linkable":"B+NL","./native-gl":"sKEg"}],"mUad":[function(require,module,exports) {
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var bits = require('bit-twiddle');
+
+var tokenize = require('glsl-tokenizer/string');
+
+var HEADLESS_VERSION = require('../../package.json').version;
+
+var _require = require('./native-gl'),
+    gl = _require.gl,
+    NativeWebGLRenderingContext = _require.NativeWebGLRenderingContext,
+    NativeWebGL = _require.NativeWebGL;
+
+var _require2 = require('./extensions/angle-instanced-arrays'),
+    getANGLEInstancedArrays = _require2.getANGLEInstancedArrays;
+
+var _require3 = require('./extensions/oes-element-index-unit'),
+    getOESElementIndexUint = _require3.getOESElementIndexUint;
+
+var _require4 = require('./extensions/oes-texture-float'),
+    getOESTextureFloat = _require4.getOESTextureFloat;
+
+var _require5 = require('./extensions/stackgl-destroy-context'),
+    getSTACKGLDestroyContext = _require5.getSTACKGLDestroyContext;
+
+var _require6 = require('./extensions/stackgl-resize-drawing-buffer'),
+    getSTACKGLResizeDrawingBuffer = _require6.getSTACKGLResizeDrawingBuffer;
+
+var _require7 = require('./extensions/webgl-draw-buffers'),
+    getWebGLDrawBuffers = _require7.getWebGLDrawBuffers;
+
+var _require8 = require('./utils'),
+    bindPublics = _require8.bindPublics,
+    checkObject = _require8.checkObject,
+    checkUniform = _require8.checkUniform,
+    formatSize = _require8.formatSize,
+    isValidString = _require8.isValidString,
+    typeSize = _require8.typeSize,
+    uniformTypeSize = _require8.uniformTypeSize,
+    extractImageData = _require8.extractImageData,
+    vertexCount = _require8.vertexCount,
+    isTypedArray = _require8.isTypedArray,
+    unpackTypedArray = _require8.unpackTypedArray,
+    convertPixels = _require8.convertPixels,
+    checkFormat = _require8.checkFormat,
+    validCubeTarget = _require8.validCubeTarget;
+
+var _require9 = require('./webgl-active-info'),
+    WebGLActiveInfo = _require9.WebGLActiveInfo;
+
+var _require10 = require('./webgl-framebuffer'),
+    WebGLFramebuffer = _require10.WebGLFramebuffer;
+
+var _require11 = require('./webgl-buffer'),
+    WebGLBuffer = _require11.WebGLBuffer;
+
+var _require12 = require('./webgl-drawing-buffer-wrapper'),
+    WebGLDrawingBufferWrapper = _require12.WebGLDrawingBufferWrapper;
+
+var _require13 = require('./webgl-program'),
+    WebGLProgram = _require13.WebGLProgram;
+
+var _require14 = require('./webgl-renderbuffer'),
+    WebGLRenderbuffer = _require14.WebGLRenderbuffer;
+
+var _require15 = require('./webgl-shader'),
+    WebGLShader = _require15.WebGLShader;
+
+var _require16 = require('./webgl-shader-precision-format'),
+    WebGLShaderPrecisionFormat = _require16.WebGLShaderPrecisionFormat;
+
+var _require17 = require('./webgl-texture'),
+    WebGLTexture = _require17.WebGLTexture;
+
+var _require18 = require('./webgl-uniform-location'),
+    WebGLUniformLocation = _require18.WebGLUniformLocation; // These are defined by the WebGL spec
+
+
+var MAX_UNIFORM_LENGTH = 256;
+var MAX_ATTRIBUTE_LENGTH = 256;
+var DEFAULT_ATTACHMENTS = [gl.COLOR_ATTACHMENT0, gl.DEPTH_ATTACHMENT, gl.STENCIL_ATTACHMENT, gl.DEPTH_STENCIL_ATTACHMENT];
+var DEFAULT_COLOR_ATTACHMENTS = [gl.COLOR_ATTACHMENT0];
+var availableExtensions = {
+  angle_instanced_arrays: getANGLEInstancedArrays,
+  oes_element_index_uint: getOESElementIndexUint,
+  oes_texture_float: getOESTextureFloat,
+  stackgl_destroy_context: getSTACKGLDestroyContext,
+  stackgl_resize_drawingbuffer: getSTACKGLResizeDrawingBuffer,
+  webgl_draw_buffers: getWebGLDrawBuffers
+};
+var privateMethods = ['resize', 'destroy'];
+
+function wrapContext(ctx) {
+  var wrapper = new WebGLRenderingContext();
+  bindPublics(Object.keys(ctx), wrapper, ctx, privateMethods);
+  bindPublics(Object.keys(ctx.constructor.prototype), wrapper, ctx, privateMethods);
+  bindPublics(Object.getOwnPropertyNames(ctx), wrapper, ctx, privateMethods);
+  bindPublics(Object.getOwnPropertyNames(ctx.constructor.prototype), wrapper, ctx, privateMethods);
+  Object.defineProperties(wrapper, {
+    drawingBufferWidth: {
+      get: function get() {
+        return ctx.drawingBufferWidth;
+      },
+      set: function set(value) {
+        ctx.drawingBufferWidth = value;
+      }
+    },
+    drawingBufferHeight: {
+      get: function get() {
+        return ctx.drawingBufferHeight;
+      },
+      set: function set(value) {
+        ctx.drawingBufferHeight = value;
+      }
+    }
+  });
+  return wrapper;
+} // We need to wrap some of the native WebGL functions to handle certain error codes and check input values
+
+
+var WebGLRenderingContext =
+/*#__PURE__*/
+function (_NativeWebGLRendering) {
+  _inherits(WebGLRenderingContext, _NativeWebGLRendering);
+
+  function WebGLRenderingContext() {
+    _classCallCheck(this, WebGLRenderingContext);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(WebGLRenderingContext).apply(this, arguments));
+  }
+
+  _createClass(WebGLRenderingContext, [{
+    key: "_checkDimensions",
+    value: function _checkDimensions(target, width, height, level) {
+      if (level < 0 || width < 0 || height < 0) {
+        this.setError(gl.INVALID_VALUE);
+        return false;
+      }
+
+      if (target === gl.TEXTURE_2D) {
+        if (width > this._maxTextureSize || height > this._maxTextureSize || level > this._maxTextureLevel) {
+          this.setError(gl.INVALID_VALUE);
+          return false;
+        }
+      } else if (this._validCubeTarget(target)) {
+        if (width > this._maxCubeMapSize || height > this._maxCubeMapSize || level > this._maxCubeMapLevel) {
+          this.setError(gl.INVALID_VALUE);
+          return false;
+        }
+      } else {
+        this.setError(gl.INVALID_ENUM);
+        return false;
+      }
+
+      return true;
+    }
+  }, {
+    key: "_checkLocation",
+    value: function _checkLocation(location) {
+      if (!(location instanceof WebGLUniformLocation)) {
+        this.setError(gl.INVALID_VALUE);
+        return false;
+      } else if (location._program._ctx !== this || location._linkCount !== location._program._linkCount) {
+        this.setError(gl.INVALID_OPERATION);
+        return false;
+      }
+
+      return true;
+    }
+  }, {
+    key: "_checkLocationActive",
+    value: function _checkLocationActive(location) {
+      if (!location) {
+        return false;
+      } else if (!this._checkLocation(location)) {
+        return false;
+      } else if (location._program !== this._activeProgram) {
+        this.setError(gl.INVALID_OPERATION);
+        return false;
+      }
+
+      return true;
+    }
+  }, {
+    key: "_checkOwns",
+    value: function _checkOwns(object) {
+      return _typeof(object) === 'object' && object._ctx === this;
+    }
+  }, {
+    key: "_checkShaderSource",
+    value: function _checkShaderSource(shader) {
+      var source = shader._source;
+      var tokens = tokenize(source);
+      var errorStatus = false;
+      var errorLog = [];
+
+      for (var i = 0; i < tokens.length; ++i) {
+        var tok = tokens[i];
+
+        switch (tok.type) {
+          case 'ident':
+            if (!this._validGLSLIdentifier(tok.data)) {
+              errorStatus = true;
+              errorLog.push(tok.line + ':' + tok.column + ' invalid identifier - ' + tok.data);
+            }
+
+            break;
+
+          case 'preprocessor':
+            var bodyToks = tokenize(tok.data.match(/^\s*#\s*(.*)$/)[1]);
+
+            for (var j = 0; j < bodyToks.length; ++j) {
+              var btok = bodyToks[j];
+
+              if (btok.type === 'ident' || btok.type === void 0) {
+                if (!this._validGLSLIdentifier(btok.data)) {
+                  errorStatus = true;
+                  errorLog.push(tok.line + ':' + btok.column + ' invalid identifier - ' + btok.data);
+                }
+              }
+            }
+
+            break;
+
+          case 'keyword':
+            switch (tok.data) {
+              case 'do':
+                errorStatus = true;
+                errorLog.push(tok.line + ':' + tok.column + ' do not supported');
+                break;
+            }
+
+            break;
+        }
+      }
+
+      if (errorStatus) {
+        shader._compileInfo = errorLog.join('\n');
+      }
+
+      return !errorStatus;
+    }
+  }, {
+    key: "_checkStencilState",
+    value: function _checkStencilState() {
+      if (this.getParameter(gl.STENCIL_WRITEMASK) !== this.getParameter(gl.STENCIL_BACK_WRITEMASK) || this.getParameter(gl.STENCIL_VALUE_MASK) !== this.getParameter(gl.STENCIL_BACK_VALUE_MASK) || this.getParameter(gl.STENCIL_REF) !== this.getParameter(gl.STENCIL_BACK_REF)) {
+        this.setError(gl.INVALID_OPERATION);
+        return false;
+      }
+
+      return true;
+    }
+  }, {
+    key: "_checkTextureTarget",
+    value: function _checkTextureTarget(target) {
+      var unit = this._getActiveTextureUnit();
+
+      var tex = null;
+
+      if (target === gl.TEXTURE_2D) {
+        tex = unit._bind2D;
+      } else if (target === gl.TEXTURE_CUBE_MAP) {
+        tex = unit._bindCube;
+      } else {
+        this.setError(gl.INVALID_ENUM);
+        return false;
+      }
+
+      if (!tex) {
+        this.setError(gl.INVALID_OPERATION);
+        return false;
+      }
+
+      return true;
+    }
+  }, {
+    key: "_checkWrapper",
+    value: function _checkWrapper(object, Wrapper) {
+      if (!this._checkValid(object, Wrapper)) {
+        this.setError(gl.INVALID_VALUE);
+        return false;
+      } else if (!this._checkOwns(object)) {
+        this.setError(gl.INVALID_OPERATION);
+        return false;
+      }
+
+      return true;
+    }
+  }, {
+    key: "_checkValid",
+    value: function _checkValid(object, Type) {
+      return object instanceof Type && object._ !== 0;
+    }
+  }, {
+    key: "_checkVertexAttribState",
+    value: function _checkVertexAttribState(maxIndex) {
+      var program = this._activeProgram;
+
+      if (!program) {
+        this.setError(gl.INVALID_OPERATION);
+        return false;
+      }
+
+      var attribs = this._vertexAttribs;
+
+      for (var i = 0; i < attribs.length; ++i) {
+        var attrib = attribs[i];
+
+        if (attrib._isPointer) {
+          var buffer = attrib._pointerBuffer;
+
+          if (!buffer) {
+            this.setError(gl.INVALID_OPERATION);
+            return false;
+          }
+
+          if (program._attributes.indexOf(i) >= 0) {
+            var maxByte = 0;
+
+            if (attrib._divisor) {
+              maxByte = attrib._pointerSize + attrib._pointerOffset;
+            } else {
+              maxByte = attrib._pointerStride * maxIndex + attrib._pointerSize + attrib._pointerOffset;
+            }
+
+            if (maxByte > buffer._size) {
+              this.setError(gl.INVALID_OPERATION);
+              return false;
+            }
+          }
+        }
+      }
+
+      return true;
+    }
+  }, {
+    key: "_checkVertexIndex",
+    value: function _checkVertexIndex(index) {
+      if (index < 0 || index >= this._vertexAttribs.length) {
+        this.setError(gl.INVALID_VALUE);
+        return false;
+      }
+
+      return true;
+    }
+  }, {
+    key: "_computePixelSize",
+    value: function _computePixelSize(type, internalFormat) {
+      var pixelSize = formatSize(internalFormat);
+
+      if (pixelSize === 0) {
+        this.setError(gl.INVALID_ENUM);
+        return 0;
+      }
+
+      switch (type) {
+        case gl.UNSIGNED_BYTE:
+          return pixelSize;
+
+        case gl.UNSIGNED_SHORT_5_6_5:
+          if (internalFormat !== gl.RGB) {
+            this.setError(gl.INVALID_OPERATION);
+            break;
+          }
+
+          return 2;
+
+        case gl.UNSIGNED_SHORT_4_4_4_4:
+        case gl.UNSIGNED_SHORT_5_5_5_1:
+          if (internalFormat !== gl.RGBA) {
+            this.setError(gl.INVALID_OPERATION);
+            break;
+          }
+
+          return 2;
+
+        case gl.FLOAT:
+          return 1;
+      }
+
+      this.setError(gl.INVALID_ENUM);
+      return 0;
+    }
+  }, {
+    key: "_computeRowStride",
+    value: function _computeRowStride(width, pixelSize) {
+      var rowStride = width * pixelSize;
+
+      if (rowStride % this._unpackAlignment) {
+        rowStride += this._unpackAlignment - rowStride % this._unpackAlignment;
+      }
+
+      return rowStride;
+    }
+  }, {
+    key: "_fixupLink",
+    value: function _fixupLink(program) {
+      if (!_get(_getPrototypeOf(WebGLRenderingContext.prototype), "getProgramParameter", this).call(this, program._, gl.LINK_STATUS)) {
+        program._linkInfoLog = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getProgramInfoLog", this).call(this, program);
+        return false;
+      } // Record attribute attributeLocations
+
+
+      var numAttribs = this.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+      var names = new Array(numAttribs);
+      program._attributes.length = numAttribs;
+
+      for (var i = 0; i < numAttribs; ++i) {
+        names[i] = this.getActiveAttrib(program, i).name;
+        program._attributes[i] = this.getAttribLocation(program, names[i]) | 0;
+      } // Check attribute names
+
+
+      for (var _i = 0; _i < names.length; ++_i) {
+        if (names[_i].length > MAX_ATTRIBUTE_LENGTH) {
+          program._linkInfoLog = 'attribute ' + names[_i] + ' is too long';
+          return false;
+        }
+      }
+
+      for (var _i2 = 0; _i2 < numAttribs; ++_i2) {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindAttribLocation", this).call(this, program._ | 0, program._attributes[_i2], names[_i2]);
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "linkProgram", this).call(this, program._ | 0);
+
+      var numUniforms = this.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+      program._uniforms.length = numUniforms;
+
+      for (var _i3 = 0; _i3 < numUniforms; ++_i3) {
+        program._uniforms[_i3] = this.getActiveUniform(program, _i3);
+      } // Check attribute and uniform name lengths
+
+
+      for (var _i4 = 0; _i4 < program._uniforms.length; ++_i4) {
+        if (program._uniforms[_i4].name.length > MAX_UNIFORM_LENGTH) {
+          program._linkInfoLog = 'uniform ' + program._uniforms[_i4].name + ' is too long';
+          return false;
+        }
+      }
+
+      program._linkInfoLog = '';
+      return true;
+    }
+  }, {
+    key: "_framebufferOk",
+    value: function _framebufferOk() {
+      var framebuffer = this._activeFramebuffer;
+
+      if (framebuffer && this._preCheckFramebufferStatus(framebuffer) !== gl.FRAMEBUFFER_COMPLETE) {
+        this.setError(gl.INVALID_FRAMEBUFFER_OPERATION);
+        return false;
+      }
+
+      return true;
+    }
+  }, {
+    key: "_getActiveBuffer",
+    value: function _getActiveBuffer(target) {
+      if (target === gl.ARRAY_BUFFER) {
+        return this._activeArrayBuffer;
+      } else if (target === gl.ELEMENT_ARRAY_BUFFER) {
+        return this._activeElementArrayBuffer;
+      }
+
+      return null;
+    }
+  }, {
+    key: "_getActiveTextureUnit",
+    value: function _getActiveTextureUnit() {
+      return this._textureUnits[this._activeTextureUnit];
+    }
+  }, {
+    key: "_getActiveTexture",
+    value: function _getActiveTexture(target) {
+      var activeUnit = this._getActiveTextureUnit();
+
+      if (target === gl.TEXTURE_2D) {
+        return activeUnit._bind2D;
+      } else if (target === gl.TEXTURE_CUBE_MAP) {
+        return activeUnit._bindCube;
+      }
+
+      return null;
+    }
+  }, {
+    key: "_getAttachments",
+    value: function _getAttachments() {
+      return this._extensions.webgl_draw_buffers ? this._extensions.webgl_draw_buffers._ALL_ATTACHMENTS : DEFAULT_ATTACHMENTS;
+    }
+  }, {
+    key: "_getColorAttachments",
+    value: function _getColorAttachments() {
+      return this._extensions.webgl_draw_buffers ? this._extensions.webgl_draw_buffers._ALL_COLOR_ATTACHMENTS : DEFAULT_COLOR_ATTACHMENTS;
+    }
+  }, {
+    key: "_getParameterDirect",
+    value: function _getParameterDirect(pname) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getParameter", this).call(this, pname);
+    }
+  }, {
+    key: "_getTexImage",
+    value: function _getTexImage(target) {
+      var unit = this._getActiveTextureUnit();
+
+      if (target === gl.TEXTURE_2D) {
+        return unit._bind2D;
+      } else if (validCubeTarget(target)) {
+        return unit._bindCube;
+      }
+
+      this.setError(gl.INVALID_ENUM);
+      return null;
+    }
+  }, {
+    key: "_preCheckFramebufferStatus",
+    value: function _preCheckFramebufferStatus(framebuffer) {
+      var attachments = framebuffer._attachments;
+      var width = [];
+      var height = [];
+      var depthAttachment = attachments[gl.DEPTH_ATTACHMENT];
+      var depthStencilAttachment = attachments[gl.DEPTH_STENCIL_ATTACHMENT];
+      var stencilAttachment = attachments[gl.STENCIL_ATTACHMENT];
+
+      if (depthStencilAttachment && (stencilAttachment || depthAttachment) || stencilAttachment && depthAttachment) {
+        return gl.FRAMEBUFFER_UNSUPPORTED;
+      }
+
+      var colorAttachments = this._getColorAttachments();
+
+      var colorAttachmentCount = 0;
+
+      for (var attachmentEnum in attachments) {
+        if (attachments[attachmentEnum] && colorAttachments.indexOf(attachmentEnum * 1) !== -1) {
+          colorAttachmentCount++;
+        }
+      }
+
+      if (colorAttachmentCount === 0) {
+        return gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
+      }
+
+      if (depthStencilAttachment instanceof WebGLTexture) {
+        return gl.FRAMEBUFFER_UNSUPPORTED;
+      } else if (depthStencilAttachment instanceof WebGLRenderbuffer) {
+        if (depthStencilAttachment._format !== gl.DEPTH_STENCIL) {
+          return gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+        }
+
+        width.push(depthStencilAttachment._width);
+        height.push(depthStencilAttachment._height);
+      }
+
+      if (depthAttachment instanceof WebGLTexture) {
+        return gl.FRAMEBUFFER_UNSUPPORTED;
+      } else if (depthAttachment instanceof WebGLRenderbuffer) {
+        if (depthAttachment._format !== gl.DEPTH_COMPONENT16) {
+          return gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+        }
+
+        width.push(depthAttachment._width);
+        height.push(depthAttachment._height);
+      }
+
+      if (stencilAttachment instanceof WebGLTexture) {
+        return gl.FRAMEBUFFER_UNSUPPORTED;
+      } else if (stencilAttachment instanceof WebGLRenderbuffer) {
+        if (stencilAttachment._format !== gl.STENCIL_INDEX8) {
+          return gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+        }
+
+        width.push(stencilAttachment._width);
+        height.push(stencilAttachment._height);
+      }
+
+      var colorAttached = false;
+
+      for (var i = 0; i < colorAttachments.length; ++i) {
+        var colorAttachment = attachments[colorAttachments[i]];
+
+        if (colorAttachment instanceof WebGLTexture) {
+          if (colorAttachment._format !== gl.RGBA || !(colorAttachment._type === gl.UNSIGNED_BYTE || colorAttachment._type === gl.FLOAT)) {
+            return gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+          }
+
+          colorAttached = true;
+          var level = framebuffer._attachmentLevel[gl.COLOR_ATTACHMENT0];
+          width.push(colorAttachment._levelWidth[level]);
+          height.push(colorAttachment._levelHeight[level]);
+        } else if (colorAttachment instanceof WebGLRenderbuffer) {
+          var format = colorAttachment._format;
+
+          if (format !== gl.RGBA4 && format !== gl.RGB565 && format !== gl.RGB5_A1) {
+            return gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+          }
+
+          colorAttached = true;
+          width.push(colorAttachment._width);
+          height.push(colorAttachment._height);
+        }
+      }
+
+      if (!colorAttached && !stencilAttachment && !depthAttachment && !depthStencilAttachment) {
+        return gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
+      }
+
+      if (width.length <= 0 || height.length <= 0) {
+        return gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+      }
+
+      for (var _i5 = 1; _i5 < width.length; ++_i5) {
+        if (width[_i5 - 1] !== width[_i5] || height[_i5 - 1] !== height[_i5]) {
+          return gl.FRAMEBUFFER_INCOMPLETE_DIMENSIONS;
+        }
+      }
+
+      if (width[0] === 0 || height[0] === 0) {
+        return gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+      }
+
+      framebuffer._width = width[0];
+      framebuffer._height = height[0];
+      return gl.FRAMEBUFFER_COMPLETE;
+    }
+  }, {
+    key: "_isConstantBlendFunc",
+    value: function _isConstantBlendFunc(factor) {
+      return factor === gl.CONSTANT_COLOR || factor === gl.ONE_MINUS_CONSTANT_COLOR || factor === gl.CONSTANT_ALPHA || factor === gl.ONE_MINUS_CONSTANT_ALPHA;
+    }
+  }, {
+    key: "_isObject",
+    value: function _isObject(object, method, Wrapper) {
+      if (!(object === null || object === void 0) && !(object instanceof Wrapper)) {
+        throw new TypeError(method + '(' + Wrapper.name + ')');
+      }
+
+      if (this._checkValid(object, Wrapper) && this._checkOwns(object)) {
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "_resizeDrawingBuffer",
+    value: function _resizeDrawingBuffer(width, height) {
+      var prevFramebuffer = this._activeFramebuffer;
+
+      var prevTexture = this._getActiveTexture(gl.TEXTURE_2D);
+
+      var prevRenderbuffer = this._activeRenderbuffer;
+      var contextAttributes = this._contextAttributes;
+      var drawingBuffer = this._drawingBuffer;
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindFramebuffer", this).call(this, gl.FRAMEBUFFER, drawingBuffer._framebuffer);
+
+      var attachments = this._getAttachments(); // Clear all attachments
+
+
+      for (var i = 0; i < attachments.length; ++i) {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "framebufferTexture2D", this).call(this, gl.FRAMEBUFFER, attachments[i], gl.TEXTURE_2D, 0, 0);
+      } // Update color attachment
+
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindTexture", this).call(this, gl.TEXTURE_2D, drawingBuffer._color);
+
+      var colorFormat = contextAttributes.alpha ? gl.RGBA : gl.RGB;
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "texImage2D", this).call(this, gl.TEXTURE_2D, 0, colorFormat, width, height, 0, colorFormat, gl.UNSIGNED_BYTE, null);
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "texParameteri", this).call(this, gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "texParameteri", this).call(this, gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "framebufferTexture2D", this).call(this, gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, drawingBuffer._color, 0); // Update depth-stencil attachments if needed
+
+
+      var storage = 0;
+      var attachment = 0;
+
+      if (contextAttributes.depth && contextAttributes.stencil) {
+        storage = gl.DEPTH_STENCIL;
+        attachment = gl.DEPTH_STENCIL_ATTACHMENT;
+      } else if (contextAttributes.depth) {
+        storage = 0x81A7;
+        attachment = gl.DEPTH_ATTACHMENT;
+      } else if (contextAttributes.stencil) {
+        storage = gl.STENCIL_INDEX8;
+        attachment = gl.STENCIL_ATTACHMENT;
+      }
+
+      if (storage) {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindRenderbuffer", this).call(this, gl.RENDERBUFFER, drawingBuffer._depthStencil);
+
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "renderbufferStorage", this).call(this, gl.RENDERBUFFER, storage, width, height);
+
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "framebufferRenderbuffer", this).call(this, gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, drawingBuffer._depthStencil);
+      } // Restore previous binding state
+
+
+      this.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer);
+      this.bindTexture(gl.TEXTURE_2D, prevTexture);
+      this.bindRenderbuffer(gl.RENDERBUFFER, prevRenderbuffer);
+    }
+  }, {
+    key: "_restoreError",
+    value: function _restoreError(lastError) {
+      var topError = this._errorStack.pop();
+
+      if (topError === gl.NO_ERROR) {
+        this.setError(lastError);
+      } else {
+        this.setError(topError);
+      }
+    }
+  }, {
+    key: "_saveError",
+    value: function _saveError() {
+      this._errorStack.push(this.getError());
+    }
+  }, {
+    key: "_switchActiveBuffer",
+    value: function _switchActiveBuffer(active, buffer) {
+      if (active !== buffer) {
+        if (active) {
+          active._refCount -= 1;
+
+          active._checkDelete();
+        }
+
+        if (buffer) {
+          buffer._refCount += 1;
+        }
+      }
+    }
+  }, {
+    key: "_switchActiveProgram",
+    value: function _switchActiveProgram(active) {
+      if (active) {
+        active._refCount -= 1;
+
+        active._checkDelete();
+      }
+    }
+  }, {
+    key: "_tryDetachFramebuffer",
+    value: function _tryDetachFramebuffer(framebuffer, renderbuffer) {
+      // FIXME: Does the texture get unbound from *all* framebuffers, or just the
+      // active FBO?
+      if (framebuffer && framebuffer._linked(renderbuffer)) {
+        var attachments = this._getAttachments();
+
+        var framebufferAttachments = Object.keys(framebuffer._attachments);
+
+        for (var i = 0; i < framebufferAttachments.length; ++i) {
+          if (framebuffer._attachments[attachments[i]] === renderbuffer) {
+            this.framebufferTexture2D(gl.FRAMEBUFFER, attachments[i] | 0, gl.TEXTURE_2D, null);
+          }
+        }
+      }
+    }
+  }, {
+    key: "_updateFramebufferAttachments",
+    value: function _updateFramebufferAttachments(framebuffer) {
+      var prevStatus = framebuffer._status;
+
+      var attachments = this._getAttachments();
+
+      framebuffer._status = this._preCheckFramebufferStatus(framebuffer);
+
+      if (framebuffer._status !== gl.FRAMEBUFFER_COMPLETE) {
+        if (prevStatus === gl.FRAMEBUFFER_COMPLETE) {
+          for (var i = 0; i < attachments.length; ++i) {
+            var attachmentEnum = attachments[i];
+
+            _get(_getPrototypeOf(WebGLRenderingContext.prototype), "framebufferTexture2D", this).call(this, gl.FRAMEBUFFER, attachmentEnum, framebuffer._attachmentFace[attachmentEnum], 0, framebuffer._attachmentLevel[attachmentEnum]);
+          }
+        }
+
+        return;
+      }
+
+      for (var _i6 = 0; _i6 < attachments.length; ++_i6) {
+        var _attachmentEnum = attachments[_i6];
+
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "framebufferTexture2D", this).call(this, gl.FRAMEBUFFER, _attachmentEnum, framebuffer._attachmentFace[_attachmentEnum], 0, framebuffer._attachmentLevel[_attachmentEnum]);
+      }
+
+      for (var _i7 = 0; _i7 < attachments.length; ++_i7) {
+        var _attachmentEnum2 = attachments[_i7];
+        var attachment = framebuffer._attachments[_attachmentEnum2];
+
+        if (attachment instanceof WebGLTexture) {
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "framebufferTexture2D", this).call(this, gl.FRAMEBUFFER, _attachmentEnum2, framebuffer._attachmentFace[_attachmentEnum2], attachment._ | 0, framebuffer._attachmentLevel[_attachmentEnum2]);
+        } else if (attachment instanceof WebGLRenderbuffer) {
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "framebufferRenderbuffer", this).call(this, gl.FRAMEBUFFER, _attachmentEnum2, gl.RENDERBUFFER, attachment._ | 0);
+        }
+      }
+    }
+  }, {
+    key: "_validBlendFunc",
+    value: function _validBlendFunc(factor) {
+      return factor === gl.ZERO || factor === gl.ONE || factor === gl.SRC_COLOR || factor === gl.ONE_MINUS_SRC_COLOR || factor === gl.DST_COLOR || factor === gl.ONE_MINUS_DST_COLOR || factor === gl.SRC_ALPHA || factor === gl.ONE_MINUS_SRC_ALPHA || factor === gl.DST_ALPHA || factor === gl.ONE_MINUS_DST_ALPHA || factor === gl.SRC_ALPHA_SATURATE || factor === gl.CONSTANT_COLOR || factor === gl.ONE_MINUS_CONSTANT_COLOR || factor === gl.CONSTANT_ALPHA || factor === gl.ONE_MINUS_CONSTANT_ALPHA;
+    }
+  }, {
+    key: "_validBlendMode",
+    value: function _validBlendMode(mode) {
+      return mode === gl.FUNC_ADD || mode === gl.FUNC_SUBTRACT || mode === gl.FUNC_REVERSE_SUBTRACT;
+    }
+  }, {
+    key: "_validCubeTarget",
+    value: function _validCubeTarget(target) {
+      return target === gl.TEXTURE_CUBE_MAP_POSITIVE_X || target === gl.TEXTURE_CUBE_MAP_NEGATIVE_X || target === gl.TEXTURE_CUBE_MAP_POSITIVE_Y || target === gl.TEXTURE_CUBE_MAP_NEGATIVE_Y || target === gl.TEXTURE_CUBE_MAP_POSITIVE_Z || target === gl.TEXTURE_CUBE_MAP_NEGATIVE_Z;
+    }
+  }, {
+    key: "_validFramebufferAttachment",
+    value: function _validFramebufferAttachment(attachment) {
+      switch (attachment) {
+        case gl.DEPTH_ATTACHMENT:
+        case gl.STENCIL_ATTACHMENT:
+        case gl.DEPTH_STENCIL_ATTACHMENT:
+        case gl.COLOR_ATTACHMENT0:
+          return true;
+      }
+
+      if (this._extensions.webgl_draw_buffers) {
+        // eslint-disable-line
+        var webgl_draw_buffers = this._extensions.webgl_draw_buffers; // eslint-disable-line
+
+        return attachment < webgl_draw_buffers.COLOR_ATTACHMENT0_WEBGL + webgl_draw_buffers._maxDrawBuffers; // eslint-disable-line
+      }
+
+      return false;
+    }
+  }, {
+    key: "_validGLSLIdentifier",
+    value: function _validGLSLIdentifier(str) {
+      return !(str.indexOf('webgl_') === 0 || str.indexOf('_webgl_') === 0 || str.length > 256);
+    }
+  }, {
+    key: "_validTextureTarget",
+    value: function _validTextureTarget(target) {
+      return target === gl.TEXTURE_2D || target === gl.TEXTURE_CUBE_MAP;
+    }
+  }, {
+    key: "_verifyTextureCompleteness",
+    value: function _verifyTextureCompleteness(target, pname, param) {
+      var unit = this._getActiveTextureUnit();
+
+      var texture = null;
+
+      if (target === gl.TEXTURE_2D) {
+        texture = unit._bind2D;
+      } else if (this._validCubeTarget(target)) {
+        texture = unit._bindCube;
+      } // oes_texture_float
+
+
+      if (this._extensions.oes_texture_float && texture && texture._type === gl.FLOAT && (pname === gl.TEXTURE_MAG_FILTER || pname === gl.TEXTURE_MIN_FILTER) && (param === gl.LINEAR || param === gl.LINEAR_MIPMAP_NEAREST || param === gl.NEAREST_MIPMAP_LINEAR || param === gl.LINEAR_MIPMAP_LINEAR)) {
+        texture._complete = false;
+        this.bindTexture(target, texture);
+        return;
+      }
+
+      if (texture && texture._complete === false) {
+        texture._complete = true;
+        this.bindTexture(target, texture);
+      }
+    }
+  }, {
+    key: "_wrapShader",
+    value: function _wrapShader(type, source) {
+      // eslint-disable-line
+      if (this._extensions.webgl_draw_buffers) {
+        // eslint-disable-line
+        return source;
+      }
+
+      return this._extensions.webgl_draw_buffers ? source : '#define gl_MaxDrawBuffers 1\n' + source; // eslint-disable-line
+    }
+  }, {
+    key: "_beginAttrib0Hack",
+    value: function _beginAttrib0Hack() {
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindBuffer", this).call(this, gl.ARRAY_BUFFER, this._attrib0Buffer._);
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bufferData", this).call(this, gl.ARRAY_BUFFER, this._vertexAttribs[0]._data, gl.STREAM_DRAW);
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "enableVertexAttribArray", this).call(this, 0);
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "vertexAttribPointer", this).call(this, 0, 4, gl.FLOAT, false, 0, 0);
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "_vertexAttribDivisor", this).call(this, 0, 1);
+    }
+  }, {
+    key: "_endAttrib0Hack",
+    value: function _endAttrib0Hack() {
+      var attrib = this._vertexAttribs[0];
+
+      if (attrib._pointerBuffer) {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindBuffer", this).call(this, gl.ARRAY_BUFFER, attrib._pointerBuffer._);
+      } else {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindBuffer", this).call(this, gl.ARRAY_BUFFER, 0);
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "vertexAttribPointer", this).call(this, 0, attrib._inputSize, attrib._pointerType, attrib._pointerNormal, attrib._inputStride, attrib._pointerOffset);
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "_vertexAttribDivisor", this).call(this, 0, attrib._divisor);
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "disableVertexAttribArray", this).call(this, 0);
+
+      if (this._activeArrayBuffer) {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindBuffer", this).call(this, gl.ARRAY_BUFFER, this._activeArrayBuffer._);
+      } else {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindBuffer", this).call(this, gl.ARRAY_BUFFER, 0);
+      }
+    }
+  }, {
+    key: "activeTexture",
+    value: function activeTexture(texture) {
+      texture |= 0;
+      var texNum = texture - gl.TEXTURE0;
+
+      if (texNum >= 0 && texNum < this._textureUnits.length) {
+        this._activeTextureUnit = texNum;
+        return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "activeTexture", this).call(this, texture);
+      }
+
+      this.setError(gl.INVALID_ENUM);
+    }
+  }, {
+    key: "attachShader",
+    value: function attachShader(program, shader) {
+      if (!checkObject(program) || !checkObject(shader)) {
+        throw new TypeError('attachShader(WebGLProgram, WebGLShader)');
+      }
+
+      if (!program || !shader) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      } else if (program instanceof WebGLProgram && shader instanceof WebGLShader && this._checkOwns(program) && this._checkOwns(shader)) {
+        if (!program._linked(shader)) {
+          this._saveError();
+
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "attachShader", this).call(this, program._ | 0, shader._ | 0);
+
+          var error = this.getError();
+
+          this._restoreError(error);
+
+          if (error === gl.NO_ERROR) {
+            program._link(shader);
+          }
+
+          return;
+        }
+      }
+
+      this.setError(gl.INVALID_OPERATION);
+    }
+  }, {
+    key: "bindAttribLocation",
+    value: function bindAttribLocation(program, index, name) {
+      if (!checkObject(program) || typeof name !== 'string') {
+        throw new TypeError('bindAttribLocation(WebGLProgram, GLint, String)');
+      }
+
+      name += '';
+
+      if (!isValidString(name) || name.length > MAX_ATTRIBUTE_LENGTH) {
+        this.setError(gl.INVALID_VALUE);
+      } else if (/^_?webgl_a/.test(name)) {
+        this.setError(gl.INVALID_OPERATION);
+      } else if (this._checkWrapper(program, WebGLProgram)) {
+        return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindAttribLocation", this).call(this, program._ | 0, index | 0, name);
+      }
+    }
+  }, {
+    key: "bindFramebuffer",
+    value: function bindFramebuffer(target, framebuffer) {
+      if (!checkObject(framebuffer)) {
+        throw new TypeError('bindFramebuffer(GLenum, WebGLFramebuffer)');
+      }
+
+      if (target !== gl.FRAMEBUFFER) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (!framebuffer) {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindFramebuffer", this).call(this, gl.FRAMEBUFFER, this._drawingBuffer._framebuffer);
+      } else if (framebuffer._pendingDelete) {
+        return;
+      } else if (this._checkWrapper(framebuffer, WebGLFramebuffer)) {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindFramebuffer", this).call(this, gl.FRAMEBUFFER, framebuffer._ | 0);
+      } else {
+        return;
+      }
+
+      var activeFramebuffer = this._activeFramebuffer;
+
+      if (activeFramebuffer !== framebuffer) {
+        if (activeFramebuffer) {
+          activeFramebuffer._refCount -= 1;
+
+          activeFramebuffer._checkDelete();
+        }
+
+        if (framebuffer) {
+          framebuffer._refCount += 1;
+        }
+      }
+
+      this._activeFramebuffer = framebuffer;
+
+      if (framebuffer) {
+        this._updateFramebufferAttachments(framebuffer);
+      }
+    }
+  }, {
+    key: "bindBuffer",
+    value: function bindBuffer(target, buffer) {
+      target |= 0;
+
+      if (!checkObject(buffer)) {
+        throw new TypeError('bindBuffer(GLenum, WebGLBuffer)');
+      }
+
+      if (target !== gl.ARRAY_BUFFER && target !== gl.ELEMENT_ARRAY_BUFFER) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (!buffer) {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindBuffer", this).call(this, target, 0);
+      } else if (buffer._pendingDelete) {
+        return;
+      } else if (this._checkWrapper(buffer, WebGLBuffer)) {
+        if (buffer._binding && buffer._binding !== target) {
+          this.setError(gl.INVALID_OPERATION);
+          return;
+        }
+
+        buffer._binding = target | 0;
+
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindBuffer", this).call(this, target, buffer._ | 0);
+      } else {
+        return;
+      }
+
+      if (target === gl.ARRAY_BUFFER) {
+        this._switchActiveBuffer(this._activeArrayBuffer, buffer);
+
+        this._activeArrayBuffer = buffer;
+      } else {
+        this._switchActiveBuffer(this._activeElementArrayBuffer, buffer);
+
+        this._activeElementArrayBuffer = buffer;
+      }
+    }
+  }, {
+    key: "bindRenderbuffer",
+    value: function bindRenderbuffer(target, object) {
+      if (!checkObject(object)) {
+        throw new TypeError('bindRenderbuffer(GLenum, WebGLRenderbuffer)');
+      }
+
+      if (target !== gl.RENDERBUFFER) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (!object) {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindRenderbuffer", this).call(this, target | 0, 0);
+      } else if (object._pendingDelete) {
+        return;
+      } else if (this._checkWrapper(object, WebGLRenderbuffer)) {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindRenderbuffer", this).call(this, target | 0, object._ | 0);
+      } else {
+        return;
+      }
+
+      var active = this._activeRenderbuffer;
+
+      if (active !== object) {
+        if (active) {
+          active._refCount -= 1;
+
+          active._checkDelete();
+        }
+
+        if (object) {
+          object._refCount += 1;
+        }
+      }
+
+      this._activeRenderbuffer = object;
+    }
+  }, {
+    key: "bindTexture",
+    value: function bindTexture(target, texture) {
+      target |= 0;
+
+      if (!checkObject(texture)) {
+        throw new TypeError('bindTexture(GLenum, WebGLTexture)');
+      }
+
+      if (!this._validTextureTarget(target)) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      } // Get texture id
+
+
+      var textureId = 0;
+
+      if (!texture) {
+        texture = null;
+      } else if (texture instanceof WebGLTexture && texture._pendingDelete) {
+        // Special case: error codes for deleted textures don't get set for some dumb reason
+        return;
+      } else if (this._checkWrapper(texture, WebGLTexture)) {
+        // Check binding mode of texture
+        if (texture._binding && texture._binding !== target) {
+          this.setError(gl.INVALID_OPERATION);
+          return;
+        }
+
+        texture._binding = target;
+
+        if (texture._complete) {
+          textureId = texture._ | 0;
+        }
+      } else {
+        return;
+      }
+
+      this._saveError();
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bindTexture", this).call(this, target, textureId);
+
+      var error = this.getError();
+
+      this._restoreError(error);
+
+      if (error !== gl.NO_ERROR) {
+        return;
+      }
+
+      var activeUnit = this._getActiveTextureUnit();
+
+      var activeTex = this._getActiveTexture(target); // Update references
+
+
+      if (activeTex !== texture) {
+        if (activeTex) {
+          activeTex._refCount -= 1;
+
+          activeTex._checkDelete();
+        }
+
+        if (texture) {
+          texture._refCount += 1;
+        }
+      }
+
+      if (target === gl.TEXTURE_2D) {
+        activeUnit._bind2D = texture;
+      } else if (target === gl.TEXTURE_CUBE_MAP) {
+        activeUnit._bindCube = texture;
+      }
+    }
+  }, {
+    key: "blendColor",
+    value: function blendColor(red, green, blue, alpha) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "blendColor", this).call(this, +red, +green, +blue, +alpha);
+    }
+  }, {
+    key: "blendEquation",
+    value: function blendEquation(mode) {
+      mode |= 0;
+
+      if (this._validBlendMode(mode)) {
+        return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "blendEquation", this).call(this, mode);
+      }
+
+      this.setError(gl.INVALID_ENUM);
+    }
+  }, {
+    key: "blendEquationSeparate",
+    value: function blendEquationSeparate(modeRGB, modeAlpha) {
+      modeRGB |= 0;
+      modeAlpha |= 0;
+
+      if (this._validBlendMode(modeRGB) && this._validBlendMode(modeAlpha)) {
+        return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "blendEquationSeparate", this).call(this, modeRGB, modeAlpha);
+      }
+
+      this.setError(gl.INVALID_ENUM);
+    }
+  }, {
+    key: "createBuffer",
+    value: function createBuffer() {
+      var id = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "createBuffer", this).call(this);
+
+      if (id <= 0) return null;
+      var webGLBuffer = new WebGLBuffer(id, this);
+      this._buffers[id] = webGLBuffer;
+      return webGLBuffer;
+    }
+  }, {
+    key: "createFramebuffer",
+    value: function createFramebuffer() {
+      var id = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "createFramebuffer", this).call(this);
+
+      if (id <= 0) return null;
+      var webGLFramebuffer = new WebGLFramebuffer(id, this);
+      this._framebuffers[id] = webGLFramebuffer;
+      return webGLFramebuffer;
+    }
+  }, {
+    key: "createProgram",
+    value: function createProgram() {
+      var id = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "createProgram", this).call(this);
+
+      if (id <= 0) return null;
+      var webGLProgram = new WebGLProgram(id, this);
+      this._programs[id] = webGLProgram;
+      return webGLProgram;
+    }
+  }, {
+    key: "createRenderbuffer",
+    value: function createRenderbuffer() {
+      var id = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "createRenderbuffer", this).call(this);
+
+      if (id <= 0) return null;
+      var webGLRenderbuffer = new WebGLRenderbuffer(id, this);
+      this._renderbuffers[id] = webGLRenderbuffer;
+      return webGLRenderbuffer;
+    }
+  }, {
+    key: "createTexture",
+    value: function createTexture() {
+      var id = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "createTexture", this).call(this);
+
+      if (id <= 0) return null;
+      var webGlTexture = new WebGLTexture(id, this);
+      this._textures[id] = webGlTexture;
+      return webGlTexture;
+    }
+  }, {
+    key: "getContextAttributes",
+    value: function getContextAttributes() {
+      return this._contextAttributes;
+    }
+  }, {
+    key: "getExtension",
+    value: function getExtension(name) {
+      var str = name.toLowerCase();
+
+      if (str in this._extensions) {
+        return this._extensions[str];
+      }
+
+      var ext = availableExtensions[str] ? availableExtensions[str](this) : null;
+
+      if (ext) {
+        this._extensions[str] = ext;
+      }
+
+      return ext;
+    }
+  }, {
+    key: "getSupportedExtensions",
+    value: function getSupportedExtensions() {
+      var exts = ['ANGLE_instanced_arrays', 'STACKGL_resize_drawingbuffer', 'STACKGL_destroy_context'];
+
+      var supportedExts = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getSupportedExtensions", this).call(this);
+
+      if (supportedExts.indexOf('GL_OES_element_index_uint') >= 0) {
+        exts.push('OES_element_index_uint');
+      }
+
+      if (supportedExts.indexOf('GL_OES_texture_float') >= 0) {
+        exts.push('OES_texture_float');
+      }
+
+      if (supportedExts.indexOf('EXT_draw_buffers') >= 0) {
+        exts.push('WEBGL_draw_buffers');
+      }
+
+      return exts;
+    }
+  }, {
+    key: "setError",
+    value: function setError(error) {
+      NativeWebGL.setError.call(this, error | 0);
+    }
+  }, {
+    key: "blendFunc",
+    value: function blendFunc(sfactor, dfactor) {
+      sfactor |= 0;
+      dfactor |= 0;
+
+      if (!this._validBlendFunc(sfactor) || !this._validBlendFunc(dfactor)) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (this._isConstantBlendFunc(sfactor) && this._isConstantBlendFunc(dfactor)) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "blendFunc", this).call(this, sfactor, dfactor);
+    }
+  }, {
+    key: "blendFuncSeparate",
+    value: function blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha) {
+      srcRGB |= 0;
+      dstRGB |= 0;
+      srcAlpha |= 0;
+      dstAlpha |= 0;
+
+      if (!(this._validBlendFunc(srcRGB) && this._validBlendFunc(dstRGB) && this._validBlendFunc(srcAlpha) && this._validBlendFunc(dstAlpha))) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (this._isConstantBlendFunc(srcRGB) && this._isConstantBlendFunc(dstRGB) || this._isConstantBlendFunc(srcAlpha) && this._isConstantBlendFunc(dstAlpha)) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "blendFuncSeparate", this).call(this, srcRGB, dstRGB, srcAlpha, dstAlpha);
+    }
+  }, {
+    key: "bufferData",
+    value: function bufferData(target, data, usage) {
+      target |= 0;
+      usage |= 0;
+
+      if (usage !== gl.STREAM_DRAW && usage !== gl.STATIC_DRAW && usage !== gl.DYNAMIC_DRAW) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (target !== gl.ARRAY_BUFFER && target !== gl.ELEMENT_ARRAY_BUFFER) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      var active = this._getActiveBuffer(target);
+
+      if (!active) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      if (_typeof(data) === 'object') {
+        var u8Data = null;
+
+        if (isTypedArray(data)) {
+          u8Data = unpackTypedArray(data);
+        } else if (data instanceof ArrayBuffer) {
+          u8Data = new Uint8Array(data);
+        } else {
+          this.setError(gl.INVALID_VALUE);
+          return;
+        }
+
+        this._saveError();
+
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bufferData", this).call(this, target, u8Data, usage);
+
+        var error = this.getError();
+
+        this._restoreError(error);
+
+        if (error !== gl.NO_ERROR) {
+          return;
+        }
+
+        active._size = u8Data.length;
+
+        if (target === gl.ELEMENT_ARRAY_BUFFER) {
+          active._elements = new Uint8Array(u8Data);
+        }
+      } else if (typeof data === 'number') {
+        var size = data | 0;
+
+        if (size < 0) {
+          this.setError(gl.INVALID_VALUE);
+          return;
+        }
+
+        this._saveError();
+
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bufferData", this).call(this, target, size, usage);
+
+        var _error = this.getError();
+
+        this._restoreError(_error);
+
+        if (_error !== gl.NO_ERROR) {
+          return;
+        }
+
+        active._size = size;
+
+        if (target === gl.ELEMENT_ARRAY_BUFFER) {
+          active._elements = new Uint8Array(size);
+        }
+      } else {
+        this.setError(gl.INVALID_VALUE);
+      }
+    }
+  }, {
+    key: "bufferSubData",
+    value: function bufferSubData(target, offset, data) {
+      target |= 0;
+      offset |= 0;
+
+      if (target !== gl.ARRAY_BUFFER && target !== gl.ELEMENT_ARRAY_BUFFER) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (data === null) {
+        return;
+      }
+
+      if (!data || _typeof(data) !== 'object') {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      var active = this._getActiveBuffer(target);
+
+      if (!active) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      if (offset < 0 || offset >= active._size) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      var u8Data = null;
+
+      if (isTypedArray(data)) {
+        u8Data = unpackTypedArray(data);
+      } else if (data instanceof ArrayBuffer) {
+        u8Data = new Uint8Array(data);
+      } else {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      if (offset + u8Data.length > active._size) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      if (target === gl.ELEMENT_ARRAY_BUFFER) {
+        active._elements.set(u8Data, offset);
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "bufferSubData", this).call(this, target, offset, u8Data);
+    }
+  }, {
+    key: "checkFramebufferStatus",
+    value: function checkFramebufferStatus(target) {
+      if (target !== gl.FRAMEBUFFER) {
+        this.setError(gl.INVALID_ENUM);
+        return 0;
+      }
+
+      var framebuffer = this._activeFramebuffer;
+
+      if (!framebuffer) {
+        return gl.FRAMEBUFFER_COMPLETE;
+      }
+
+      return this._preCheckFramebufferStatus(framebuffer);
+    }
+  }, {
+    key: "clear",
+    value: function clear(mask) {
+      if (!this._framebufferOk()) {
+        return;
+      }
+
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "clear", this).call(this, mask | 0);
+    }
+  }, {
+    key: "clearColor",
+    value: function clearColor(red, green, blue, alpha) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "clearColor", this).call(this, +red, +green, +blue, +alpha);
+    }
+  }, {
+    key: "clearDepth",
+    value: function clearDepth(depth) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "clearDepth", this).call(this, +depth);
+    }
+  }, {
+    key: "clearStencil",
+    value: function clearStencil(s) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "clearStencil", this).call(this, s | 0);
+    }
+  }, {
+    key: "colorMask",
+    value: function colorMask(red, green, blue, alpha) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "colorMask", this).call(this, !!red, !!green, !!blue, !!alpha);
+    }
+  }, {
+    key: "compileShader",
+    value: function compileShader(shader) {
+      if (!checkObject(shader)) {
+        throw new TypeError('compileShader(WebGLShader)');
+      }
+
+      if (this._checkWrapper(shader, WebGLShader) && this._checkShaderSource(shader)) {
+        var prevError = this.getError();
+
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "compileShader", this).call(this, shader._ | 0);
+
+        var error = this.getError();
+        shader._compileStatus = !!_get(_getPrototypeOf(WebGLRenderingContext.prototype), "getShaderParameter", this).call(this, shader._ | 0, gl.COMPILE_STATUS);
+        shader._compileInfo = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getShaderInfoLog", this).call(this, shader._ | 0);
+        this.getError();
+        this.setError(prevError || error);
+      }
+    }
+  }, {
+    key: "copyTexImage2D",
+    value: function copyTexImage2D(target, level, internalFormat, x, y, width, height, border) {
+      target |= 0;
+      level |= 0;
+      internalFormat |= 0;
+      x |= 0;
+      y |= 0;
+      width |= 0;
+      height |= 0;
+      border |= 0;
+
+      var texture = this._getTexImage(target);
+
+      if (!texture) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      if (internalFormat !== gl.RGBA && internalFormat !== gl.RGB && internalFormat !== gl.ALPHA && internalFormat !== gl.LUMINANCE && internalFormat !== gl.LUMINANCE_ALPHA) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (level < 0 || width < 0 || height < 0 || border !== 0) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      if (level > 0 && !(bits.isPow2(width) && bits.isPow2(height))) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      this._saveError();
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "copyTexImage2D", this).call(this, target, level, internalFormat, x, y, width, height, border);
+
+      var error = this.getError();
+
+      this._restoreError(error);
+
+      if (error === gl.NO_ERROR) {
+        texture._levelWidth[level] = width;
+        texture._levelHeight[level] = height;
+        texture._format = gl.RGBA;
+        texture._type = gl.UNSIGNED_BYTE;
+      }
+    }
+  }, {
+    key: "copyTexSubImage2D",
+    value: function copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height) {
+      target |= 0;
+      level |= 0;
+      xoffset |= 0;
+      yoffset |= 0;
+      x |= 0;
+      y |= 0;
+      width |= 0;
+      height |= 0;
+
+      var texture = this._getTexImage(target);
+
+      if (!texture) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      if (width < 0 || height < 0 || xoffset < 0 || yoffset < 0 || level < 0) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "copyTexSubImage2D", this).call(this, target, level, xoffset, yoffset, x, y, width, height);
+    }
+  }, {
+    key: "cullFace",
+    value: function cullFace(mode) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "cullFace", this).call(this, mode | 0);
+    }
+  }, {
+    key: "createShader",
+    value: function createShader(type) {
+      type |= 0;
+
+      if (type !== gl.FRAGMENT_SHADER && type !== gl.VERTEX_SHADER) {
+        this.setError(gl.INVALID_ENUM);
+        return null;
+      }
+
+      var id = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "createShader", this).call(this, type);
+
+      if (id < 0) {
+        return null;
+      }
+
+      var result = new WebGLShader(id, this, type);
+      this._shaders[id] = result;
+      return result;
+    }
+  }, {
+    key: "deleteProgram",
+    value: function deleteProgram(object) {
+      return this._deleteLinkable('deleteProgram', object, WebGLProgram);
+    }
+  }, {
+    key: "deleteShader",
+    value: function deleteShader(object) {
+      return this._deleteLinkable('deleteShader', object, WebGLShader);
+    }
+  }, {
+    key: "_deleteLinkable",
+    value: function _deleteLinkable(name, object, Type) {
+      if (!checkObject(object)) {
+        throw new TypeError(name + '(' + Type.name + ')');
+      }
+
+      if (object instanceof Type && this._checkOwns(object)) {
+        object._pendingDelete = true;
+
+        object._checkDelete();
+
+        return;
+      }
+
+      this.setError(gl.INVALID_OPERATION);
+    }
+  }, {
+    key: "deleteBuffer",
+    value: function deleteBuffer(buffer) {
+      if (!checkObject(buffer) || buffer !== null && !(buffer instanceof WebGLBuffer)) {
+        throw new TypeError('deleteBuffer(WebGLBuffer)');
+      }
+
+      if (!(buffer instanceof WebGLBuffer && this._checkOwns(buffer))) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      if (this._activeArrayBuffer === buffer) {
+        this.bindBuffer(gl.ARRAY_BUFFER, null);
+      }
+
+      if (this._activeElementArrayBuffer === buffer) {
+        this.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+      }
+
+      for (var i = 0; i < this._vertexAttribs.length; ++i) {
+        var attrib = this._vertexAttribs[i];
+
+        if (attrib._pointerBuffer === buffer) {
+          attrib._pointerBuffer = null;
+          attrib._pointerStride = 0;
+          attrib._pointerOffset = 0;
+          attrib._pointerSize = 4;
+          buffer._refCount -= 1;
+        }
+      }
+
+      buffer._pendingDelete = true;
+
+      buffer._checkDelete();
+    }
+  }, {
+    key: "deleteFramebuffer",
+    value: function deleteFramebuffer(framebuffer) {
+      if (!checkObject(framebuffer)) {
+        throw new TypeError('deleteFramebuffer(WebGLFramebuffer)');
+      }
+
+      if (!(framebuffer instanceof WebGLFramebuffer && this._checkOwns(framebuffer))) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      if (this._activeFramebuffer === framebuffer) {
+        this.bindFramebuffer(gl.FRAMEBUFFER, null);
+      }
+
+      framebuffer._pendingDelete = true;
+
+      framebuffer._checkDelete();
+    } // Need to handle textures and render buffers as a special case:
+    // When a texture gets deleted, we need to do the following extra steps:
+    //  1. Is it bound to the current texture unit?
+    //     If so, then unbind it
+    //  2. Is it attached to the active fbo?
+    //     If so, then detach it
+    //
+    // For renderbuffers only need to do second step
+    //
+    // After this, proceed with the usual deletion algorithm
+    //
+
+  }, {
+    key: "deleteRenderbuffer",
+    value: function deleteRenderbuffer(renderbuffer) {
+      if (!checkObject(renderbuffer)) {
+        throw new TypeError('deleteRenderbuffer(WebGLRenderbuffer)');
+      }
+
+      if (!(renderbuffer instanceof WebGLRenderbuffer && this._checkOwns(renderbuffer))) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      if (this._activeRenderbuffer === renderbuffer) {
+        this.bindRenderbuffer(gl.RENDERBUFFER, null);
+      }
+
+      var activeFramebuffer = this._activeFramebuffer;
+
+      this._tryDetachFramebuffer(activeFramebuffer, renderbuffer);
+
+      renderbuffer._pendingDelete = true;
+
+      renderbuffer._checkDelete();
+    }
+  }, {
+    key: "deleteTexture",
+    value: function deleteTexture(texture) {
+      if (!checkObject(texture)) {
+        throw new TypeError('deleteTexture(WebGLTexture)');
+      }
+
+      if (texture instanceof WebGLTexture) {
+        if (!this._checkOwns(texture)) {
+          this.setError(gl.INVALID_OPERATION);
+          return;
+        }
+      } else {
+        return;
+      } // Unbind from all texture units
+
+
+      var curActive = this._activeTextureUnit;
+
+      for (var i = 0; i < this._textureUnits.length; ++i) {
+        var unit = this._textureUnits[i];
+
+        if (unit._bind2D === texture) {
+          this.activeTexture(gl.TEXTURE0 + i);
+          this.bindTexture(gl.TEXTURE_2D, null);
+        } else if (unit._bindCube === texture) {
+          this.activeTexture(gl.TEXTURE0 + i);
+          this.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+        }
+      }
+
+      this.activeTexture(gl.TEXTURE0 + curActive); // FIXME: Does the texture get unbound from *all* framebuffers, or just the
+      // active FBO?
+
+      var ctx = this;
+      var activeFramebuffer = this._activeFramebuffer;
+
+      function tryDetach(framebuffer) {
+        if (framebuffer && framebuffer._linked(texture)) {
+          var attachments = ctx._getAttachments();
+
+          for (var _i8 = 0; _i8 < attachments.length; ++_i8) {
+            var attachment = attachments[_i8];
+
+            if (framebuffer._attachments[attachment] === texture) {
+              ctx.framebufferTexture2D(gl.FRAMEBUFFER, attachment, gl.TEXTURE_2D, null);
+            }
+          }
+        }
+      }
+
+      tryDetach(activeFramebuffer); // Mark texture for deletion
+
+      texture._pendingDelete = true;
+
+      texture._checkDelete();
+    }
+  }, {
+    key: "depthFunc",
+    value: function depthFunc(func) {
+      func |= 0;
+
+      switch (func) {
+        case gl.NEVER:
+        case gl.LESS:
+        case gl.EQUAL:
+        case gl.LEQUAL:
+        case gl.GREATER:
+        case gl.NOTEQUAL:
+        case gl.GEQUAL:
+        case gl.ALWAYS:
+          return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "depthFunc", this).call(this, func);
+
+        default:
+          this.setError(gl.INVALID_ENUM);
+      }
+    }
+  }, {
+    key: "depthMask",
+    value: function depthMask(flag) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "depthMask", this).call(this, !!flag);
+    }
+  }, {
+    key: "depthRange",
+    value: function depthRange(zNear, zFar) {
+      zNear = +zNear;
+      zFar = +zFar;
+
+      if (zNear <= zFar) {
+        return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "depthRange", this).call(this, zNear, zFar);
+      }
+
+      this.setError(gl.INVALID_OPERATION);
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "destroy", this).call(this);
+    }
+  }, {
+    key: "detachShader",
+    value: function detachShader(program, shader) {
+      if (!checkObject(program) || !checkObject(shader)) {
+        throw new TypeError('detachShader(WebGLProgram, WebGLShader)');
+      }
+
+      if (this._checkWrapper(program, WebGLProgram) && this._checkWrapper(shader, WebGLShader)) {
+        if (program._linked(shader)) {
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "detachShader", this).call(this, program._, shader._);
+
+          program._unlink(shader);
+        } else {
+          this.setError(gl.INVALID_OPERATION);
+        }
+      }
+    }
+  }, {
+    key: "disable",
+    value: function disable(cap) {
+      cap |= 0;
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "disable", this).call(this, cap);
+
+      if (cap === gl.TEXTURE_2D || cap === gl.TEXTURE_CUBE_MAP) {
+        var active = this._getActiveTextureUnit();
+
+        if (active._mode === cap) {
+          active._mode = 0;
+        }
+      }
+    }
+  }, {
+    key: "disableVertexAttribArray",
+    value: function disableVertexAttribArray(index) {
+      index |= 0;
+
+      if (index < 0 || index >= this._vertexAttribs.length) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "disableVertexAttribArray", this).call(this, index);
+
+      this._vertexAttribs[index]._isPointer = false;
+    }
+  }, {
+    key: "drawArrays",
+    value: function drawArrays(mode, first, count) {
+      mode |= 0;
+      first |= 0;
+      count |= 0;
+
+      if (first < 0 || count < 0) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      if (!this._checkStencilState()) {
+        return;
+      }
+
+      var reducedCount = vertexCount(mode, count);
+
+      if (reducedCount < 0) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (!this._framebufferOk()) {
+        return;
+      }
+
+      if (count === 0) {
+        return;
+      }
+
+      var maxIndex = first;
+
+      if (count > 0) {
+        maxIndex = count + first - 1 >>> 0;
+      }
+
+      if (this._checkVertexAttribState(maxIndex)) {
+        if (this._vertexAttribs[0]._isPointer || this._extensions.webgl_draw_buffers && this._extensions.webgl_draw_buffers._buffersState && this._extensions.webgl_draw_buffers._buffersState.length > 0) {
+          return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "drawArrays", this).call(this, mode, first, reducedCount);
+        } else {
+          this._beginAttrib0Hack();
+
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "_drawArraysInstanced", this).call(this, mode, first, reducedCount, 1);
+
+          this._endAttrib0Hack();
+        }
+      }
+    }
+  }, {
+    key: "drawElements",
+    value: function drawElements(mode, count, type, ioffset) {
+      mode |= 0;
+      count |= 0;
+      type |= 0;
+      ioffset |= 0;
+
+      if (count < 0 || ioffset < 0) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      if (!this._checkStencilState()) {
+        return;
+      }
+
+      var elementBuffer = this._activeElementArrayBuffer;
+
+      if (!elementBuffer) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      } // Unpack element data
+
+
+      var elementData = null;
+      var offset = ioffset;
+
+      if (type === gl.UNSIGNED_SHORT) {
+        if (offset % 2) {
+          this.setError(gl.INVALID_OPERATION);
+          return;
+        }
+
+        offset >>= 1;
+        elementData = new Uint16Array(elementBuffer._elements.buffer);
+      } else if (this._extensions.oes_element_index_uint && type === gl.UNSIGNED_INT) {
+        if (offset % 4) {
+          this.setError(gl.INVALID_OPERATION);
+          return;
+        }
+
+        offset >>= 2;
+        elementData = new Uint32Array(elementBuffer._elements.buffer);
+      } else if (type === gl.UNSIGNED_BYTE) {
+        elementData = elementBuffer._elements;
+      } else {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      var reducedCount = count;
+
+      switch (mode) {
+        case gl.TRIANGLES:
+          if (count % 3) {
+            reducedCount -= count % 3;
+          }
+
+          break;
+
+        case gl.LINES:
+          if (count % 2) {
+            reducedCount -= count % 2;
+          }
+
+          break;
+
+        case gl.POINTS:
+          break;
+
+        case gl.LINE_LOOP:
+        case gl.LINE_STRIP:
+          if (count < 2) {
+            this.setError(gl.INVALID_OPERATION);
+            return;
+          }
+
+          break;
+
+        case gl.TRIANGLE_FAN:
+        case gl.TRIANGLE_STRIP:
+          if (count < 3) {
+            this.setError(gl.INVALID_OPERATION);
+            return;
+          }
+
+          break;
+
+        default:
+          this.setError(gl.INVALID_ENUM);
+          return;
+      }
+
+      if (!this._framebufferOk()) {
+        return;
+      }
+
+      if (count === 0) {
+        this._checkVertexAttribState(0);
+
+        return;
+      }
+
+      if (count + offset >>> 0 > elementData.length) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      } // Compute max index
+
+
+      var maxIndex = -1;
+
+      for (var i = offset; i < offset + count; ++i) {
+        maxIndex = Math.max(maxIndex, elementData[i]);
+      }
+
+      if (maxIndex < 0) {
+        this._checkVertexAttribState(0);
+
+        return;
+      }
+
+      if (this._checkVertexAttribState(maxIndex)) {
+        if (reducedCount > 0) {
+          if (this._vertexAttribs[0]._isPointer) {
+            return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "drawElements", this).call(this, mode, reducedCount, type, ioffset);
+          } else {
+            this._beginAttrib0Hack();
+
+            _get(_getPrototypeOf(WebGLRenderingContext.prototype), "_drawElementsInstanced", this).call(this, mode, reducedCount, type, ioffset, 1);
+
+            this._endAttrib0Hack();
+          }
+        }
+      }
+    }
+  }, {
+    key: "enable",
+    value: function enable(cap) {
+      cap |= 0;
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "enable", this).call(this, cap);
+    }
+  }, {
+    key: "enableVertexAttribArray",
+    value: function enableVertexAttribArray(index) {
+      index |= 0;
+
+      if (index < 0 || index >= this._vertexAttribs.length) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "enableVertexAttribArray", this).call(this, index);
+
+      this._vertexAttribs[index]._isPointer = true;
+    }
+  }, {
+    key: "finish",
+    value: function finish() {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "finish", this).call(this);
+    }
+  }, {
+    key: "flush",
+    value: function flush() {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "flush", this).call(this);
+    }
+  }, {
+    key: "framebufferRenderbuffer",
+    value: function framebufferRenderbuffer(target, attachment, renderbufferTarget, renderbuffer) {
+      target = target | 0;
+      attachment = attachment | 0;
+      renderbufferTarget = renderbufferTarget | 0;
+
+      if (!checkObject(renderbuffer)) {
+        throw new TypeError('framebufferRenderbuffer(GLenum, GLenum, GLenum, WebGLRenderbuffer)');
+      }
+
+      if (target !== gl.FRAMEBUFFER || !this._validFramebufferAttachment(attachment) || renderbufferTarget !== gl.RENDERBUFFER) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      var framebuffer = this._activeFramebuffer;
+
+      if (!framebuffer) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      if (renderbuffer && !this._checkWrapper(renderbuffer, WebGLRenderbuffer)) {
+        return;
+      }
+
+      framebuffer._setAttachment(renderbuffer, attachment);
+
+      this._updateFramebufferAttachments(framebuffer);
+    }
+  }, {
+    key: "framebufferTexture2D",
+    value: function framebufferTexture2D(target, attachment, textarget, texture, level) {
+      target |= 0;
+      attachment |= 0;
+      textarget |= 0;
+      level |= 0;
+
+      if (!checkObject(texture)) {
+        throw new TypeError('framebufferTexture2D(GLenum, GLenum, GLenum, WebGLTexture, GLint)');
+      } // Check parameters are ok
+
+
+      if (target !== gl.FRAMEBUFFER || !this._validFramebufferAttachment(attachment)) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (level !== 0) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      } // Check object ownership
+
+
+      if (texture && !this._checkWrapper(texture, WebGLTexture)) {
+        return;
+      } // Check texture target is ok
+
+
+      if (textarget === gl.TEXTURE_2D) {
+        if (texture && texture._binding !== gl.TEXTURE_2D) {
+          this.setError(gl.INVALID_OPERATION);
+          return;
+        }
+      } else if (this._validCubeTarget(textarget)) {
+        if (texture && texture._binding !== gl.TEXTURE_CUBE_MAP) {
+          this.setError(gl.INVALID_OPERATION);
+          return;
+        }
+      } else {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      } // Check a framebuffer is actually bound
+
+
+      var framebuffer = this._activeFramebuffer;
+
+      if (!framebuffer) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      framebuffer._attachmentLevel[attachment] = level;
+      framebuffer._attachmentFace[attachment] = textarget;
+
+      framebuffer._setAttachment(texture, attachment);
+
+      this._updateFramebufferAttachments(framebuffer);
+    }
+  }, {
+    key: "frontFace",
+    value: function frontFace(mode) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "frontFace", this).call(this, mode | 0);
+    }
+  }, {
+    key: "generateMipmap",
+    value: function generateMipmap(target) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "generateMipmap", this).call(this, target | 0) | 0;
+    }
+  }, {
+    key: "getActiveAttrib",
+    value: function getActiveAttrib(program, index) {
+      if (!checkObject(program)) {
+        throw new TypeError('getActiveAttrib(WebGLProgram)');
+      } else if (!program) {
+        this.setError(gl.INVALID_VALUE);
+      } else if (this._checkWrapper(program, WebGLProgram)) {
+        var info = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getActiveAttrib", this).call(this, program._ | 0, index | 0);
+
+        if (info) {
+          return new WebGLActiveInfo(info);
+        }
+      }
+
+      return null;
+    }
+  }, {
+    key: "getActiveUniform",
+    value: function getActiveUniform(program, index) {
+      if (!checkObject(program)) {
+        throw new TypeError('getActiveUniform(WebGLProgram, GLint)');
+      } else if (!program) {
+        this.setError(gl.INVALID_VALUE);
+      } else if (this._checkWrapper(program, WebGLProgram)) {
+        var info = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getActiveUniform", this).call(this, program._ | 0, index | 0);
+
+        if (info) {
+          return new WebGLActiveInfo(info);
+        }
+      }
+
+      return null;
+    }
+  }, {
+    key: "getAttachedShaders",
+    value: function getAttachedShaders(program) {
+      if (!checkObject(program) || _typeof(program) === 'object' && program !== null && !(program instanceof WebGLProgram)) {
+        throw new TypeError('getAttachedShaders(WebGLProgram)');
+      }
+
+      if (!program) {
+        this.setError(gl.INVALID_VALUE);
+      } else if (this._checkWrapper(program, WebGLProgram)) {
+        var shaderArray = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getAttachedShaders", this).call(this, program._ | 0);
+
+        if (!shaderArray) {
+          return null;
+        }
+
+        var unboxedShaders = new Array(shaderArray.length);
+
+        for (var i = 0; i < shaderArray.length; ++i) {
+          unboxedShaders[i] = this._shaders[shaderArray[i]];
+        }
+
+        return unboxedShaders;
+      }
+
+      return null;
+    }
+  }, {
+    key: "getAttribLocation",
+    value: function getAttribLocation(program, name) {
+      if (!checkObject(program)) {
+        throw new TypeError('getAttribLocation(WebGLProgram, String)');
+      }
+
+      name += '';
+
+      if (!isValidString(name) || name.length > MAX_ATTRIBUTE_LENGTH) {
+        this.setError(gl.INVALID_VALUE);
+      } else if (this._checkWrapper(program, WebGLProgram)) {
+        return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getAttribLocation", this).call(this, program._ | 0, name + '');
+      }
+
+      return -1;
+    }
+  }, {
+    key: "getParameter",
+    value: function getParameter(pname) {
+      pname |= 0;
+
+      switch (pname) {
+        case gl.ARRAY_BUFFER_BINDING:
+          return this._activeArrayBuffer;
+
+        case gl.ELEMENT_ARRAY_BUFFER_BINDING:
+          return this._activeElementArrayBuffer;
+
+        case gl.CURRENT_PROGRAM:
+          return this._activeProgram;
+
+        case gl.FRAMEBUFFER_BINDING:
+          return this._activeFramebuffer;
+
+        case gl.RENDERBUFFER_BINDING:
+          return this._activeRenderbuffer;
+
+        case gl.TEXTURE_BINDING_2D:
+          return this._getActiveTextureUnit()._bind2D;
+
+        case gl.TEXTURE_BINDING_CUBE_MAP:
+          return this._getActiveTextureUnit()._bindCube;
+
+        case gl.VERSION:
+          return 'WebGL 1.0 stack-gl ' + HEADLESS_VERSION;
+
+        case gl.VENDOR:
+          return 'stack-gl';
+
+        case gl.RENDERER:
+          return 'ANGLE';
+
+        case gl.SHADING_LANGUAGE_VERSION:
+          return 'WebGL GLSL ES 1.0 stack-gl';
+
+        case gl.COMPRESSED_TEXTURE_FORMATS:
+          return new Uint32Array(0);
+        // Int arrays
+
+        case gl.MAX_VIEWPORT_DIMS:
+        case gl.SCISSOR_BOX:
+        case gl.VIEWPORT:
+          return new Int32Array(_get(_getPrototypeOf(WebGLRenderingContext.prototype), "getParameter", this).call(this, pname));
+        // Float arrays
+
+        case gl.ALIASED_LINE_WIDTH_RANGE:
+        case gl.ALIASED_POINT_SIZE_RANGE:
+        case gl.DEPTH_RANGE:
+        case gl.BLEND_COLOR:
+        case gl.COLOR_CLEAR_VALUE:
+          return new Float32Array(_get(_getPrototypeOf(WebGLRenderingContext.prototype), "getParameter", this).call(this, pname));
+
+        case gl.COLOR_WRITEMASK:
+          return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getParameter", this).call(this, pname);
+
+        case gl.DEPTH_CLEAR_VALUE:
+        case gl.LINE_WIDTH:
+        case gl.POLYGON_OFFSET_FACTOR:
+        case gl.POLYGON_OFFSET_UNITS:
+        case gl.SAMPLE_COVERAGE_VALUE:
+          return +_get(_getPrototypeOf(WebGLRenderingContext.prototype), "getParameter", this).call(this, pname);
+
+        case gl.BLEND:
+        case gl.CULL_FACE:
+        case gl.DEPTH_TEST:
+        case gl.DEPTH_WRITEMASK:
+        case gl.DITHER:
+        case gl.POLYGON_OFFSET_FILL:
+        case gl.SAMPLE_COVERAGE_INVERT:
+        case gl.SCISSOR_TEST:
+        case gl.STENCIL_TEST:
+        case gl.UNPACK_FLIP_Y_WEBGL:
+        case gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL:
+          return !!_get(_getPrototypeOf(WebGLRenderingContext.prototype), "getParameter", this).call(this, pname);
+
+        case gl.ACTIVE_TEXTURE:
+        case gl.ALPHA_BITS:
+        case gl.BLEND_DST_ALPHA:
+        case gl.BLEND_DST_RGB:
+        case gl.BLEND_EQUATION_ALPHA:
+        case gl.BLEND_EQUATION_RGB:
+        case gl.BLEND_SRC_ALPHA:
+        case gl.BLEND_SRC_RGB:
+        case gl.BLUE_BITS:
+        case gl.CULL_FACE_MODE:
+        case gl.DEPTH_BITS:
+        case gl.DEPTH_FUNC:
+        case gl.FRONT_FACE:
+        case gl.GENERATE_MIPMAP_HINT:
+        case gl.GREEN_BITS:
+        case gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS:
+        case gl.MAX_CUBE_MAP_TEXTURE_SIZE:
+        case gl.MAX_FRAGMENT_UNIFORM_VECTORS:
+        case gl.MAX_RENDERBUFFER_SIZE:
+        case gl.MAX_TEXTURE_IMAGE_UNITS:
+        case gl.MAX_TEXTURE_SIZE:
+        case gl.MAX_VARYING_VECTORS:
+        case gl.MAX_VERTEX_ATTRIBS:
+        case gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS:
+        case gl.MAX_VERTEX_UNIFORM_VECTORS:
+        case gl.PACK_ALIGNMENT:
+        case gl.RED_BITS:
+        case gl.SAMPLE_BUFFERS:
+        case gl.SAMPLES:
+        case gl.STENCIL_BACK_FAIL:
+        case gl.STENCIL_BACK_FUNC:
+        case gl.STENCIL_BACK_PASS_DEPTH_FAIL:
+        case gl.STENCIL_BACK_PASS_DEPTH_PASS:
+        case gl.STENCIL_BACK_REF:
+        case gl.STENCIL_BACK_VALUE_MASK:
+        case gl.STENCIL_BACK_WRITEMASK:
+        case gl.STENCIL_BITS:
+        case gl.STENCIL_CLEAR_VALUE:
+        case gl.STENCIL_FAIL:
+        case gl.STENCIL_FUNC:
+        case gl.STENCIL_PASS_DEPTH_FAIL:
+        case gl.STENCIL_PASS_DEPTH_PASS:
+        case gl.STENCIL_REF:
+        case gl.STENCIL_VALUE_MASK:
+        case gl.STENCIL_WRITEMASK:
+        case gl.SUBPIXEL_BITS:
+        case gl.UNPACK_ALIGNMENT:
+        case gl.UNPACK_COLORSPACE_CONVERSION_WEBGL:
+          return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getParameter", this).call(this, pname) | 0;
+
+        case gl.IMPLEMENTATION_COLOR_READ_FORMAT:
+        case gl.IMPLEMENTATION_COLOR_READ_TYPE:
+          return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getParameter", this).call(this, pname);
+
+        default:
+          if (this._extensions.webgl_draw_buffers) {
+            var ext = this._extensions.webgl_draw_buffers;
+
+            switch (pname) {
+              case ext.DRAW_BUFFER0_WEBGL:
+              case ext.DRAW_BUFFER1_WEBGL:
+              case ext.DRAW_BUFFER2_WEBGL:
+              case ext.DRAW_BUFFER3_WEBGL:
+              case ext.DRAW_BUFFER4_WEBGL:
+              case ext.DRAW_BUFFER5_WEBGL:
+              case ext.DRAW_BUFFER6_WEBGL:
+              case ext.DRAW_BUFFER7_WEBGL:
+              case ext.DRAW_BUFFER8_WEBGL:
+              case ext.DRAW_BUFFER9_WEBGL:
+              case ext.DRAW_BUFFER10_WEBGL:
+              case ext.DRAW_BUFFER11_WEBGL:
+              case ext.DRAW_BUFFER12_WEBGL:
+              case ext.DRAW_BUFFER13_WEBGL:
+              case ext.DRAW_BUFFER14_WEBGL:
+              case ext.DRAW_BUFFER15_WEBGL:
+                if (ext._buffersState.length === 1 && ext._buffersState[0] === gl.BACK) {
+                  return gl.BACK;
+                }
+
+                return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getParameter", this).call(this, pname);
+
+              case ext.MAX_DRAW_BUFFERS_WEBGL:
+              case ext.MAX_COLOR_ATTACHMENTS_WEBGL:
+                return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getParameter", this).call(this, pname);
+            }
+          }
+
+          this.setError(gl.INVALID_ENUM);
+          return null;
+      }
+    }
+  }, {
+    key: "getShaderPrecisionFormat",
+    value: function getShaderPrecisionFormat(shaderType, precisionType) {
+      shaderType |= 0;
+      precisionType |= 0;
+
+      if (!(shaderType === gl.FRAGMENT_SHADER || shaderType === gl.VERTEX_SHADER) || !(precisionType === gl.LOW_FLOAT || precisionType === gl.MEDIUM_FLOAT || precisionType === gl.HIGH_FLOAT || precisionType === gl.LOW_INT || precisionType === gl.MEDIUM_INT || precisionType === gl.HIGH_INT)) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      var format = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getShaderPrecisionFormat", this).call(this, shaderType, precisionType);
+
+      if (!format) {
+        return null;
+      }
+
+      return new WebGLShaderPrecisionFormat(format);
+    }
+  }, {
+    key: "getBufferParameter",
+    value: function getBufferParameter(target, pname) {
+      target |= 0;
+      pname |= 0;
+
+      if (target !== gl.ARRAY_BUFFER && target !== gl.ELEMENT_ARRAY_BUFFER) {
+        this.setError(gl.INVALID_ENUM);
+        return null;
+      }
+
+      switch (pname) {
+        case gl.BUFFER_SIZE:
+        case gl.BUFFER_USAGE:
+          return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getBufferParameter", this).call(this, target | 0, pname | 0);
+
+        default:
+          this.setError(gl.INVALID_ENUM);
+          return null;
+      }
+    }
+  }, {
+    key: "getError",
+    value: function getError() {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getError", this).call(this);
+    }
+  }, {
+    key: "getFramebufferAttachmentParameter",
+    value: function getFramebufferAttachmentParameter(target, attachment, pname) {
+      target |= 0;
+      attachment |= 0;
+      pname |= 0;
+
+      if (target !== gl.FRAMEBUFFER || !this._validFramebufferAttachment(attachment)) {
+        this.setError(gl.INVALID_ENUM);
+        return null;
+      }
+
+      var framebuffer = this._activeFramebuffer;
+
+      if (!framebuffer) {
+        this.setError(gl.INVALID_OPERATION);
+        return null;
+      }
+
+      var object = framebuffer._attachments[attachment];
+
+      if (object === null) {
+        if (pname === gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE) {
+          return gl.NONE;
+        }
+      } else if (object instanceof WebGLTexture) {
+        switch (pname) {
+          case gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
+            return object;
+
+          case gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+            return gl.TEXTURE;
+
+          case gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
+            return framebuffer._attachmentLevel[attachment];
+
+          case gl.FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
+            var face = framebuffer._attachmentFace[attachment];
+
+            if (face === gl.TEXTURE_2D) {
+              return 0;
+            }
+
+            return face;
+        }
+      } else if (object instanceof WebGLRenderbuffer) {
+        switch (pname) {
+          case gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
+            return object;
+
+          case gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+            return gl.RENDERBUFFER;
+        }
+      }
+
+      this.setError(gl.INVALID_ENUM);
+      return null;
+    }
+  }, {
+    key: "getProgramParameter",
+    value: function getProgramParameter(program, pname) {
+      pname |= 0;
+
+      if (!checkObject(program)) {
+        throw new TypeError('getProgramParameter(WebGLProgram, GLenum)');
+      } else if (this._checkWrapper(program, WebGLProgram)) {
+        switch (pname) {
+          case gl.DELETE_STATUS:
+            return program._pendingDelete;
+
+          case gl.LINK_STATUS:
+            return program._linkStatus;
+
+          case gl.VALIDATE_STATUS:
+            return !!_get(_getPrototypeOf(WebGLRenderingContext.prototype), "getProgramParameter", this).call(this, program._, pname);
+
+          case gl.ATTACHED_SHADERS:
+          case gl.ACTIVE_ATTRIBUTES:
+          case gl.ACTIVE_UNIFORMS:
+            return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getProgramParameter", this).call(this, program._, pname);
+        }
+
+        this.setError(gl.INVALID_ENUM);
+      }
+
+      return null;
+    }
+  }, {
+    key: "getProgramInfoLog",
+    value: function getProgramInfoLog(program) {
+      if (!checkObject(program)) {
+        throw new TypeError('getProgramInfoLog(WebGLProgram)');
+      } else if (this._checkWrapper(program, WebGLProgram)) {
+        return program._linkInfoLog;
+      }
+
+      return null;
+    }
+  }, {
+    key: "getRenderbufferParameter",
+    value: function getRenderbufferParameter(target, pname) {
+      target |= 0;
+      pname |= 0;
+
+      if (target !== gl.RENDERBUFFER) {
+        this.setError(gl.INVALID_ENUM);
+        return null;
+      }
+
+      var renderbuffer = this._activeRenderbuffer;
+
+      if (!renderbuffer) {
+        this.setError(gl.INVALID_OPERATION);
+        return null;
+      }
+
+      switch (pname) {
+        case gl.RENDERBUFFER_INTERNAL_FORMAT:
+          return renderbuffer._format;
+
+        case gl.RENDERBUFFER_WIDTH:
+          return renderbuffer._width;
+
+        case gl.RENDERBUFFER_HEIGHT:
+          return renderbuffer._height;
+
+        case gl.RENDERBUFFER_SIZE:
+        case gl.RENDERBUFFER_RED_SIZE:
+        case gl.RENDERBUFFER_GREEN_SIZE:
+        case gl.RENDERBUFFER_BLUE_SIZE:
+        case gl.RENDERBUFFER_ALPHA_SIZE:
+        case gl.RENDERBUFFER_DEPTH_SIZE:
+        case gl.RENDERBUFFER_STENCIL_SIZE:
+          return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getRenderbufferParameter", this).call(this, target, pname);
+      }
+
+      this.setError(gl.INVALID_ENUM);
+      return null;
+    }
+  }, {
+    key: "getShaderParameter",
+    value: function getShaderParameter(shader, pname) {
+      pname |= 0;
+
+      if (!checkObject(shader)) {
+        throw new TypeError('getShaderParameter(WebGLShader, GLenum)');
+      } else if (this._checkWrapper(shader, WebGLShader)) {
+        switch (pname) {
+          case gl.DELETE_STATUS:
+            return shader._pendingDelete;
+
+          case gl.COMPILE_STATUS:
+            return shader._compileStatus;
+
+          case gl.SHADER_TYPE:
+            return shader._type;
+        }
+
+        this.setError(gl.INVALID_ENUM);
+      }
+
+      return null;
+    }
+  }, {
+    key: "getShaderInfoLog",
+    value: function getShaderInfoLog(shader) {
+      if (!checkObject(shader)) {
+        throw new TypeError('getShaderInfoLog(WebGLShader)');
+      } else if (this._checkWrapper(shader, WebGLShader)) {
+        return shader._compileInfo;
+      }
+
+      return null;
+    }
+  }, {
+    key: "getShaderSource",
+    value: function getShaderSource(shader) {
+      if (!checkObject(shader)) {
+        throw new TypeError('Input to getShaderSource must be an object');
+      } else if (this._checkWrapper(shader, WebGLShader)) {
+        return shader._source;
+      }
+
+      return null;
+    }
+  }, {
+    key: "getTexParameter",
+    value: function getTexParameter(target, pname) {
+      target |= 0;
+      pname |= 0;
+
+      if (!this._checkTextureTarget(target)) {
+        return null;
+      }
+
+      var unit = this._getActiveTextureUnit();
+
+      if (target === gl.TEXTURE_2D && !unit._bind2D || target === gl.TEXTURE_CUBE_MAP && !unit._bindCube) {
+        this.setError(gl.INVALID_OPERATION);
+        return null;
+      }
+
+      switch (pname) {
+        case gl.TEXTURE_MAG_FILTER:
+        case gl.TEXTURE_MIN_FILTER:
+        case gl.TEXTURE_WRAP_S:
+        case gl.TEXTURE_WRAP_T:
+          return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getTexParameter", this).call(this, target, pname);
+      }
+
+      this.setError(gl.INVALID_ENUM);
+      return null;
+    }
+  }, {
+    key: "getUniform",
+    value: function getUniform(program, location) {
+      if (!checkObject(program) || !checkObject(location)) {
+        throw new TypeError('getUniform(WebGLProgram, WebGLUniformLocation)');
+      } else if (!program) {
+        this.setError(gl.INVALID_VALUE);
+        return null;
+      } else if (!location) {
+        return null;
+      } else if (this._checkWrapper(program, WebGLProgram)) {
+        if (!checkUniform(program, location)) {
+          this.setError(gl.INVALID_OPERATION);
+          return null;
+        }
+
+        var data = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getUniform", this).call(this, program._ | 0, location._ | 0);
+
+        if (!data) {
+          return null;
+        }
+
+        switch (location._activeInfo.type) {
+          case gl.FLOAT:
+            return data[0];
+
+          case gl.FLOAT_VEC2:
+            return new Float32Array(data.slice(0, 2));
+
+          case gl.FLOAT_VEC3:
+            return new Float32Array(data.slice(0, 3));
+
+          case gl.FLOAT_VEC4:
+            return new Float32Array(data.slice(0, 4));
+
+          case gl.INT:
+            return data[0] | 0;
+
+          case gl.INT_VEC2:
+            return new Int32Array(data.slice(0, 2));
+
+          case gl.INT_VEC3:
+            return new Int32Array(data.slice(0, 3));
+
+          case gl.INT_VEC4:
+            return new Int32Array(data.slice(0, 4));
+
+          case gl.BOOL:
+            return !!data[0];
+
+          case gl.BOOL_VEC2:
+            return [!!data[0], !!data[1]];
+
+          case gl.BOOL_VEC3:
+            return [!!data[0], !!data[1], !!data[2]];
+
+          case gl.BOOL_VEC4:
+            return [!!data[0], !!data[1], !!data[2], !!data[3]];
+
+          case gl.FLOAT_MAT2:
+            return new Float32Array(data.slice(0, 4));
+
+          case gl.FLOAT_MAT3:
+            return new Float32Array(data.slice(0, 9));
+
+          case gl.FLOAT_MAT4:
+            return new Float32Array(data.slice(0, 16));
+
+          case gl.SAMPLER_2D:
+          case gl.SAMPLER_CUBE:
+            return data[0] | 0;
+
+          default:
+            return null;
+        }
+      }
+
+      return null;
+    }
+  }, {
+    key: "getUniformLocation",
+    value: function getUniformLocation(program, name) {
+      if (!checkObject(program)) {
+        throw new TypeError('getUniformLocation(WebGLProgram, String)');
+      }
+
+      name += '';
+
+      if (!isValidString(name)) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      if (this._checkWrapper(program, WebGLProgram)) {
+        var loc = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getUniformLocation", this).call(this, program._ | 0, name);
+
+        if (loc >= 0) {
+          var searchName = name;
+
+          if (/\[\d+\]$/.test(name)) {
+            searchName = name.replace(/\[\d+\]$/, '[0]');
+          }
+
+          var info = null;
+
+          for (var i = 0; i < program._uniforms.length; ++i) {
+            var infoItem = program._uniforms[i];
+
+            if (infoItem.name === searchName) {
+              info = {
+                size: infoItem.size,
+                type: infoItem.type,
+                name: infoItem.name
+              };
+            }
+          }
+
+          if (!info) {
+            return null;
+          }
+
+          var result = new WebGLUniformLocation(loc, program, info); // handle array case
+
+          if (/\[0\]$/.test(name)) {
+            var baseName = name.replace(/\[0\]$/, '');
+            var arrayLocs = []; // if (offset < 0 || offset >= info.size) {
+            //   return null
+            // }
+
+            this._saveError();
+
+            for (var _i9 = 0; this.getError() === gl.NO_ERROR; ++_i9) {
+              var xloc = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getUniformLocation", this).call(this, program._ | 0, baseName + '[' + _i9 + ']');
+
+              if (this.getError() !== gl.NO_ERROR || xloc < 0) {
+                break;
+              }
+
+              arrayLocs.push(xloc);
+            }
+
+            this._restoreError(gl.NO_ERROR);
+
+            result._array = arrayLocs;
+          } else if (/\[(\d+)\]$/.test(name)) {
+            var offset = +/\[(\d+)\]$/.exec(name)[1];
+
+            if (offset < 0 || offset >= info.size) {
+              return null;
+            }
+          }
+
+          return result;
+        }
+      }
+
+      return null;
+    }
+  }, {
+    key: "getVertexAttrib",
+    value: function getVertexAttrib(index, pname) {
+      index |= 0;
+      pname |= 0;
+
+      if (index < 0 || index >= this._vertexAttribs.length) {
+        this.setError(gl.INVALID_VALUE);
+        return null;
+      }
+
+      var attrib = this._vertexAttribs[index];
+      var extInstancing = this._extensions.angle_instanced_arrays;
+
+      if (extInstancing) {
+        if (pname === extInstancing.VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE) {
+          return attrib._divisor;
+        }
+      }
+
+      switch (pname) {
+        case gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING:
+          return attrib._pointerBuffer;
+
+        case gl.VERTEX_ATTRIB_ARRAY_ENABLED:
+          return attrib._isPointer;
+
+        case gl.VERTEX_ATTRIB_ARRAY_SIZE:
+          return attrib._inputSize;
+
+        case gl.VERTEX_ATTRIB_ARRAY_STRIDE:
+          return attrib._inputStride;
+
+        case gl.VERTEX_ATTRIB_ARRAY_TYPE:
+          return attrib._pointerType;
+
+        case gl.VERTEX_ATTRIB_ARRAY_NORMALIZED:
+          return attrib._pointerNormal;
+
+        case gl.CURRENT_VERTEX_ATTRIB:
+          return new Float32Array(attrib._data);
+
+        default:
+          this.setError(gl.INVALID_ENUM);
+          return null;
+      }
+    }
+  }, {
+    key: "getVertexAttribOffset",
+    value: function getVertexAttribOffset(index, pname) {
+      index |= 0;
+      pname |= 0;
+
+      if (index < 0 || index >= this._vertexAttribs.length) {
+        this.setError(gl.INVALID_VALUE);
+        return null;
+      }
+
+      if (pname === gl.VERTEX_ATTRIB_ARRAY_POINTER) {
+        return this._vertexAttribs[index]._pointerOffset;
+      } else {
+        this.setError(gl.INVALID_ENUM);
+        return null;
+      }
+    }
+  }, {
+    key: "hint",
+    value: function hint(target, mode) {
+      target |= 0;
+      mode |= 0;
+
+      if (target !== gl.GENERATE_MIPMAP_HINT) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (mode !== gl.FASTEST && mode !== gl.NICEST && mode !== gl.DONT_CARE) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "hint", this).call(this, target, mode);
+    }
+  }, {
+    key: "isBuffer",
+    value: function isBuffer(object) {
+      if (!this._isObject(object, 'isBuffer', WebGLBuffer)) return false;
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "isBuffer", this).call(this, object._ | 0);
+    }
+  }, {
+    key: "isFramebuffer",
+    value: function isFramebuffer(object) {
+      if (!this._isObject(object, 'isFramebuffer', WebGLFramebuffer)) return false;
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "isFramebuffer", this).call(this, object._ | 0);
+    }
+  }, {
+    key: "isProgram",
+    value: function isProgram(object) {
+      if (!this._isObject(object, 'isProgram', WebGLProgram)) return false;
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "isProgram", this).call(this, object._ | 0);
+    }
+  }, {
+    key: "isRenderbuffer",
+    value: function isRenderbuffer(object) {
+      if (!this._isObject(object, 'isRenderbuffer', WebGLRenderbuffer)) return false;
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "isRenderbuffer", this).call(this, object._ | 0);
+    }
+  }, {
+    key: "isShader",
+    value: function isShader(object) {
+      if (!this._isObject(object, 'isShader', WebGLShader)) return false;
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "isShader", this).call(this, object._ | 0);
+    }
+  }, {
+    key: "isTexture",
+    value: function isTexture(object) {
+      if (!this._isObject(object, 'isTexture', WebGLTexture)) return false;
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "isTexture", this).call(this, object._ | 0);
+    }
+  }, {
+    key: "isEnabled",
+    value: function isEnabled(cap) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "isEnabled", this).call(this, cap | 0);
+    }
+  }, {
+    key: "lineWidth",
+    value: function lineWidth(width) {
+      if (isNaN(width)) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "lineWidth", this).call(this, +width);
+    }
+  }, {
+    key: "linkProgram",
+    value: function linkProgram(program) {
+      if (!checkObject(program)) {
+        throw new TypeError('linkProgram(WebGLProgram)');
+      }
+
+      if (this._checkWrapper(program, WebGLProgram)) {
+        program._linkCount += 1;
+        program._attributes = [];
+        var prevError = this.getError();
+
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "linkProgram", this).call(this, program._ | 0);
+
+        var error = this.getError();
+
+        if (error === gl.NO_ERROR) {
+          program._linkStatus = this._fixupLink(program);
+        }
+
+        this.getError();
+        this.setError(prevError || error);
+      }
+    }
+  }, {
+    key: "pixelStorei",
+    value: function pixelStorei(pname, param) {
+      pname |= 0;
+      param |= 0;
+
+      if (pname === gl.UNPACK_ALIGNMENT) {
+        if (param === 1 || param === 2 || param === 4 || param === 8) {
+          this._unpackAlignment = param;
+        } else {
+          this.setError(gl.INVALID_VALUE);
+          return;
+        }
+      } else if (pname === gl.PACK_ALIGNMENT) {
+        if (param === 1 || param === 2 || param === 4 || param === 8) {
+          this._packAlignment = param;
+        } else {
+          this.setError(gl.INVALID_VALUE);
+          return;
+        }
+      } else if (pname === gl.UNPACK_COLORSPACE_CONVERSION_WEBGL) {
+        if (!(param === gl.NONE || param === gl.BROWSER_DEFAULT_WEBGL)) {
+          this.setError(gl.INVALID_VALUE);
+          return;
+        }
+      }
+
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "pixelStorei", this).call(this, pname, param);
+    }
+  }, {
+    key: "polygonOffset",
+    value: function polygonOffset(factor, units) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "polygonOffset", this).call(this, +factor, +units);
+    }
+  }, {
+    key: "readPixels",
+    value: function readPixels(x, y, width, height, format, type, pixels) {
+      x |= 0;
+      y |= 0;
+      width |= 0;
+      height |= 0;
+
+      if (this._extensions.oes_texture_float && type === gl.FLOAT && format === gl.RGBA) {} else if (format === gl.RGB || format === gl.ALPHA || type !== gl.UNSIGNED_BYTE) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      } else if (format !== gl.RGBA) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      } else if (width < 0 || height < 0 || !(pixels instanceof Uint8Array)) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      if (!this._framebufferOk()) {
+        return;
+      }
+
+      var rowStride = width * 4;
+
+      if (rowStride % this._packAlignment !== 0) {
+        rowStride += this._packAlignment - rowStride % this._packAlignment;
+      }
+
+      var imageSize = rowStride * (height - 1) + width * 4;
+
+      if (imageSize <= 0) {
+        return;
+      }
+
+      if (pixels.length < imageSize) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      } // Handle reading outside the window
+
+
+      var viewWidth = this.drawingBufferWidth;
+      var viewHeight = this.drawingBufferHeight;
+
+      if (this._activeFramebuffer) {
+        viewWidth = this._activeFramebuffer._width;
+        viewHeight = this._activeFramebuffer._height;
+      }
+
+      var pixelData = unpackTypedArray(pixels);
+
+      if (x >= viewWidth || x + width <= 0 || y >= viewHeight || y + height <= 0) {
+        for (var i = 0; i < pixelData.length; ++i) {
+          pixelData[i] = 0;
+        }
+      } else if (x < 0 || x + width > viewWidth || y < 0 || y + height > viewHeight) {
+        for (var _i10 = 0; _i10 < pixelData.length; ++_i10) {
+          pixelData[_i10] = 0;
+        }
+
+        var nx = x;
+        var nWidth = width;
+
+        if (x < 0) {
+          nWidth += x;
+          nx = 0;
+        }
+
+        if (nx + width > viewWidth) {
+          nWidth = viewWidth - nx;
+        }
+
+        var ny = y;
+        var nHeight = height;
+
+        if (y < 0) {
+          nHeight += y;
+          ny = 0;
+        }
+
+        if (ny + height > viewHeight) {
+          nHeight = viewHeight - ny;
+        }
+
+        var nRowStride = nWidth * 4;
+
+        if (nRowStride % this._packAlignment !== 0) {
+          nRowStride += this._packAlignment - nRowStride % this._packAlignment;
+        }
+
+        if (nWidth > 0 && nHeight > 0) {
+          var subPixels = new Uint8Array(nRowStride * nHeight);
+
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "readPixels", this).call(this, nx, ny, nWidth, nHeight, format, type, subPixels);
+
+          var offset = 4 * (nx - x) + (ny - y) * rowStride;
+
+          for (var j = 0; j < nHeight; ++j) {
+            for (var _i11 = 0; _i11 < nWidth; ++_i11) {
+              for (var k = 0; k < 4; ++k) {
+                pixelData[offset + j * rowStride + 4 * _i11 + k] = subPixels[j * nRowStride + 4 * _i11 + k];
+              }
+            }
+          }
+        }
+      } else {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "readPixels", this).call(this, x, y, width, height, format, type, pixelData);
+      }
+    }
+  }, {
+    key: "renderbufferStorage",
+    value: function renderbufferStorage(target, internalFormat, width, height) {
+      target |= 0;
+      internalFormat |= 0;
+      width |= 0;
+      height |= 0;
+
+      if (target !== gl.RENDERBUFFER) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      var renderbuffer = this._activeRenderbuffer;
+
+      if (!renderbuffer) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      if (internalFormat !== gl.RGBA4 && internalFormat !== gl.RGB565 && internalFormat !== gl.RGB5_A1 && internalFormat !== gl.DEPTH_COMPONENT16 && internalFormat !== gl.STENCIL_INDEX && internalFormat !== gl.STENCIL_INDEX8 && internalFormat !== gl.DEPTH_STENCIL) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      this._saveError();
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "renderbufferStorage", this).call(this, target, internalFormat, width, height);
+
+      var error = this.getError();
+
+      this._restoreError(error);
+
+      if (error !== gl.NO_ERROR) {
+        return;
+      }
+
+      renderbuffer._width = width;
+      renderbuffer._height = height;
+      renderbuffer._format = internalFormat;
+      var activeFramebuffer = this._activeFramebuffer;
+
+      if (activeFramebuffer) {
+        var needsUpdate = false;
+
+        var attachments = this._getAttachments();
+
+        for (var i = 0; i < attachments.length; ++i) {
+          if (activeFramebuffer._attachments[attachments[i]] === renderbuffer) {
+            needsUpdate = true;
+            break;
+          }
+        }
+
+        if (needsUpdate) {
+          this._updateFramebufferAttachments(this._activeFramebuffer);
+        }
+      }
+    }
+  }, {
+    key: "resize",
+    value: function resize(width, height) {
+      width = width | 0;
+      height = height | 0;
+
+      if (!(width > 0 && height > 0)) {
+        throw new Error('Invalid surface dimensions');
+      } else if (width !== this.drawingBufferWidth || height !== this.drawingBufferHeight) {
+        this._resizeDrawingBuffer(width, height);
+
+        this.drawingBufferWidth = width;
+        this.drawingBufferHeight = height;
+      }
+    }
+  }, {
+    key: "sampleCoverage",
+    value: function sampleCoverage(value, invert) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "sampleCoverage", this).call(this, +value, !!invert);
+    }
+  }, {
+    key: "scissor",
+    value: function scissor(x, y, width, height) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "scissor", this).call(this, x | 0, y | 0, width | 0, height | 0);
+    }
+  }, {
+    key: "shaderSource",
+    value: function shaderSource(shader, source) {
+      if (!checkObject(shader)) {
+        throw new TypeError('shaderSource(WebGLShader, String)');
+      }
+
+      if (!shader || !source && typeof source !== 'string') {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      source += '';
+
+      if (!isValidString(source)) {
+        this.setError(gl.INVALID_VALUE);
+      } else if (this._checkWrapper(shader, WebGLShader)) {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "shaderSource", this).call(this, shader._ | 0, this._wrapShader(shader._type, source)); // eslint-disable-line
+
+
+        shader._source = source;
+      }
+    }
+  }, {
+    key: "stencilFunc",
+    value: function stencilFunc(func, ref, mask) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "stencilFunc", this).call(this, func | 0, ref | 0, mask | 0);
+    }
+  }, {
+    key: "stencilFuncSeparate",
+    value: function stencilFuncSeparate(face, func, ref, mask) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "stencilFuncSeparate", this).call(this, face | 0, func | 0, ref | 0, mask | 0);
+    }
+  }, {
+    key: "stencilMask",
+    value: function stencilMask(mask) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "stencilMask", this).call(this, mask | 0);
+    }
+  }, {
+    key: "stencilMaskSeparate",
+    value: function stencilMaskSeparate(face, mask) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "stencilMaskSeparate", this).call(this, face | 0, mask | 0);
+    }
+  }, {
+    key: "stencilOp",
+    value: function stencilOp(fail, zfail, zpass) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "stencilOp", this).call(this, fail | 0, zfail | 0, zpass | 0);
+    }
+  }, {
+    key: "stencilOpSeparate",
+    value: function stencilOpSeparate(face, fail, zfail, zpass) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "stencilOpSeparate", this).call(this, face | 0, fail | 0, zfail | 0, zpass | 0);
+    }
+  }, {
+    key: "texImage2D",
+    value: function texImage2D(target, level, internalFormat, width, height, border, format, type, pixels) {
+      if (arguments.length === 6) {
+        pixels = border;
+        type = height;
+        format = width;
+        pixels = extractImageData(pixels);
+
+        if (pixels == null) {
+          throw new TypeError('texImage2D(GLenum, GLint, GLenum, GLint, GLenum, GLenum, ImageData | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement)');
+        }
+
+        width = pixels.width;
+        height = pixels.height;
+        pixels = pixels.data;
+      }
+
+      target |= 0;
+      level |= 0;
+      internalFormat |= 0;
+      width |= 0;
+      height |= 0;
+      border |= 0;
+      format |= 0;
+      type |= 0;
+
+      if (_typeof(pixels) !== 'object' && pixels !== void 0) {
+        throw new TypeError('texImage2D(GLenum, GLint, GLenum, GLint, GLint, GLint, GLenum, GLenum, Uint8Array)');
+      }
+
+      if (!checkFormat(format) || !checkFormat(internalFormat)) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (type === gl.FLOAT && !this._extensions.oes_texture_float) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      var texture = this._getTexImage(target);
+
+      if (!texture || format !== internalFormat) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      var pixelSize = this._computePixelSize(type, format);
+
+      if (pixelSize === 0) {
+        return;
+      }
+
+      if (!this._checkDimensions(target, width, height, level)) {
+        return;
+      }
+
+      var data = convertPixels(pixels);
+
+      var rowStride = this._computeRowStride(width, pixelSize);
+
+      var imageSize = rowStride * height;
+
+      if (data && data.length < imageSize) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      if (border !== 0 || validCubeTarget(target) && width !== height) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      } // Need to check for out of memory error
+
+
+      this._saveError();
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "texImage2D", this).call(this, target, level, internalFormat, width, height, border, format, type, data);
+
+      var error = this.getError();
+
+      this._restoreError(error);
+
+      if (error !== gl.NO_ERROR) {
+        return;
+      } // Save width and height at level
+
+
+      texture._levelWidth[level] = width;
+      texture._levelHeight[level] = height;
+      texture._format = format;
+      texture._type = type;
+      var activeFramebuffer = this._activeFramebuffer;
+
+      if (activeFramebuffer) {
+        var needsUpdate = false;
+
+        var attachments = this._getAttachments();
+
+        for (var i = 0; i < attachments.length; ++i) {
+          if (activeFramebuffer._attachments[attachments[i]] === texture) {
+            needsUpdate = true;
+            break;
+          }
+        }
+
+        if (needsUpdate) {
+          this._updateFramebufferAttachments(this._activeFramebuffer);
+        }
+      }
+    }
+  }, {
+    key: "texSubImage2D",
+    value: function texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels) {
+      if (arguments.length === 7) {
+        pixels = format;
+        type = height;
+        format = width;
+        pixels = extractImageData(pixels);
+
+        if (pixels == null) {
+          throw new TypeError('texSubImage2D(GLenum, GLint, GLint, GLint, GLenum, GLenum, ImageData | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement)');
+        }
+
+        width = pixels.width;
+        height = pixels.height;
+        pixels = pixels.data;
+      }
+
+      if (_typeof(pixels) !== 'object') {
+        throw new TypeError('texSubImage2D(GLenum, GLint, GLint, GLint, GLint, GLint, GLenum, GLenum, Uint8Array)');
+      }
+
+      target |= 0;
+      level |= 0;
+      xoffset |= 0;
+      yoffset |= 0;
+      width |= 0;
+      height |= 0;
+      format |= 0;
+      type |= 0;
+
+      var texture = this._getTexImage(target);
+
+      if (!texture) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      if (type === gl.FLOAT && !this._extensions.oes_texture_float) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      var pixelSize = this._computePixelSize(type, format);
+
+      if (pixelSize === 0) {
+        return;
+      }
+
+      if (!this._checkDimensions(target, width, height, level)) {
+        return;
+      }
+
+      if (xoffset < 0 || yoffset < 0) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      var data = convertPixels(pixels);
+
+      var rowStride = this._computeRowStride(width, pixelSize);
+
+      var imageSize = rowStride * height;
+
+      if (!data || data.length < imageSize) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "texSubImage2D", this).call(this, target, level, xoffset, yoffset, width, height, format, type, data);
+    }
+  }, {
+    key: "texParameterf",
+    value: function texParameterf(target, pname, param) {
+      target |= 0;
+      pname |= 0;
+      param = +param;
+
+      if (this._checkTextureTarget(target)) {
+        this._verifyTextureCompleteness(target, pname, param);
+
+        switch (pname) {
+          case gl.TEXTURE_MIN_FILTER:
+          case gl.TEXTURE_MAG_FILTER:
+          case gl.TEXTURE_WRAP_S:
+          case gl.TEXTURE_WRAP_T:
+            return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "texParameterf", this).call(this, target, pname, param);
+        }
+
+        this.setError(gl.INVALID_ENUM);
+      }
+    }
+  }, {
+    key: "texParameteri",
+    value: function texParameteri(target, pname, param) {
+      target |= 0;
+      pname |= 0;
+      param |= 0;
+
+      if (this._checkTextureTarget(target)) {
+        this._verifyTextureCompleteness(target, pname, param);
+
+        switch (pname) {
+          case gl.TEXTURE_MIN_FILTER:
+          case gl.TEXTURE_MAG_FILTER:
+          case gl.TEXTURE_WRAP_S:
+          case gl.TEXTURE_WRAP_T:
+            return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "texParameteri", this).call(this, target, pname, param);
+        }
+
+        this.setError(gl.INVALID_ENUM);
+      }
+    }
+  }, {
+    key: "useProgram",
+    value: function useProgram(program) {
+      if (!checkObject(program)) {
+        throw new TypeError('useProgram(WebGLProgram)');
+      } else if (!program) {
+        this._switchActiveProgram(this._activeProgram);
+
+        this._activeProgram = null;
+        return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "useProgram", this).call(this, 0);
+      } else if (this._checkWrapper(program, WebGLProgram)) {
+        if (this._activeProgram !== program) {
+          this._switchActiveProgram(this._activeProgram);
+
+          this._activeProgram = program;
+          program._refCount += 1;
+        }
+
+        return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "useProgram", this).call(this, program._ | 0);
+      }
+    }
+  }, {
+    key: "validateProgram",
+    value: function validateProgram(program) {
+      if (this._checkWrapper(program, WebGLProgram)) {
+        _get(_getPrototypeOf(WebGLRenderingContext.prototype), "validateProgram", this).call(this, program._ | 0);
+
+        var error = this.getError();
+
+        if (error === gl.NO_ERROR) {
+          program._linkInfoLog = _get(_getPrototypeOf(WebGLRenderingContext.prototype), "getProgramInfoLog", this).call(this, program._ | 0);
+        }
+
+        this.getError();
+        this.setError(error);
+      }
+    }
+  }, {
+    key: "vertexAttribPointer",
+    value: function vertexAttribPointer(index, size, type, normalized, stride, offset) {
+      if (stride < 0 || offset < 0) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      index |= 0;
+      size |= 0;
+      type |= 0;
+      normalized = !!normalized;
+      stride |= 0;
+      offset |= 0;
+
+      if (stride < 0 || offset < 0 || index < 0 || index >= this._vertexAttribs.length || !(size === 1 || size === 2 || size === 3 || size === 4)) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      }
+
+      if (this._activeArrayBuffer === null) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      } // fixed, int and unsigned int aren't allowed in WebGL
+
+
+      var byteSize = typeSize(type);
+
+      if (byteSize === 0 || type === gl.INT || type === gl.UNSIGNED_INT) {
+        this.setError(gl.INVALID_ENUM);
+        return;
+      }
+
+      if (stride > 255 || stride < 0) {
+        this.setError(gl.INVALID_VALUE);
+        return;
+      } // stride and offset must be multiples of size
+
+
+      if (stride % byteSize !== 0 || offset % byteSize !== 0) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      } // Call vertex attrib pointer
+
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "vertexAttribPointer", this).call(this, index, size, type, normalized, stride, offset); // Save attribute pointer state
+
+
+      var attrib = this._vertexAttribs[index];
+
+      if (attrib._pointerBuffer && attrib._pointerBuffer !== this._activeArrayBuffer) {
+        attrib._pointerBuffer._refCount -= 1;
+
+        attrib._pointerBuffer._checkDelete();
+      }
+
+      this._activeArrayBuffer._refCount += 1;
+      attrib._pointerBuffer = this._activeArrayBuffer;
+      attrib._pointerSize = size * byteSize;
+      attrib._pointerOffset = offset;
+      attrib._pointerStride = stride || size * byteSize;
+      attrib._pointerType = type;
+      attrib._pointerNormal = normalized;
+      attrib._inputStride = stride;
+      attrib._inputSize = size;
+    }
+  }, {
+    key: "viewport",
+    value: function viewport(x, y, width, height) {
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "viewport", this).call(this, x | 0, y | 0, width | 0, height | 0);
+    }
+  }, {
+    key: "_allocateDrawingBuffer",
+    value: function _allocateDrawingBuffer(width, height) {
+      this._drawingBuffer = new WebGLDrawingBufferWrapper(_get(_getPrototypeOf(WebGLRenderingContext.prototype), "createFramebuffer", this).call(this), _get(_getPrototypeOf(WebGLRenderingContext.prototype), "createTexture", this).call(this), _get(_getPrototypeOf(WebGLRenderingContext.prototype), "createRenderbuffer", this).call(this));
+
+      this._resizeDrawingBuffer(width, height);
+    }
+  }, {
+    key: "isContextLost",
+    value: function isContextLost() {
+      return false;
+    }
+  }, {
+    key: "compressedTexImage2D",
+    value: function compressedTexImage2D() {// TODO not yet implemented
+    }
+  }, {
+    key: "compressedTexSubImage2D",
+    value: function compressedTexSubImage2D() {// TODO not yet implemented
+    }
+  }, {
+    key: "_checkUniformValid",
+    value: function _checkUniformValid(location, v0, name, count, type) {
+      if (!checkObject(location)) {
+        throw new TypeError("".concat(name, "(WebGLUniformLocation, ...)"));
+      } else if (!location) {
+        return false;
+      } else if (this._checkLocationActive(location)) {
+        var utype = location._activeInfo.type;
+
+        if (utype === gl.SAMPLER_2D || utype === gl.SAMPLER_CUBE) {
+          if (count !== 1) {
+            this.setError(gl.INVALID_VALUE);
+            return;
+          }
+
+          if (type !== 'i') {
+            this.setError(gl.INVALID_OPERATION);
+            return;
+          }
+
+          if (v0 < 0 || v0 >= this._textureUnits.length) {
+            this.setError(gl.INVALID_VALUE);
+            return false;
+          }
+        }
+
+        if (uniformTypeSize(utype) > count) {
+          this.setError(gl.INVALID_OPERATION);
+          return false;
+        }
+
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "_checkUniformValueValid",
+    value: function _checkUniformValueValid(location, value, name, count, type) {
+      if (!checkObject(location) || !checkObject(value)) {
+        throw new TypeError("".concat(name, "v(WebGLUniformLocation, Array)"));
+      } else if (!location) {
+        return false;
+      } else if (!this._checkLocationActive(location)) {
+        return false;
+      } else if (_typeof(value) !== 'object' || !value || typeof value.length !== 'number') {
+        throw new TypeError("Second argument to ".concat(name, " must be array"));
+      } else if (uniformTypeSize(location._activeInfo.type) > count) {
+        this.setError(gl.INVALID_OPERATION);
+        return false;
+      } else if (value.length >= count && value.length % count === 0) {
+        if (location._array) {
+          return true;
+        } else if (value.length === count) {
+          return true;
+        } else {
+          this.setError(gl.INVALID_OPERATION);
+          return false;
+        }
+      }
+
+      this.setError(gl.INVALID_VALUE);
+      return false;
+    }
+  }, {
+    key: "uniform1f",
+    value: function uniform1f(location, v0) {
+      if (!this._checkUniformValid(location, v0, 'uniform1f', 1, 'f')) return;
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform1f", this).call(this, location._ | 0, v0);
+    }
+  }, {
+    key: "uniform1fv",
+    value: function uniform1fv(location, value) {
+      if (!this._checkUniformValueValid(location, value, 'uniform1fv', 1, 'f')) return;
+
+      if (location._array) {
+        var locs = location._array;
+
+        for (var i = 0; i < locs.length && i < value.length; ++i) {
+          var loc = locs[i];
+
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform1f", this).call(this, loc, value[i]);
+        }
+
+        return;
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform1f", this).call(this, location._ | 0, value[0]);
+    }
+  }, {
+    key: "uniform1i",
+    value: function uniform1i(location, v0) {
+      if (!this._checkUniformValid(location, v0, 'uniform1i', 1, 'i')) return;
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform1i", this).call(this, location._ | 0, v0);
+    }
+  }, {
+    key: "uniform1iv",
+    value: function uniform1iv(location, value) {
+      if (!this._checkUniformValueValid(location, value, 'uniform1iv', 1, 'i')) return;
+
+      if (location._array) {
+        var locs = location._array;
+
+        for (var i = 0; i < locs.length && i < value.length; ++i) {
+          var loc = locs[i];
+
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform1i", this).call(this, loc, value[i]);
+        }
+
+        return;
+      }
+
+      this.uniform1i(location, value[0]);
+    }
+  }, {
+    key: "uniform2f",
+    value: function uniform2f(location, v0, v1) {
+      if (!this._checkUniformValid(location, v0, 'uniform2f', 2, 'f')) return;
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform2f", this).call(this, location._ | 0, v0, v1);
+    }
+  }, {
+    key: "uniform2fv",
+    value: function uniform2fv(location, value) {
+      if (!this._checkUniformValueValid(location, value, 'uniform2fv', 2, 'f')) return;
+
+      if (location._array) {
+        var locs = location._array;
+
+        for (var i = 0; i < locs.length && 2 * i < value.length; ++i) {
+          var loc = locs[i];
+
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform2f", this).call(this, loc, value[2 * i], value[2 * i + 1]);
+        }
+
+        return;
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform2f", this).call(this, location._ | 0, value[0], value[1]);
+    }
+  }, {
+    key: "uniform2i",
+    value: function uniform2i(location, v0, v1) {
+      if (!this._checkUniformValid(location, v0, 'uniform2i', 2, 'i')) return;
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform2i", this).call(this, location._ | 0, v0, v1);
+    }
+  }, {
+    key: "uniform2iv",
+    value: function uniform2iv(location, value) {
+      if (!this._checkUniformValueValid(location, value, 'uniform2iv', 2, 'i')) return;
+
+      if (location._array) {
+        var locs = location._array;
+
+        for (var i = 0; i < locs.length && 2 * i < value.length; ++i) {
+          var loc = locs[i];
+
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform2i", this).call(this, loc, value[2 * i], value[2 * i + 1]);
+        }
+
+        return;
+      }
+
+      this.uniform2i(location, value[0], value[1]);
+    }
+  }, {
+    key: "uniform3f",
+    value: function uniform3f(location, v0, v1, v2) {
+      if (!this._checkUniformValid(location, v0, 'uniform3f', 3, 'f')) return;
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform3f", this).call(this, location._ | 0, v0, v1, v2);
+    }
+  }, {
+    key: "uniform3fv",
+    value: function uniform3fv(location, value) {
+      if (!this._checkUniformValueValid(location, value, 'uniform3fv', 3, 'f')) return;
+
+      if (location._array) {
+        var locs = location._array;
+
+        for (var i = 0; i < locs.length && 3 * i < value.length; ++i) {
+          var loc = locs[i];
+
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform3f", this).call(this, loc, value[3 * i], value[3 * i + 1], value[3 * i + 2]);
+        }
+
+        return;
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform3f", this).call(this, location._ | 0, value[0], value[1], value[2]);
+    }
+  }, {
+    key: "uniform3i",
+    value: function uniform3i(location, v0, v1, v2) {
+      if (!this._checkUniformValid(location, v0, 'uniform3i', 3, 'i')) return;
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform3i", this).call(this, location._ | 0, v0, v1, v2);
+    }
+  }, {
+    key: "uniform3iv",
+    value: function uniform3iv(location, value) {
+      if (!this._checkUniformValueValid(location, value, 'uniform3iv', 3, 'i')) return;
+
+      if (location._array) {
+        var locs = location._array;
+
+        for (var i = 0; i < locs.length && 3 * i < value.length; ++i) {
+          var loc = locs[i];
+
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform3i", this).call(this, loc, value[3 * i], value[3 * i + 1], value[3 * i + 2]);
+        }
+
+        return;
+      }
+
+      this.uniform3i(location, value[0], value[1], value[2]);
+    }
+  }, {
+    key: "uniform4f",
+    value: function uniform4f(location, v0, v1, v2, v3) {
+      if (!this._checkUniformValid(location, v0, 'uniform4f', 4, 'f')) return;
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform4f", this).call(this, location._ | 0, v0, v1, v2, v3);
+    }
+  }, {
+    key: "uniform4fv",
+    value: function uniform4fv(location, value) {
+      if (!this._checkUniformValueValid(location, value, 'uniform4fv', 4, 'f')) return;
+
+      if (location._array) {
+        var locs = location._array;
+
+        for (var i = 0; i < locs.length && 4 * i < value.length; ++i) {
+          var loc = locs[i];
+
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform4f", this).call(this, loc, value[4 * i], value[4 * i + 1], value[4 * i + 2], value[4 * i + 3]);
+        }
+
+        return;
+      }
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform4f", this).call(this, location._ | 0, value[0], value[1], value[2], value[3]);
+    }
+  }, {
+    key: "uniform4i",
+    value: function uniform4i(location, v0, v1, v2, v3) {
+      if (!this._checkUniformValid(location, v0, 'uniform4i', 4, 'i')) return;
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform4i", this).call(this, location._ | 0, v0, v1, v2, v3);
+    }
+  }, {
+    key: "uniform4iv",
+    value: function uniform4iv(location, value) {
+      if (!this._checkUniformValueValid(location, value, 'uniform4iv', 4, 'i')) return;
+
+      if (location._array) {
+        var locs = location._array;
+
+        for (var i = 0; i < locs.length && 4 * i < value.length; ++i) {
+          var loc = locs[i];
+
+          _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniform4i", this).call(this, loc, value[4 * i], value[4 * i + 1], value[4 * i + 2], value[4 * i + 3]);
+        }
+
+        return;
+      }
+
+      this.uniform4i(location, value[0], value[1], value[2], value[3]);
+    }
+  }, {
+    key: "_checkUniformMatrix",
+    value: function _checkUniformMatrix(location, transpose, value, name, count) {
+      if (!checkObject(location) || _typeof(value) !== 'object') {
+        throw new TypeError(name + '(WebGLUniformLocation, Boolean, Array)');
+      } else if (!!transpose || _typeof(value) !== 'object' || value === null || !value.length || value.length % count * count !== 0) {
+        this.setError(gl.INVALID_VALUE);
+        return false;
+      }
+
+      if (!location) {
+        return false;
+      }
+
+      if (!this._checkLocationActive(location)) {
+        return false;
+      }
+
+      if (value.length === count * count) {
+        return true;
+      } else if (location._array) {
+        return true;
+      }
+
+      this.setError(gl.INVALID_VALUE);
+      return false;
+    }
+  }, {
+    key: "uniformMatrix2fv",
+    value: function uniformMatrix2fv(location, transpose, value) {
+      if (!this._checkUniformMatrix(location, transpose, value, 'uniformMatrix2fv', 2)) return;
+      var data = new Float32Array(value);
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniformMatrix2fv", this).call(this, location._ | 0, !!transpose, data);
+    }
+  }, {
+    key: "uniformMatrix3fv",
+    value: function uniformMatrix3fv(location, transpose, value) {
+      if (!this._checkUniformMatrix(location, transpose, value, 'uniformMatrix3fv', 3)) return;
+      var data = new Float32Array(value);
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniformMatrix3fv", this).call(this, location._ | 0, !!transpose, data);
+    }
+  }, {
+    key: "uniformMatrix4fv",
+    value: function uniformMatrix4fv(location, transpose, value) {
+      if (!this._checkUniformMatrix(location, transpose, value, 'uniformMatrix4fv', 4)) return;
+      var data = new Float32Array(value);
+
+      _get(_getPrototypeOf(WebGLRenderingContext.prototype), "uniformMatrix4fv", this).call(this, location._ | 0, !!transpose, data);
+    }
+  }, {
+    key: "vertexAttrib1f",
+    value: function vertexAttrib1f(index, v0) {
+      index |= 0;
+      if (!this._checkVertexIndex(index)) return;
+      var data = this._vertexAttribs[index]._data;
+      data[3] = 1;
+      data[1] = data[2] = 0;
+      data[0] = v0;
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "vertexAttrib1f", this).call(this, index | 0, +v0);
+    }
+  }, {
+    key: "vertexAttrib2f",
+    value: function vertexAttrib2f(index, v0, v1) {
+      index |= 0;
+      if (!this._checkVertexIndex(index)) return;
+      var data = this._vertexAttribs[index]._data;
+      data[3] = 1;
+      data[2] = 0;
+      data[1] = v1;
+      data[0] = v0;
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "vertexAttrib2f", this).call(this, index | 0, +v0, +v1);
+    }
+  }, {
+    key: "vertexAttrib3f",
+    value: function vertexAttrib3f(index, v0, v1, v2) {
+      index |= 0;
+      if (!this._checkVertexIndex(index)) return;
+      var data = this._vertexAttribs[index]._data;
+      data[3] = 1;
+      data[2] = v2;
+      data[1] = v1;
+      data[0] = v0;
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "vertexAttrib3f", this).call(this, index | 0, +v0, +v1, +v2);
+    }
+  }, {
+    key: "vertexAttrib4f",
+    value: function vertexAttrib4f(index, v0, v1, v2, v3) {
+      index |= 0;
+      if (!this._checkVertexIndex(index)) return;
+      var data = this._vertexAttribs[index]._data;
+      data[3] = v3;
+      data[2] = v2;
+      data[1] = v1;
+      data[0] = v0;
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "vertexAttrib4f", this).call(this, index | 0, +v0, +v1, +v2, +v3);
+    }
+  }, {
+    key: "vertexAttrib1fv",
+    value: function vertexAttrib1fv(index, value) {
+      if (_typeof(value) !== 'object' || value === null || value.length < 1) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      var data = this._vertexAttribs[index]._data;
+      data[3] = 1;
+      data[2] = 0;
+      data[1] = 0;
+      data[0] = value[0];
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "vertexAttrib1f", this).call(this, index | 0, +value[0]);
+    }
+  }, {
+    key: "vertexAttrib2fv",
+    value: function vertexAttrib2fv(index, value) {
+      if (_typeof(value) !== 'object' || value === null || value.length < 2) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      var data = this._vertexAttribs[index]._data;
+      data[3] = 1;
+      data[2] = 0;
+      data[1] = value[1];
+      data[0] = value[0];
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "vertexAttrib2f", this).call(this, index | 0, +value[0], +value[1]);
+    }
+  }, {
+    key: "vertexAttrib3fv",
+    value: function vertexAttrib3fv(index, value) {
+      if (_typeof(value) !== 'object' || value === null || value.length < 3) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      var data = this._vertexAttribs[index]._data;
+      data[3] = 1;
+      data[2] = value[2];
+      data[1] = value[1];
+      data[0] = value[0];
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "vertexAttrib3f", this).call(this, index | 0, +value[0], +value[1], +value[2]);
+    }
+  }, {
+    key: "vertexAttrib4fv",
+    value: function vertexAttrib4fv(index, value) {
+      if (_typeof(value) !== 'object' || value === null || value.length < 4) {
+        this.setError(gl.INVALID_OPERATION);
+        return;
+      }
+
+      var data = this._vertexAttribs[index]._data;
+      data[3] = value[3];
+      data[2] = value[2];
+      data[1] = value[1];
+      data[0] = value[0];
+      return _get(_getPrototypeOf(WebGLRenderingContext.prototype), "vertexAttrib4f", this).call(this, index | 0, +value[0], +value[1], +value[2], +value[3]);
+    }
+  }]);
+
+  return WebGLRenderingContext;
+}(NativeWebGLRenderingContext);
+
+module.exports = {
+  WebGLRenderingContext: WebGLRenderingContext,
+  wrapContext: wrapContext
+};
+},{"bit-twiddle":"gXRl","glsl-tokenizer/string":"qTvY","../../package.json":"u+Fl","./native-gl":"sKEg","./extensions/angle-instanced-arrays":"szyx","./extensions/oes-element-index-unit":"4tF8","./extensions/oes-texture-float":"1jl5","./extensions/stackgl-destroy-context":"Y2uY","./extensions/stackgl-resize-drawing-buffer":"LPDT","./extensions/webgl-draw-buffers":"nmtm","./utils":"nGyt","./webgl-active-info":"IW4i","./webgl-framebuffer":"gerX","./webgl-buffer":"KfrC","./webgl-drawing-buffer-wrapper":"k8Ir","./webgl-program":"eJRH","./webgl-renderbuffer":"hFzp","./webgl-shader":"KtH9","./webgl-shader-precision-format":"Xj5G","./webgl-texture":"qlOf","./webgl-uniform-location":"tW9K"}],"p3Ja":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var WebGLTextureUnit = function WebGLTextureUnit(ctx, idx) {
+  _classCallCheck(this, WebGLTextureUnit);
+
+  this._ctx = ctx;
+  this._idx = idx;
+  this._mode = 0;
+  this._bind2D = null;
+  this._bindCube = null;
+};
+
+module.exports = {
+  WebGLTextureUnit: WebGLTextureUnit
+};
+},{}],"wXTd":[function(require,module,exports) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _require = require('./native-gl'),
+    gl = _require.gl;
+
+var WebGLVertexAttribute = function WebGLVertexAttribute(ctx, idx) {
+  _classCallCheck(this, WebGLVertexAttribute);
+
+  this._ctx = ctx;
+  this._idx = idx;
+  this._isPointer = false;
+  this._pointerBuffer = null;
+  this._pointerOffset = 0;
+  this._pointerSize = 0;
+  this._pointerStride = 0;
+  this._pointerType = gl.FLOAT;
+  this._pointerNormal = false;
+  this._divisor = 0;
+  this._inputSize = 4;
+  this._inputStride = 0;
+  this._data = new Float32Array([0, 0, 0, 1]);
+};
+
+module.exports = {
+  WebGLVertexAttribute: WebGLVertexAttribute
+};
+},{"./native-gl":"sKEg"}],"Hk42":[function(require,module,exports) {
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+var bits = require('bit-twiddle');
+
+var _require = require('./webgl-context-attributes'),
+    WebGLContextAttributes = _require.WebGLContextAttributes;
+
+var _require2 = require('./webgl-rendering-context'),
+    WebGLRenderingContext = _require2.WebGLRenderingContext,
+    wrapContext = _require2.wrapContext;
+
+var _require3 = require('./webgl-texture-unit'),
+    WebGLTextureUnit = _require3.WebGLTextureUnit;
+
+var _require4 = require('./webgl-vertex-attribute'),
+    WebGLVertexAttribute = _require4.WebGLVertexAttribute;
+
+var CONTEXT_COUNTER = 0;
+
+function flag(options, name, dflt) {
+  if (!options || !(_typeof(options) === 'object') || !(name in options)) {
+    return dflt;
+  }
+
+  return !!options[name];
+}
+
+function createContext(width, height, options) {
+  width = width | 0;
+  height = height | 0;
+
+  if (!(width > 0 && height > 0)) {
+    return null;
+  }
+
+  var contextAttributes = new WebGLContextAttributes(flag(options, 'alpha', true), flag(options, 'depth', true), flag(options, 'stencil', false), false, // flag(options, 'antialias', true),
+  flag(options, 'premultipliedAlpha', true), flag(options, 'preserveDrawingBuffer', false), flag(options, 'preferLowPowerToHighPerformance', false), flag(options, 'failIfMajorPerformanceCaveat', false)); // Can only use premultipliedAlpha if alpha is set
+
+  contextAttributes.premultipliedAlpha = contextAttributes.premultipliedAlpha && contextAttributes.alpha;
+  var ctx;
+
+  try {
+    ctx = new WebGLRenderingContext(1, 1, contextAttributes.alpha, contextAttributes.depth, contextAttributes.stencil, contextAttributes.antialias, contextAttributes.premultipliedAlpha, contextAttributes.preserveDrawingBuffer, contextAttributes.preferLowPowerToHighPerformance, contextAttributes.failIfMajorPerformanceCaveat);
+  } catch (e) {}
+
+  if (!ctx) {
+    return null;
+  }
+
+  ctx.drawingBufferWidth = width;
+  ctx.drawingBufferHeight = height;
+  ctx._ = CONTEXT_COUNTER++;
+  ctx._contextAttributes = contextAttributes;
+  ctx._extensions = {};
+  ctx._programs = {};
+  ctx._shaders = {};
+  ctx._buffers = {};
+  ctx._textures = {};
+  ctx._framebuffers = {};
+  ctx._renderbuffers = {};
+  ctx._activeProgram = null;
+  ctx._activeFramebuffer = null;
+  ctx._activeArrayBuffer = null;
+  ctx._activeElementArrayBuffer = null;
+  ctx._activeRenderbuffer = null; // Initialize texture units
+
+  var numTextures = ctx.getParameter(ctx.MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+  ctx._textureUnits = new Array(numTextures);
+
+  for (var i = 0; i < numTextures; ++i) {
+    ctx._textureUnits[i] = new WebGLTextureUnit(i);
+  }
+
+  ctx._activeTextureUnit = 0;
+  ctx.activeTexture(ctx.TEXTURE0);
+  ctx._errorStack = []; // Initialize vertex attributes
+
+  var numAttribs = ctx.getParameter(ctx.MAX_VERTEX_ATTRIBS);
+  ctx._vertexAttribs = new Array(numAttribs);
+
+  for (var _i = 0; _i < numAttribs; ++_i) {
+    ctx._vertexAttribs[_i] = new WebGLVertexAttribute(ctx, _i);
+  } // Store limits
+
+
+  ctx._maxTextureSize = ctx.getParameter(ctx.MAX_TEXTURE_SIZE);
+  ctx._maxTextureLevel = bits.log2(bits.nextPow2(ctx._maxTextureSize));
+  ctx._maxCubeMapSize = ctx.getParameter(ctx.MAX_CUBE_MAP_TEXTURE_SIZE);
+  ctx._maxCubeMapLevel = bits.log2(bits.nextPow2(ctx._maxCubeMapSize)); // Unpack alignment
+
+  ctx._unpackAlignment = 4;
+  ctx._packAlignment = 4; // Allocate framebuffer
+
+  ctx._allocateDrawingBuffer(width, height);
+
+  var attrib0Buffer = ctx.createBuffer();
+  ctx._attrib0Buffer = attrib0Buffer; // Initialize defaults
+
+  ctx.bindBuffer(ctx.ARRAY_BUFFER, null);
+  ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, null);
+  ctx.bindFramebuffer(ctx.FRAMEBUFFER, null);
+  ctx.bindRenderbuffer(ctx.RENDERBUFFER, null); // Set viewport and scissor
+
+  ctx.viewport(0, 0, width, height);
+  ctx.scissor(0, 0, width, height); // Clear buffers
+
+  ctx.clearDepth(1);
+  ctx.clearColor(0, 0, 0, 0);
+  ctx.clearStencil(0);
+  ctx.clear(ctx.COLOR_BUFFER_BIT | ctx.DEPTH_BUFFER_BIT | ctx.STENCIL_BUFFER_BIT);
+  return wrapContext(ctx);
+}
+
+module.exports = createContext;
+},{"bit-twiddle":"gXRl","./webgl-context-attributes":"TR9e","./webgl-rendering-context":"mUad","./webgl-texture-unit":"p3Ja","./webgl-vertex-attribute":"wXTd"}],"Aiyt":[function(require,module,exports) {
+if (typeof WebGLRenderingContext !== 'undefined') {
+  module.exports = require('./src/javascript/browser-index');
+} else {
+  module.exports = require('./src/javascript/node-index');
+}
+},{"./src/javascript/browser-index":"boSK","./src/javascript/node-index":"Hk42"}],"pGKr":[function(require,module,exports) {
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -14569,7 +24011,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -18846,7 +28288,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -18944,7 +28386,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -19022,7 +28464,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -19122,7 +28564,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -22567,7 +32009,7 @@ function (_WebGLKernel) {
 module.exports = {
   HeadlessGLKernel: HeadlessGLKernel
 };
-},{"gl":"dVPj","../web-gl/kernel":"uiFz","../gl/kernel-string":"n+CM"}],"IZrg":[function(require,module,exports) {
+},{"gl":"Aiyt","../web-gl/kernel":"uiFz","../gl/kernel-string":"n+CM"}],"IZrg":[function(require,module,exports) {
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -23106,7 +32548,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -25988,7 +35430,7 @@ module.exports = {
   kernelOrder: kernelOrder,
   kernelTypes: kernelTypes
 };
-},{"gpu-mock.js":"qN/c","./utils":"9h1E","./backend/cpu/kernel":"A4bq","./backend/headless-gl/kernel":"5Ni1","./backend/web-gl2/kernel":"sSW8","./backend/web-gl/kernel":"uiFz","./kernel-run-shortcut":"t2wu"}],"209B":[function(require,module,exports) {
+},{"gpu-mock.js":"/T23","./utils":"9h1E","./backend/cpu/kernel":"A4bq","./backend/headless-gl/kernel":"5Ni1","./backend/web-gl2/kernel":"sSW8","./backend/web-gl/kernel":"uiFz","./kernel-run-shortcut":"t2wu"}],"209B":[function(require,module,exports) {
 var _require = require('./utils'),
     utils = _require.utils;
 /**
@@ -28918,7 +38360,9 @@ module.exports = {
   target: target
 };
 },{"../utilities/kernel":"L30b","../utilities/zeros":"M4LY","../utilities/zeros-2d":"C4Cz","../utilities/zeros-3d":"0AN3","./types":"pX1U"}],"YS3q":[function(require,module,exports) {
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -32142,215 +41586,6 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],"pBGv":[function(require,module,exports) {
-
-// shim for using process in browser
-var process = module.exports = {}; // cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-  throw new Error('setTimeout has not been defined');
-}
-
-function defaultClearTimeout() {
-  throw new Error('clearTimeout has not been defined');
-}
-
-(function () {
-  try {
-    if (typeof setTimeout === 'function') {
-      cachedSetTimeout = setTimeout;
-    } else {
-      cachedSetTimeout = defaultSetTimout;
-    }
-  } catch (e) {
-    cachedSetTimeout = defaultSetTimout;
-  }
-
-  try {
-    if (typeof clearTimeout === 'function') {
-      cachedClearTimeout = clearTimeout;
-    } else {
-      cachedClearTimeout = defaultClearTimeout;
-    }
-  } catch (e) {
-    cachedClearTimeout = defaultClearTimeout;
-  }
-})();
-
-function runTimeout(fun) {
-  if (cachedSetTimeout === setTimeout) {
-    //normal enviroments in sane situations
-    return setTimeout(fun, 0);
-  } // if setTimeout wasn't available but was latter defined
-
-
-  if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-    cachedSetTimeout = setTimeout;
-    return setTimeout(fun, 0);
-  }
-
-  try {
-    // when when somebody has screwed with setTimeout but no I.E. maddness
-    return cachedSetTimeout(fun, 0);
-  } catch (e) {
-    try {
-      // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-      return cachedSetTimeout.call(null, fun, 0);
-    } catch (e) {
-      // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-      return cachedSetTimeout.call(this, fun, 0);
-    }
-  }
-}
-
-function runClearTimeout(marker) {
-  if (cachedClearTimeout === clearTimeout) {
-    //normal enviroments in sane situations
-    return clearTimeout(marker);
-  } // if clearTimeout wasn't available but was latter defined
-
-
-  if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-    cachedClearTimeout = clearTimeout;
-    return clearTimeout(marker);
-  }
-
-  try {
-    // when when somebody has screwed with setTimeout but no I.E. maddness
-    return cachedClearTimeout(marker);
-  } catch (e) {
-    try {
-      // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-      return cachedClearTimeout.call(null, marker);
-    } catch (e) {
-      // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-      // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-      return cachedClearTimeout.call(this, marker);
-    }
-  }
-}
-
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-  if (!draining || !currentQueue) {
-    return;
-  }
-
-  draining = false;
-
-  if (currentQueue.length) {
-    queue = currentQueue.concat(queue);
-  } else {
-    queueIndex = -1;
-  }
-
-  if (queue.length) {
-    drainQueue();
-  }
-}
-
-function drainQueue() {
-  if (draining) {
-    return;
-  }
-
-  var timeout = runTimeout(cleanUpNextTick);
-  draining = true;
-  var len = queue.length;
-
-  while (len) {
-    currentQueue = queue;
-    queue = [];
-
-    while (++queueIndex < len) {
-      if (currentQueue) {
-        currentQueue[queueIndex].run();
-      }
-    }
-
-    queueIndex = -1;
-    len = queue.length;
-  }
-
-  currentQueue = null;
-  draining = false;
-  runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-  var args = new Array(arguments.length - 1);
-
-  if (arguments.length > 1) {
-    for (var i = 1; i < arguments.length; i++) {
-      args[i - 1] = arguments[i];
-    }
-  }
-
-  queue.push(new Item(fun, args));
-
-  if (queue.length === 1 && !draining) {
-    runTimeout(drainQueue);
-  }
-}; // v8 likes predictible objects
-
-
-function Item(fun, array) {
-  this.fun = fun;
-  this.array = array;
-}
-
-Item.prototype.run = function () {
-  this.fun.apply(null, this.array);
-};
-
-process.title = 'browser';
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) {
-  return [];
-};
-
-process.binding = function (name) {
-  throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () {
-  return '/';
-};
-
-process.chdir = function (dir) {
-  throw new Error('process.chdir is not supported');
-};
-
-process.umask = function () {
-  return 0;
-};
 },{}],"Yj0v":[function(require,module,exports) {
 var process = require("process");
 'use strict';
@@ -32398,2049 +41633,10 @@ function nextTick(fn, arg1, arg2, arg3) {
 }
 
 
-},{"process":"pBGv"}],"upBv":[function(require,module,exports) {
-var toString = {}.toString;
-
-module.exports = Array.isArray || function (arr) {
-  return toString.call(arr) == '[object Array]';
-};
-
-},{}],"Q8A6":[function(require,module,exports) {
+},{"process":"pBGv"}],"Q8A6":[function(require,module,exports) {
 module.exports = require('events').EventEmitter;
 
-},{"events":"FRpO"}],"yh9p":[function(require,module,exports) {
-'use strict'
-
-exports.byteLength = byteLength
-exports.toByteArray = toByteArray
-exports.fromByteArray = fromByteArray
-
-var lookup = []
-var revLookup = []
-var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
-
-var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-for (var i = 0, len = code.length; i < len; ++i) {
-  lookup[i] = code[i]
-  revLookup[code.charCodeAt(i)] = i
-}
-
-// Support decoding URL-safe base64 strings, as Node.js does.
-// See: https://en.wikipedia.org/wiki/Base64#URL_applications
-revLookup['-'.charCodeAt(0)] = 62
-revLookup['_'.charCodeAt(0)] = 63
-
-function getLens (b64) {
-  var len = b64.length
-
-  if (len % 4 > 0) {
-    throw new Error('Invalid string. Length must be a multiple of 4')
-  }
-
-  // Trim off extra bytes after placeholder bytes are found
-  // See: https://github.com/beatgammit/base64-js/issues/42
-  var validLen = b64.indexOf('=')
-  if (validLen === -1) validLen = len
-
-  var placeHoldersLen = validLen === len
-    ? 0
-    : 4 - (validLen % 4)
-
-  return [validLen, placeHoldersLen]
-}
-
-// base64 is 4/3 + up to two characters of the original data
-function byteLength (b64) {
-  var lens = getLens(b64)
-  var validLen = lens[0]
-  var placeHoldersLen = lens[1]
-  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
-}
-
-function _byteLength (b64, validLen, placeHoldersLen) {
-  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
-}
-
-function toByteArray (b64) {
-  var tmp
-  var lens = getLens(b64)
-  var validLen = lens[0]
-  var placeHoldersLen = lens[1]
-
-  var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen))
-
-  var curByte = 0
-
-  // if there are placeholders, only get up to the last complete 4 chars
-  var len = placeHoldersLen > 0
-    ? validLen - 4
-    : validLen
-
-  for (var i = 0; i < len; i += 4) {
-    tmp =
-      (revLookup[b64.charCodeAt(i)] << 18) |
-      (revLookup[b64.charCodeAt(i + 1)] << 12) |
-      (revLookup[b64.charCodeAt(i + 2)] << 6) |
-      revLookup[b64.charCodeAt(i + 3)]
-    arr[curByte++] = (tmp >> 16) & 0xFF
-    arr[curByte++] = (tmp >> 8) & 0xFF
-    arr[curByte++] = tmp & 0xFF
-  }
-
-  if (placeHoldersLen === 2) {
-    tmp =
-      (revLookup[b64.charCodeAt(i)] << 2) |
-      (revLookup[b64.charCodeAt(i + 1)] >> 4)
-    arr[curByte++] = tmp & 0xFF
-  }
-
-  if (placeHoldersLen === 1) {
-    tmp =
-      (revLookup[b64.charCodeAt(i)] << 10) |
-      (revLookup[b64.charCodeAt(i + 1)] << 4) |
-      (revLookup[b64.charCodeAt(i + 2)] >> 2)
-    arr[curByte++] = (tmp >> 8) & 0xFF
-    arr[curByte++] = tmp & 0xFF
-  }
-
-  return arr
-}
-
-function tripletToBase64 (num) {
-  return lookup[num >> 18 & 0x3F] +
-    lookup[num >> 12 & 0x3F] +
-    lookup[num >> 6 & 0x3F] +
-    lookup[num & 0x3F]
-}
-
-function encodeChunk (uint8, start, end) {
-  var tmp
-  var output = []
-  for (var i = start; i < end; i += 3) {
-    tmp =
-      ((uint8[i] << 16) & 0xFF0000) +
-      ((uint8[i + 1] << 8) & 0xFF00) +
-      (uint8[i + 2] & 0xFF)
-    output.push(tripletToBase64(tmp))
-  }
-  return output.join('')
-}
-
-function fromByteArray (uint8) {
-  var tmp
-  var len = uint8.length
-  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
-  var parts = []
-  var maxChunkLength = 16383 // must be multiple of 3
-
-  // go through the array every three bytes, we'll deal with trailing stuff later
-  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(
-      uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)
-    ))
-  }
-
-  // pad the end with zeros, but make sure to not forget the extra bytes
-  if (extraBytes === 1) {
-    tmp = uint8[len - 1]
-    parts.push(
-      lookup[tmp >> 2] +
-      lookup[(tmp << 4) & 0x3F] +
-      '=='
-    )
-  } else if (extraBytes === 2) {
-    tmp = (uint8[len - 2] << 8) + uint8[len - 1]
-    parts.push(
-      lookup[tmp >> 10] +
-      lookup[(tmp >> 4) & 0x3F] +
-      lookup[(tmp << 2) & 0x3F] +
-      '='
-    )
-  }
-
-  return parts.join('')
-}
-
-},{}],"JgNJ":[function(require,module,exports) {
-exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m
-  var eLen = (nBytes * 8) - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var nBits = -7
-  var i = isLE ? (nBytes - 1) : 0
-  var d = isLE ? -1 : 1
-  var s = buffer[offset + i]
-
-  i += d
-
-  e = s & ((1 << (-nBits)) - 1)
-  s >>= (-nBits)
-  nBits += eLen
-  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
-
-  m = e & ((1 << (-nBits)) - 1)
-  e >>= (-nBits)
-  nBits += mLen
-  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
-
-  if (e === 0) {
-    e = 1 - eBias
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen)
-    e = e - eBias
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
-
-exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c
-  var eLen = (nBytes * 8) - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-  var i = isLE ? 0 : (nBytes - 1)
-  var d = isLE ? 1 : -1
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-
-  value = Math.abs(value)
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0
-    e = eMax
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2)
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--
-      c *= 2
-    }
-    if (e + eBias >= 1) {
-      value += rt / c
-    } else {
-      value += rt * Math.pow(2, 1 - eBias)
-    }
-    if (value * c >= 2) {
-      e++
-      c /= 2
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0
-      e = eMax
-    } else if (e + eBias >= 1) {
-      m = ((value * c) - 1) * Math.pow(2, mLen)
-      e = e + eBias
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-      e = 0
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-  e = (e << mLen) | m
-  eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-  buffer[offset + i - d] |= s * 128
-}
-
-},{}],"dskh":[function(require,module,exports) {
-
-var global = arguments[3];
-/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-/* eslint-disable no-proto */
-
-'use strict'
-
-var base64 = require('base64-js')
-var ieee754 = require('ieee754')
-var isArray = require('isarray')
-
-exports.Buffer = Buffer
-exports.SlowBuffer = SlowBuffer
-exports.INSPECT_MAX_BYTES = 50
-
-/**
- * If `Buffer.TYPED_ARRAY_SUPPORT`:
- *   === true    Use Uint8Array implementation (fastest)
- *   === false   Use Object implementation (most compatible, even IE6)
- *
- * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
- * Opera 11.6+, iOS 4.2+.
- *
- * Due to various browser bugs, sometimes the Object implementation will be used even
- * when the browser supports typed arrays.
- *
- * Note:
- *
- *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
- *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
- *
- *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
- *
- *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
- *     incorrect length in some situations.
-
- * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
- * get the Object implementation, which is slower but behaves correctly.
- */
-Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
-  ? global.TYPED_ARRAY_SUPPORT
-  : typedArraySupport()
-
-/*
- * Export kMaxLength after typed array support is determined.
- */
-exports.kMaxLength = kMaxLength()
-
-function typedArraySupport () {
-  try {
-    var arr = new Uint8Array(1)
-    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
-    return arr.foo() === 42 && // typed array instances can be augmented
-        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
-        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
-  } catch (e) {
-    return false
-  }
-}
-
-function kMaxLength () {
-  return Buffer.TYPED_ARRAY_SUPPORT
-    ? 0x7fffffff
-    : 0x3fffffff
-}
-
-function createBuffer (that, length) {
-  if (kMaxLength() < length) {
-    throw new RangeError('Invalid typed array length')
-  }
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    // Return an augmented `Uint8Array` instance, for best performance
-    that = new Uint8Array(length)
-    that.__proto__ = Buffer.prototype
-  } else {
-    // Fallback: Return an object instance of the Buffer class
-    if (that === null) {
-      that = new Buffer(length)
-    }
-    that.length = length
-  }
-
-  return that
-}
-
-/**
- * The Buffer constructor returns instances of `Uint8Array` that have their
- * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
- * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
- * and the `Uint8Array` methods. Square bracket notation works as expected -- it
- * returns a single octet.
- *
- * The `Uint8Array` prototype remains unmodified.
- */
-
-function Buffer (arg, encodingOrOffset, length) {
-  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
-    return new Buffer(arg, encodingOrOffset, length)
-  }
-
-  // Common case.
-  if (typeof arg === 'number') {
-    if (typeof encodingOrOffset === 'string') {
-      throw new Error(
-        'If encoding is specified then the first argument must be a string'
-      )
-    }
-    return allocUnsafe(this, arg)
-  }
-  return from(this, arg, encodingOrOffset, length)
-}
-
-Buffer.poolSize = 8192 // not used by this implementation
-
-// TODO: Legacy, not needed anymore. Remove in next major version.
-Buffer._augment = function (arr) {
-  arr.__proto__ = Buffer.prototype
-  return arr
-}
-
-function from (that, value, encodingOrOffset, length) {
-  if (typeof value === 'number') {
-    throw new TypeError('"value" argument must not be a number')
-  }
-
-  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
-    return fromArrayBuffer(that, value, encodingOrOffset, length)
-  }
-
-  if (typeof value === 'string') {
-    return fromString(that, value, encodingOrOffset)
-  }
-
-  return fromObject(that, value)
-}
-
-/**
- * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
- * if value is a number.
- * Buffer.from(str[, encoding])
- * Buffer.from(array)
- * Buffer.from(buffer)
- * Buffer.from(arrayBuffer[, byteOffset[, length]])
- **/
-Buffer.from = function (value, encodingOrOffset, length) {
-  return from(null, value, encodingOrOffset, length)
-}
-
-if (Buffer.TYPED_ARRAY_SUPPORT) {
-  Buffer.prototype.__proto__ = Uint8Array.prototype
-  Buffer.__proto__ = Uint8Array
-  if (typeof Symbol !== 'undefined' && Symbol.species &&
-      Buffer[Symbol.species] === Buffer) {
-    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
-    Object.defineProperty(Buffer, Symbol.species, {
-      value: null,
-      configurable: true
-    })
-  }
-}
-
-function assertSize (size) {
-  if (typeof size !== 'number') {
-    throw new TypeError('"size" argument must be a number')
-  } else if (size < 0) {
-    throw new RangeError('"size" argument must not be negative')
-  }
-}
-
-function alloc (that, size, fill, encoding) {
-  assertSize(size)
-  if (size <= 0) {
-    return createBuffer(that, size)
-  }
-  if (fill !== undefined) {
-    // Only pay attention to encoding if it's a string. This
-    // prevents accidentally sending in a number that would
-    // be interpretted as a start offset.
-    return typeof encoding === 'string'
-      ? createBuffer(that, size).fill(fill, encoding)
-      : createBuffer(that, size).fill(fill)
-  }
-  return createBuffer(that, size)
-}
-
-/**
- * Creates a new filled Buffer instance.
- * alloc(size[, fill[, encoding]])
- **/
-Buffer.alloc = function (size, fill, encoding) {
-  return alloc(null, size, fill, encoding)
-}
-
-function allocUnsafe (that, size) {
-  assertSize(size)
-  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0)
-  if (!Buffer.TYPED_ARRAY_SUPPORT) {
-    for (var i = 0; i < size; ++i) {
-      that[i] = 0
-    }
-  }
-  return that
-}
-
-/**
- * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
- * */
-Buffer.allocUnsafe = function (size) {
-  return allocUnsafe(null, size)
-}
-/**
- * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
- */
-Buffer.allocUnsafeSlow = function (size) {
-  return allocUnsafe(null, size)
-}
-
-function fromString (that, string, encoding) {
-  if (typeof encoding !== 'string' || encoding === '') {
-    encoding = 'utf8'
-  }
-
-  if (!Buffer.isEncoding(encoding)) {
-    throw new TypeError('"encoding" must be a valid string encoding')
-  }
-
-  var length = byteLength(string, encoding) | 0
-  that = createBuffer(that, length)
-
-  var actual = that.write(string, encoding)
-
-  if (actual !== length) {
-    // Writing a hex string, for example, that contains invalid characters will
-    // cause everything after the first invalid character to be ignored. (e.g.
-    // 'abxxcd' will be treated as 'ab')
-    that = that.slice(0, actual)
-  }
-
-  return that
-}
-
-function fromArrayLike (that, array) {
-  var length = array.length < 0 ? 0 : checked(array.length) | 0
-  that = createBuffer(that, length)
-  for (var i = 0; i < length; i += 1) {
-    that[i] = array[i] & 255
-  }
-  return that
-}
-
-function fromArrayBuffer (that, array, byteOffset, length) {
-  array.byteLength // this throws if `array` is not a valid ArrayBuffer
-
-  if (byteOffset < 0 || array.byteLength < byteOffset) {
-    throw new RangeError('\'offset\' is out of bounds')
-  }
-
-  if (array.byteLength < byteOffset + (length || 0)) {
-    throw new RangeError('\'length\' is out of bounds')
-  }
-
-  if (byteOffset === undefined && length === undefined) {
-    array = new Uint8Array(array)
-  } else if (length === undefined) {
-    array = new Uint8Array(array, byteOffset)
-  } else {
-    array = new Uint8Array(array, byteOffset, length)
-  }
-
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    // Return an augmented `Uint8Array` instance, for best performance
-    that = array
-    that.__proto__ = Buffer.prototype
-  } else {
-    // Fallback: Return an object instance of the Buffer class
-    that = fromArrayLike(that, array)
-  }
-  return that
-}
-
-function fromObject (that, obj) {
-  if (Buffer.isBuffer(obj)) {
-    var len = checked(obj.length) | 0
-    that = createBuffer(that, len)
-
-    if (that.length === 0) {
-      return that
-    }
-
-    obj.copy(that, 0, 0, len)
-    return that
-  }
-
-  if (obj) {
-    if ((typeof ArrayBuffer !== 'undefined' &&
-        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
-      if (typeof obj.length !== 'number' || isnan(obj.length)) {
-        return createBuffer(that, 0)
-      }
-      return fromArrayLike(that, obj)
-    }
-
-    if (obj.type === 'Buffer' && isArray(obj.data)) {
-      return fromArrayLike(that, obj.data)
-    }
-  }
-
-  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
-}
-
-function checked (length) {
-  // Note: cannot use `length < kMaxLength()` here because that fails when
-  // length is NaN (which is otherwise coerced to zero.)
-  if (length >= kMaxLength()) {
-    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
-                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
-  }
-  return length | 0
-}
-
-function SlowBuffer (length) {
-  if (+length != length) { // eslint-disable-line eqeqeq
-    length = 0
-  }
-  return Buffer.alloc(+length)
-}
-
-Buffer.isBuffer = function isBuffer (b) {
-  return !!(b != null && b._isBuffer)
-}
-
-Buffer.compare = function compare (a, b) {
-  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
-    throw new TypeError('Arguments must be Buffers')
-  }
-
-  if (a === b) return 0
-
-  var x = a.length
-  var y = b.length
-
-  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
-    if (a[i] !== b[i]) {
-      x = a[i]
-      y = b[i]
-      break
-    }
-  }
-
-  if (x < y) return -1
-  if (y < x) return 1
-  return 0
-}
-
-Buffer.isEncoding = function isEncoding (encoding) {
-  switch (String(encoding).toLowerCase()) {
-    case 'hex':
-    case 'utf8':
-    case 'utf-8':
-    case 'ascii':
-    case 'latin1':
-    case 'binary':
-    case 'base64':
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      return true
-    default:
-      return false
-  }
-}
-
-Buffer.concat = function concat (list, length) {
-  if (!isArray(list)) {
-    throw new TypeError('"list" argument must be an Array of Buffers')
-  }
-
-  if (list.length === 0) {
-    return Buffer.alloc(0)
-  }
-
-  var i
-  if (length === undefined) {
-    length = 0
-    for (i = 0; i < list.length; ++i) {
-      length += list[i].length
-    }
-  }
-
-  var buffer = Buffer.allocUnsafe(length)
-  var pos = 0
-  for (i = 0; i < list.length; ++i) {
-    var buf = list[i]
-    if (!Buffer.isBuffer(buf)) {
-      throw new TypeError('"list" argument must be an Array of Buffers')
-    }
-    buf.copy(buffer, pos)
-    pos += buf.length
-  }
-  return buffer
-}
-
-function byteLength (string, encoding) {
-  if (Buffer.isBuffer(string)) {
-    return string.length
-  }
-  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
-      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
-    return string.byteLength
-  }
-  if (typeof string !== 'string') {
-    string = '' + string
-  }
-
-  var len = string.length
-  if (len === 0) return 0
-
-  // Use a for loop to avoid recursion
-  var loweredCase = false
-  for (;;) {
-    switch (encoding) {
-      case 'ascii':
-      case 'latin1':
-      case 'binary':
-        return len
-      case 'utf8':
-      case 'utf-8':
-      case undefined:
-        return utf8ToBytes(string).length
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return len * 2
-      case 'hex':
-        return len >>> 1
-      case 'base64':
-        return base64ToBytes(string).length
-      default:
-        if (loweredCase) return utf8ToBytes(string).length // assume utf8
-        encoding = ('' + encoding).toLowerCase()
-        loweredCase = true
-    }
-  }
-}
-Buffer.byteLength = byteLength
-
-function slowToString (encoding, start, end) {
-  var loweredCase = false
-
-  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
-  // property of a typed array.
-
-  // This behaves neither like String nor Uint8Array in that we set start/end
-  // to their upper/lower bounds if the value passed is out of range.
-  // undefined is handled specially as per ECMA-262 6th Edition,
-  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
-  if (start === undefined || start < 0) {
-    start = 0
-  }
-  // Return early if start > this.length. Done here to prevent potential uint32
-  // coercion fail below.
-  if (start > this.length) {
-    return ''
-  }
-
-  if (end === undefined || end > this.length) {
-    end = this.length
-  }
-
-  if (end <= 0) {
-    return ''
-  }
-
-  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
-  end >>>= 0
-  start >>>= 0
-
-  if (end <= start) {
-    return ''
-  }
-
-  if (!encoding) encoding = 'utf8'
-
-  while (true) {
-    switch (encoding) {
-      case 'hex':
-        return hexSlice(this, start, end)
-
-      case 'utf8':
-      case 'utf-8':
-        return utf8Slice(this, start, end)
-
-      case 'ascii':
-        return asciiSlice(this, start, end)
-
-      case 'latin1':
-      case 'binary':
-        return latin1Slice(this, start, end)
-
-      case 'base64':
-        return base64Slice(this, start, end)
-
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return utf16leSlice(this, start, end)
-
-      default:
-        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-        encoding = (encoding + '').toLowerCase()
-        loweredCase = true
-    }
-  }
-}
-
-// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
-// Buffer instances.
-Buffer.prototype._isBuffer = true
-
-function swap (b, n, m) {
-  var i = b[n]
-  b[n] = b[m]
-  b[m] = i
-}
-
-Buffer.prototype.swap16 = function swap16 () {
-  var len = this.length
-  if (len % 2 !== 0) {
-    throw new RangeError('Buffer size must be a multiple of 16-bits')
-  }
-  for (var i = 0; i < len; i += 2) {
-    swap(this, i, i + 1)
-  }
-  return this
-}
-
-Buffer.prototype.swap32 = function swap32 () {
-  var len = this.length
-  if (len % 4 !== 0) {
-    throw new RangeError('Buffer size must be a multiple of 32-bits')
-  }
-  for (var i = 0; i < len; i += 4) {
-    swap(this, i, i + 3)
-    swap(this, i + 1, i + 2)
-  }
-  return this
-}
-
-Buffer.prototype.swap64 = function swap64 () {
-  var len = this.length
-  if (len % 8 !== 0) {
-    throw new RangeError('Buffer size must be a multiple of 64-bits')
-  }
-  for (var i = 0; i < len; i += 8) {
-    swap(this, i, i + 7)
-    swap(this, i + 1, i + 6)
-    swap(this, i + 2, i + 5)
-    swap(this, i + 3, i + 4)
-  }
-  return this
-}
-
-Buffer.prototype.toString = function toString () {
-  var length = this.length | 0
-  if (length === 0) return ''
-  if (arguments.length === 0) return utf8Slice(this, 0, length)
-  return slowToString.apply(this, arguments)
-}
-
-Buffer.prototype.equals = function equals (b) {
-  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
-  if (this === b) return true
-  return Buffer.compare(this, b) === 0
-}
-
-Buffer.prototype.inspect = function inspect () {
-  var str = ''
-  var max = exports.INSPECT_MAX_BYTES
-  if (this.length > 0) {
-    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
-    if (this.length > max) str += ' ... '
-  }
-  return '<Buffer ' + str + '>'
-}
-
-Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
-  if (!Buffer.isBuffer(target)) {
-    throw new TypeError('Argument must be a Buffer')
-  }
-
-  if (start === undefined) {
-    start = 0
-  }
-  if (end === undefined) {
-    end = target ? target.length : 0
-  }
-  if (thisStart === undefined) {
-    thisStart = 0
-  }
-  if (thisEnd === undefined) {
-    thisEnd = this.length
-  }
-
-  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
-    throw new RangeError('out of range index')
-  }
-
-  if (thisStart >= thisEnd && start >= end) {
-    return 0
-  }
-  if (thisStart >= thisEnd) {
-    return -1
-  }
-  if (start >= end) {
-    return 1
-  }
-
-  start >>>= 0
-  end >>>= 0
-  thisStart >>>= 0
-  thisEnd >>>= 0
-
-  if (this === target) return 0
-
-  var x = thisEnd - thisStart
-  var y = end - start
-  var len = Math.min(x, y)
-
-  var thisCopy = this.slice(thisStart, thisEnd)
-  var targetCopy = target.slice(start, end)
-
-  for (var i = 0; i < len; ++i) {
-    if (thisCopy[i] !== targetCopy[i]) {
-      x = thisCopy[i]
-      y = targetCopy[i]
-      break
-    }
-  }
-
-  if (x < y) return -1
-  if (y < x) return 1
-  return 0
-}
-
-// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
-// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
-//
-// Arguments:
-// - buffer - a Buffer to search
-// - val - a string, Buffer, or number
-// - byteOffset - an index into `buffer`; will be clamped to an int32
-// - encoding - an optional encoding, relevant is val is a string
-// - dir - true for indexOf, false for lastIndexOf
-function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
-  // Empty buffer means no match
-  if (buffer.length === 0) return -1
-
-  // Normalize byteOffset
-  if (typeof byteOffset === 'string') {
-    encoding = byteOffset
-    byteOffset = 0
-  } else if (byteOffset > 0x7fffffff) {
-    byteOffset = 0x7fffffff
-  } else if (byteOffset < -0x80000000) {
-    byteOffset = -0x80000000
-  }
-  byteOffset = +byteOffset  // Coerce to Number.
-  if (isNaN(byteOffset)) {
-    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
-    byteOffset = dir ? 0 : (buffer.length - 1)
-  }
-
-  // Normalize byteOffset: negative offsets start from the end of the buffer
-  if (byteOffset < 0) byteOffset = buffer.length + byteOffset
-  if (byteOffset >= buffer.length) {
-    if (dir) return -1
-    else byteOffset = buffer.length - 1
-  } else if (byteOffset < 0) {
-    if (dir) byteOffset = 0
-    else return -1
-  }
-
-  // Normalize val
-  if (typeof val === 'string') {
-    val = Buffer.from(val, encoding)
-  }
-
-  // Finally, search either indexOf (if dir is true) or lastIndexOf
-  if (Buffer.isBuffer(val)) {
-    // Special case: looking for empty string/buffer always fails
-    if (val.length === 0) {
-      return -1
-    }
-    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
-  } else if (typeof val === 'number') {
-    val = val & 0xFF // Search for a byte value [0-255]
-    if (Buffer.TYPED_ARRAY_SUPPORT &&
-        typeof Uint8Array.prototype.indexOf === 'function') {
-      if (dir) {
-        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
-      } else {
-        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
-      }
-    }
-    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
-  }
-
-  throw new TypeError('val must be string, number or Buffer')
-}
-
-function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
-  var indexSize = 1
-  var arrLength = arr.length
-  var valLength = val.length
-
-  if (encoding !== undefined) {
-    encoding = String(encoding).toLowerCase()
-    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
-        encoding === 'utf16le' || encoding === 'utf-16le') {
-      if (arr.length < 2 || val.length < 2) {
-        return -1
-      }
-      indexSize = 2
-      arrLength /= 2
-      valLength /= 2
-      byteOffset /= 2
-    }
-  }
-
-  function read (buf, i) {
-    if (indexSize === 1) {
-      return buf[i]
-    } else {
-      return buf.readUInt16BE(i * indexSize)
-    }
-  }
-
-  var i
-  if (dir) {
-    var foundIndex = -1
-    for (i = byteOffset; i < arrLength; i++) {
-      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
-        if (foundIndex === -1) foundIndex = i
-        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
-      } else {
-        if (foundIndex !== -1) i -= i - foundIndex
-        foundIndex = -1
-      }
-    }
-  } else {
-    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength
-    for (i = byteOffset; i >= 0; i--) {
-      var found = true
-      for (var j = 0; j < valLength; j++) {
-        if (read(arr, i + j) !== read(val, j)) {
-          found = false
-          break
-        }
-      }
-      if (found) return i
-    }
-  }
-
-  return -1
-}
-
-Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
-  return this.indexOf(val, byteOffset, encoding) !== -1
-}
-
-Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
-  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
-}
-
-Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
-  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
-}
-
-function hexWrite (buf, string, offset, length) {
-  offset = Number(offset) || 0
-  var remaining = buf.length - offset
-  if (!length) {
-    length = remaining
-  } else {
-    length = Number(length)
-    if (length > remaining) {
-      length = remaining
-    }
-  }
-
-  // must be an even number of digits
-  var strLen = string.length
-  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
-
-  if (length > strLen / 2) {
-    length = strLen / 2
-  }
-  for (var i = 0; i < length; ++i) {
-    var parsed = parseInt(string.substr(i * 2, 2), 16)
-    if (isNaN(parsed)) return i
-    buf[offset + i] = parsed
-  }
-  return i
-}
-
-function utf8Write (buf, string, offset, length) {
-  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
-}
-
-function asciiWrite (buf, string, offset, length) {
-  return blitBuffer(asciiToBytes(string), buf, offset, length)
-}
-
-function latin1Write (buf, string, offset, length) {
-  return asciiWrite(buf, string, offset, length)
-}
-
-function base64Write (buf, string, offset, length) {
-  return blitBuffer(base64ToBytes(string), buf, offset, length)
-}
-
-function ucs2Write (buf, string, offset, length) {
-  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
-}
-
-Buffer.prototype.write = function write (string, offset, length, encoding) {
-  // Buffer#write(string)
-  if (offset === undefined) {
-    encoding = 'utf8'
-    length = this.length
-    offset = 0
-  // Buffer#write(string, encoding)
-  } else if (length === undefined && typeof offset === 'string') {
-    encoding = offset
-    length = this.length
-    offset = 0
-  // Buffer#write(string, offset[, length][, encoding])
-  } else if (isFinite(offset)) {
-    offset = offset | 0
-    if (isFinite(length)) {
-      length = length | 0
-      if (encoding === undefined) encoding = 'utf8'
-    } else {
-      encoding = length
-      length = undefined
-    }
-  // legacy write(string, encoding, offset, length) - remove in v0.13
-  } else {
-    throw new Error(
-      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
-    )
-  }
-
-  var remaining = this.length - offset
-  if (length === undefined || length > remaining) length = remaining
-
-  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
-    throw new RangeError('Attempt to write outside buffer bounds')
-  }
-
-  if (!encoding) encoding = 'utf8'
-
-  var loweredCase = false
-  for (;;) {
-    switch (encoding) {
-      case 'hex':
-        return hexWrite(this, string, offset, length)
-
-      case 'utf8':
-      case 'utf-8':
-        return utf8Write(this, string, offset, length)
-
-      case 'ascii':
-        return asciiWrite(this, string, offset, length)
-
-      case 'latin1':
-      case 'binary':
-        return latin1Write(this, string, offset, length)
-
-      case 'base64':
-        // Warning: maxLength not taken into account in base64Write
-        return base64Write(this, string, offset, length)
-
-      case 'ucs2':
-      case 'ucs-2':
-      case 'utf16le':
-      case 'utf-16le':
-        return ucs2Write(this, string, offset, length)
-
-      default:
-        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-        encoding = ('' + encoding).toLowerCase()
-        loweredCase = true
-    }
-  }
-}
-
-Buffer.prototype.toJSON = function toJSON () {
-  return {
-    type: 'Buffer',
-    data: Array.prototype.slice.call(this._arr || this, 0)
-  }
-}
-
-function base64Slice (buf, start, end) {
-  if (start === 0 && end === buf.length) {
-    return base64.fromByteArray(buf)
-  } else {
-    return base64.fromByteArray(buf.slice(start, end))
-  }
-}
-
-function utf8Slice (buf, start, end) {
-  end = Math.min(buf.length, end)
-  var res = []
-
-  var i = start
-  while (i < end) {
-    var firstByte = buf[i]
-    var codePoint = null
-    var bytesPerSequence = (firstByte > 0xEF) ? 4
-      : (firstByte > 0xDF) ? 3
-      : (firstByte > 0xBF) ? 2
-      : 1
-
-    if (i + bytesPerSequence <= end) {
-      var secondByte, thirdByte, fourthByte, tempCodePoint
-
-      switch (bytesPerSequence) {
-        case 1:
-          if (firstByte < 0x80) {
-            codePoint = firstByte
-          }
-          break
-        case 2:
-          secondByte = buf[i + 1]
-          if ((secondByte & 0xC0) === 0x80) {
-            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
-            if (tempCodePoint > 0x7F) {
-              codePoint = tempCodePoint
-            }
-          }
-          break
-        case 3:
-          secondByte = buf[i + 1]
-          thirdByte = buf[i + 2]
-          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
-            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
-            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
-              codePoint = tempCodePoint
-            }
-          }
-          break
-        case 4:
-          secondByte = buf[i + 1]
-          thirdByte = buf[i + 2]
-          fourthByte = buf[i + 3]
-          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
-            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
-            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
-              codePoint = tempCodePoint
-            }
-          }
-      }
-    }
-
-    if (codePoint === null) {
-      // we did not generate a valid codePoint so insert a
-      // replacement char (U+FFFD) and advance only 1 byte
-      codePoint = 0xFFFD
-      bytesPerSequence = 1
-    } else if (codePoint > 0xFFFF) {
-      // encode to utf16 (surrogate pair dance)
-      codePoint -= 0x10000
-      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
-      codePoint = 0xDC00 | codePoint & 0x3FF
-    }
-
-    res.push(codePoint)
-    i += bytesPerSequence
-  }
-
-  return decodeCodePointsArray(res)
-}
-
-// Based on http://stackoverflow.com/a/22747272/680742, the browser with
-// the lowest limit is Chrome, with 0x10000 args.
-// We go 1 magnitude less, for safety
-var MAX_ARGUMENTS_LENGTH = 0x1000
-
-function decodeCodePointsArray (codePoints) {
-  var len = codePoints.length
-  if (len <= MAX_ARGUMENTS_LENGTH) {
-    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
-  }
-
-  // Decode in chunks to avoid "call stack size exceeded".
-  var res = ''
-  var i = 0
-  while (i < len) {
-    res += String.fromCharCode.apply(
-      String,
-      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
-    )
-  }
-  return res
-}
-
-function asciiSlice (buf, start, end) {
-  var ret = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; ++i) {
-    ret += String.fromCharCode(buf[i] & 0x7F)
-  }
-  return ret
-}
-
-function latin1Slice (buf, start, end) {
-  var ret = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; ++i) {
-    ret += String.fromCharCode(buf[i])
-  }
-  return ret
-}
-
-function hexSlice (buf, start, end) {
-  var len = buf.length
-
-  if (!start || start < 0) start = 0
-  if (!end || end < 0 || end > len) end = len
-
-  var out = ''
-  for (var i = start; i < end; ++i) {
-    out += toHex(buf[i])
-  }
-  return out
-}
-
-function utf16leSlice (buf, start, end) {
-  var bytes = buf.slice(start, end)
-  var res = ''
-  for (var i = 0; i < bytes.length; i += 2) {
-    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
-  }
-  return res
-}
-
-Buffer.prototype.slice = function slice (start, end) {
-  var len = this.length
-  start = ~~start
-  end = end === undefined ? len : ~~end
-
-  if (start < 0) {
-    start += len
-    if (start < 0) start = 0
-  } else if (start > len) {
-    start = len
-  }
-
-  if (end < 0) {
-    end += len
-    if (end < 0) end = 0
-  } else if (end > len) {
-    end = len
-  }
-
-  if (end < start) end = start
-
-  var newBuf
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    newBuf = this.subarray(start, end)
-    newBuf.__proto__ = Buffer.prototype
-  } else {
-    var sliceLen = end - start
-    newBuf = new Buffer(sliceLen, undefined)
-    for (var i = 0; i < sliceLen; ++i) {
-      newBuf[i] = this[i + start]
-    }
-  }
-
-  return newBuf
-}
-
-/*
- * Need to make sure that buffer isn't trying to write out of bounds.
- */
-function checkOffset (offset, ext, length) {
-  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
-  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
-}
-
-Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-  var val = this[offset]
-  var mul = 1
-  var i = 0
-  while (++i < byteLength && (mul *= 0x100)) {
-    val += this[offset + i] * mul
-  }
-
-  return val
-}
-
-Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) {
-    checkOffset(offset, byteLength, this.length)
-  }
-
-  var val = this[offset + --byteLength]
-  var mul = 1
-  while (byteLength > 0 && (mul *= 0x100)) {
-    val += this[offset + --byteLength] * mul
-  }
-
-  return val
-}
-
-Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 1, this.length)
-  return this[offset]
-}
-
-Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  return this[offset] | (this[offset + 1] << 8)
-}
-
-Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  return (this[offset] << 8) | this[offset + 1]
-}
-
-Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return ((this[offset]) |
-      (this[offset + 1] << 8) |
-      (this[offset + 2] << 16)) +
-      (this[offset + 3] * 0x1000000)
-}
-
-Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return (this[offset] * 0x1000000) +
-    ((this[offset + 1] << 16) |
-    (this[offset + 2] << 8) |
-    this[offset + 3])
-}
-
-Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-  var val = this[offset]
-  var mul = 1
-  var i = 0
-  while (++i < byteLength && (mul *= 0x100)) {
-    val += this[offset + i] * mul
-  }
-  mul *= 0x80
-
-  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
-
-  return val
-}
-
-Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-  var i = byteLength
-  var mul = 1
-  var val = this[offset + --i]
-  while (i > 0 && (mul *= 0x100)) {
-    val += this[offset + --i] * mul
-  }
-  mul *= 0x80
-
-  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
-
-  return val
-}
-
-Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 1, this.length)
-  if (!(this[offset] & 0x80)) return (this[offset])
-  return ((0xff - this[offset] + 1) * -1)
-}
-
-Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  var val = this[offset] | (this[offset + 1] << 8)
-  return (val & 0x8000) ? val | 0xFFFF0000 : val
-}
-
-Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 2, this.length)
-  var val = this[offset + 1] | (this[offset] << 8)
-  return (val & 0x8000) ? val | 0xFFFF0000 : val
-}
-
-Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return (this[offset]) |
-    (this[offset + 1] << 8) |
-    (this[offset + 2] << 16) |
-    (this[offset + 3] << 24)
-}
-
-Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-
-  return (this[offset] << 24) |
-    (this[offset + 1] << 16) |
-    (this[offset + 2] << 8) |
-    (this[offset + 3])
-}
-
-Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-  return ieee754.read(this, offset, true, 23, 4)
-}
-
-Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 4, this.length)
-  return ieee754.read(this, offset, false, 23, 4)
-}
-
-Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 8, this.length)
-  return ieee754.read(this, offset, true, 52, 8)
-}
-
-Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
-  if (!noAssert) checkOffset(offset, 8, this.length)
-  return ieee754.read(this, offset, false, 52, 8)
-}
-
-function checkInt (buf, value, offset, ext, max, min) {
-  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
-  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
-  if (offset + ext > buf.length) throw new RangeError('Index out of range')
-}
-
-Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) {
-    var maxBytes = Math.pow(2, 8 * byteLength) - 1
-    checkInt(this, value, offset, byteLength, maxBytes, 0)
-  }
-
-  var mul = 1
-  var i = 0
-  this[offset] = value & 0xFF
-  while (++i < byteLength && (mul *= 0x100)) {
-    this[offset + i] = (value / mul) & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  byteLength = byteLength | 0
-  if (!noAssert) {
-    var maxBytes = Math.pow(2, 8 * byteLength) - 1
-    checkInt(this, value, offset, byteLength, maxBytes, 0)
-  }
-
-  var i = byteLength - 1
-  var mul = 1
-  this[offset + i] = value & 0xFF
-  while (--i >= 0 && (mul *= 0x100)) {
-    this[offset + i] = (value / mul) & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
-  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
-  this[offset] = (value & 0xff)
-  return offset + 1
-}
-
-function objectWriteUInt16 (buf, value, offset, littleEndian) {
-  if (value < 0) value = 0xffff + value + 1
-  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
-    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-      (littleEndian ? i : 1 - i) * 8
-  }
-}
-
-Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value & 0xff)
-    this[offset + 1] = (value >>> 8)
-  } else {
-    objectWriteUInt16(this, value, offset, true)
-  }
-  return offset + 2
-}
-
-Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 8)
-    this[offset + 1] = (value & 0xff)
-  } else {
-    objectWriteUInt16(this, value, offset, false)
-  }
-  return offset + 2
-}
-
-function objectWriteUInt32 (buf, value, offset, littleEndian) {
-  if (value < 0) value = 0xffffffff + value + 1
-  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
-    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
-  }
-}
-
-Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset + 3] = (value >>> 24)
-    this[offset + 2] = (value >>> 16)
-    this[offset + 1] = (value >>> 8)
-    this[offset] = (value & 0xff)
-  } else {
-    objectWriteUInt32(this, value, offset, true)
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 24)
-    this[offset + 1] = (value >>> 16)
-    this[offset + 2] = (value >>> 8)
-    this[offset + 3] = (value & 0xff)
-  } else {
-    objectWriteUInt32(this, value, offset, false)
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) {
-    var limit = Math.pow(2, 8 * byteLength - 1)
-
-    checkInt(this, value, offset, byteLength, limit - 1, -limit)
-  }
-
-  var i = 0
-  var mul = 1
-  var sub = 0
-  this[offset] = value & 0xFF
-  while (++i < byteLength && (mul *= 0x100)) {
-    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
-      sub = 1
-    }
-    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) {
-    var limit = Math.pow(2, 8 * byteLength - 1)
-
-    checkInt(this, value, offset, byteLength, limit - 1, -limit)
-  }
-
-  var i = byteLength - 1
-  var mul = 1
-  var sub = 0
-  this[offset + i] = value & 0xFF
-  while (--i >= 0 && (mul *= 0x100)) {
-    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
-      sub = 1
-    }
-    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
-  }
-
-  return offset + byteLength
-}
-
-Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
-  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
-  if (value < 0) value = 0xff + value + 1
-  this[offset] = (value & 0xff)
-  return offset + 1
-}
-
-Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value & 0xff)
-    this[offset + 1] = (value >>> 8)
-  } else {
-    objectWriteUInt16(this, value, offset, true)
-  }
-  return offset + 2
-}
-
-Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 8)
-    this[offset + 1] = (value & 0xff)
-  } else {
-    objectWriteUInt16(this, value, offset, false)
-  }
-  return offset + 2
-}
-
-Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value & 0xff)
-    this[offset + 1] = (value >>> 8)
-    this[offset + 2] = (value >>> 16)
-    this[offset + 3] = (value >>> 24)
-  } else {
-    objectWriteUInt32(this, value, offset, true)
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
-  value = +value
-  offset = offset | 0
-  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
-  if (value < 0) value = 0xffffffff + value + 1
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    this[offset] = (value >>> 24)
-    this[offset + 1] = (value >>> 16)
-    this[offset + 2] = (value >>> 8)
-    this[offset + 3] = (value & 0xff)
-  } else {
-    objectWriteUInt32(this, value, offset, false)
-  }
-  return offset + 4
-}
-
-function checkIEEE754 (buf, value, offset, ext, max, min) {
-  if (offset + ext > buf.length) throw new RangeError('Index out of range')
-  if (offset < 0) throw new RangeError('Index out of range')
-}
-
-function writeFloat (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
-  }
-  ieee754.write(buf, value, offset, littleEndian, 23, 4)
-  return offset + 4
-}
-
-Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
-  return writeFloat(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
-  return writeFloat(this, value, offset, false, noAssert)
-}
-
-function writeDouble (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
-  }
-  ieee754.write(buf, value, offset, littleEndian, 52, 8)
-  return offset + 8
-}
-
-Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
-  return writeDouble(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
-  return writeDouble(this, value, offset, false, noAssert)
-}
-
-// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function copy (target, targetStart, start, end) {
-  if (!start) start = 0
-  if (!end && end !== 0) end = this.length
-  if (targetStart >= target.length) targetStart = target.length
-  if (!targetStart) targetStart = 0
-  if (end > 0 && end < start) end = start
-
-  // Copy 0 bytes; we're done
-  if (end === start) return 0
-  if (target.length === 0 || this.length === 0) return 0
-
-  // Fatal error conditions
-  if (targetStart < 0) {
-    throw new RangeError('targetStart out of bounds')
-  }
-  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
-  if (end < 0) throw new RangeError('sourceEnd out of bounds')
-
-  // Are we oob?
-  if (end > this.length) end = this.length
-  if (target.length - targetStart < end - start) {
-    end = target.length - targetStart + start
-  }
-
-  var len = end - start
-  var i
-
-  if (this === target && start < targetStart && targetStart < end) {
-    // descending copy from end
-    for (i = len - 1; i >= 0; --i) {
-      target[i + targetStart] = this[i + start]
-    }
-  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
-    // ascending copy from start
-    for (i = 0; i < len; ++i) {
-      target[i + targetStart] = this[i + start]
-    }
-  } else {
-    Uint8Array.prototype.set.call(
-      target,
-      this.subarray(start, start + len),
-      targetStart
-    )
-  }
-
-  return len
-}
-
-// Usage:
-//    buffer.fill(number[, offset[, end]])
-//    buffer.fill(buffer[, offset[, end]])
-//    buffer.fill(string[, offset[, end]][, encoding])
-Buffer.prototype.fill = function fill (val, start, end, encoding) {
-  // Handle string cases:
-  if (typeof val === 'string') {
-    if (typeof start === 'string') {
-      encoding = start
-      start = 0
-      end = this.length
-    } else if (typeof end === 'string') {
-      encoding = end
-      end = this.length
-    }
-    if (val.length === 1) {
-      var code = val.charCodeAt(0)
-      if (code < 256) {
-        val = code
-      }
-    }
-    if (encoding !== undefined && typeof encoding !== 'string') {
-      throw new TypeError('encoding must be a string')
-    }
-    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
-      throw new TypeError('Unknown encoding: ' + encoding)
-    }
-  } else if (typeof val === 'number') {
-    val = val & 255
-  }
-
-  // Invalid ranges are not set to a default, so can range check early.
-  if (start < 0 || this.length < start || this.length < end) {
-    throw new RangeError('Out of range index')
-  }
-
-  if (end <= start) {
-    return this
-  }
-
-  start = start >>> 0
-  end = end === undefined ? this.length : end >>> 0
-
-  if (!val) val = 0
-
-  var i
-  if (typeof val === 'number') {
-    for (i = start; i < end; ++i) {
-      this[i] = val
-    }
-  } else {
-    var bytes = Buffer.isBuffer(val)
-      ? val
-      : utf8ToBytes(new Buffer(val, encoding).toString())
-    var len = bytes.length
-    for (i = 0; i < end - start; ++i) {
-      this[i + start] = bytes[i % len]
-    }
-  }
-
-  return this
-}
-
-// HELPER FUNCTIONS
-// ================
-
-var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
-
-function base64clean (str) {
-  // Node strips out invalid characters like \n and \t from the string, base64-js does not
-  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
-  // Node converts strings with length < 2 to ''
-  if (str.length < 2) return ''
-  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
-  while (str.length % 4 !== 0) {
-    str = str + '='
-  }
-  return str
-}
-
-function stringtrim (str) {
-  if (str.trim) return str.trim()
-  return str.replace(/^\s+|\s+$/g, '')
-}
-
-function toHex (n) {
-  if (n < 16) return '0' + n.toString(16)
-  return n.toString(16)
-}
-
-function utf8ToBytes (string, units) {
-  units = units || Infinity
-  var codePoint
-  var length = string.length
-  var leadSurrogate = null
-  var bytes = []
-
-  for (var i = 0; i < length; ++i) {
-    codePoint = string.charCodeAt(i)
-
-    // is surrogate component
-    if (codePoint > 0xD7FF && codePoint < 0xE000) {
-      // last char was a lead
-      if (!leadSurrogate) {
-        // no lead yet
-        if (codePoint > 0xDBFF) {
-          // unexpected trail
-          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-          continue
-        } else if (i + 1 === length) {
-          // unpaired lead
-          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-          continue
-        }
-
-        // valid lead
-        leadSurrogate = codePoint
-
-        continue
-      }
-
-      // 2 leads in a row
-      if (codePoint < 0xDC00) {
-        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-        leadSurrogate = codePoint
-        continue
-      }
-
-      // valid surrogate pair
-      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
-    } else if (leadSurrogate) {
-      // valid bmp char, but last char was a lead
-      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-    }
-
-    leadSurrogate = null
-
-    // encode utf8
-    if (codePoint < 0x80) {
-      if ((units -= 1) < 0) break
-      bytes.push(codePoint)
-    } else if (codePoint < 0x800) {
-      if ((units -= 2) < 0) break
-      bytes.push(
-        codePoint >> 0x6 | 0xC0,
-        codePoint & 0x3F | 0x80
-      )
-    } else if (codePoint < 0x10000) {
-      if ((units -= 3) < 0) break
-      bytes.push(
-        codePoint >> 0xC | 0xE0,
-        codePoint >> 0x6 & 0x3F | 0x80,
-        codePoint & 0x3F | 0x80
-      )
-    } else if (codePoint < 0x110000) {
-      if ((units -= 4) < 0) break
-      bytes.push(
-        codePoint >> 0x12 | 0xF0,
-        codePoint >> 0xC & 0x3F | 0x80,
-        codePoint >> 0x6 & 0x3F | 0x80,
-        codePoint & 0x3F | 0x80
-      )
-    } else {
-      throw new Error('Invalid code point')
-    }
-  }
-
-  return bytes
-}
-
-function asciiToBytes (str) {
-  var byteArray = []
-  for (var i = 0; i < str.length; ++i) {
-    // Node's code seems to be doing this and not & 0x7F..
-    byteArray.push(str.charCodeAt(i) & 0xFF)
-  }
-  return byteArray
-}
-
-function utf16leToBytes (str, units) {
-  var c, hi, lo
-  var byteArray = []
-  for (var i = 0; i < str.length; ++i) {
-    if ((units -= 2) < 0) break
-
-    c = str.charCodeAt(i)
-    hi = c >> 8
-    lo = c % 256
-    byteArray.push(lo)
-    byteArray.push(hi)
-  }
-
-  return byteArray
-}
-
-function base64ToBytes (str) {
-  return base64.toByteArray(base64clean(str))
-}
-
-function blitBuffer (src, dst, offset, length) {
-  for (var i = 0; i < length; ++i) {
-    if ((i + offset >= dst.length) || (i >= src.length)) break
-    dst[i + offset] = src[i]
-  }
-  return i
-}
-
-function isnan (val) {
-  return val !== val // eslint-disable-line no-self-compare
-}
-
-},{"base64-js":"yh9p","ieee754":"JgNJ","isarray":"upBv","buffer":"dskh"}],"38Wu":[function(require,module,exports) {
+},{"events":"FRpO"}],"38Wu":[function(require,module,exports) {
 
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -34615,9 +41811,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 
-},{"buffer":"dskh"}],"70rD":[function(require,module,exports) {
-
-},{}],"Um5I":[function(require,module,exports) {
+},{"buffer":"dskh"}],"Um5I":[function(require,module,exports) {
 
 'use strict';
 
@@ -36976,7 +44170,7 @@ function indexOf(xs, x) {
   }
   return -1;
 }
-},{"process-nextick-args":"Yj0v","isarray":"upBv","events":"FRpO","./internal/streams/stream":"Q8A6","safe-buffer":"38Wu","core-util-is":"Q14w","inherits":"4Bm0","util":"70rD","./internal/streams/BufferList":"Um5I","./internal/streams/destroy":"avqi","./_stream_duplex":"wldW","string_decoder/":"3+3F","process":"pBGv"}],"I3bg":[function(require,module,exports) {
+},{"process-nextick-args":"Yj0v","isarray":"seLU","events":"FRpO","./internal/streams/stream":"Q8A6","safe-buffer":"38Wu","core-util-is":"Q14w","inherits":"4Bm0","util":"70rD","./internal/streams/BufferList":"Um5I","./internal/streams/destroy":"avqi","./_stream_duplex":"wldW","string_decoder/":"3+3F","process":"pBGv"}],"I3bg":[function(require,module,exports) {
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -37742,7 +44936,1452 @@ module.exports = {
   objectToFloat32Arrays: objectToFloat32Arrays,
   objectToFloat32Array: objectToFloat32Array
 };
-},{}],"8epZ":[function(require,module,exports) {
+},{}],"5E9k":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = partition;
+
+function partition(array) {
+  var partitions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+  var partitionSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+  var stdSize = Math.floor(array.length / partitions);
+  var step = stdSize;
+
+  if (partitionSize <= stdSize) {
+    partitionSize = stdSize;
+  } else {
+    step = partitionSize - stdSize;
+
+    if (array.length / partitions > stdSize) {
+      step += 1;
+    }
+  }
+
+  var partitioned = [];
+  var from = 0;
+
+  for (var p = 0; p < partitions - 1; p++) {
+    partitioned.push(array.slice(from, Math.min(array.length, from + partitionSize)));
+    from += step;
+  }
+
+  var tailIdx = Math.min(array.length - partitionSize, from + partitionSize);
+  partitioned.push(array.slice(tailIdx));
+  return partitioned;
+}
+},{}],"zv8z":[function(require,module,exports) {
+exports.endianness = function () { return 'LE' };
+
+exports.hostname = function () {
+    if (typeof location !== 'undefined') {
+        return location.hostname
+    }
+    else return '';
+};
+
+exports.loadavg = function () { return [] };
+
+exports.uptime = function () { return 0 };
+
+exports.freemem = function () {
+    return Number.MAX_VALUE;
+};
+
+exports.totalmem = function () {
+    return Number.MAX_VALUE;
+};
+
+exports.cpus = function () { return [] };
+
+exports.type = function () { return 'Browser' };
+
+exports.release = function () {
+    if (typeof navigator !== 'undefined') {
+        return navigator.appVersion;
+    }
+    return '';
+};
+
+exports.networkInterfaces
+= exports.getNetworkInterfaces
+= function () { return {} };
+
+exports.arch = function () { return 'javascript' };
+
+exports.platform = function () { return 'browser' };
+
+exports.tmpdir = exports.tmpDir = function () {
+    return '/tmp';
+};
+
+exports.EOL = '\n';
+
+exports.homedir = function () {
+	return '/'
+};
+
+},{}],"po20":[function(require,module,exports) {
+var process = require("process");
+'use strict'
+
+const childProcess = require('child_process')
+    , childModule  = require.resolve('./child/index')
+
+
+function fork (forkModule, workerOptions) {
+  // suppress --debug / --inspect flags while preserving others (like --harmony)
+  let filteredArgs = process.execArgv.filter(function (v) {
+        return !(/^--(debug|inspect)/).test(v)
+      })
+    , options       = Object.assign({
+          execArgv : filteredArgs
+        , env      : process.env
+        , cwd      : process.cwd()
+      }, workerOptions)
+    , child         = childProcess.fork(childModule, process.argv, options)
+
+  child.on('error', function() {
+    // this *should* be picked up by onExit and the operation requeued
+  })
+
+  child.send({ owner: 'farm', module: forkModule })
+
+  // return a send() function for this child
+  return {
+      send  : child.send.bind(child)
+    , child : child
+  }
+}
+
+
+module.exports = fork
+
+},{"child_process":"70rD","process":"pBGv"}],"uCcW":[function(require,module,exports) {
+/*!
+  * prr
+  * (c) 2013 Rod Vagg <rod@vagg.org>
+  * https://github.com/rvagg/prr
+  * License: MIT
+  */
+
+(function (name, context, definition) {
+  if (typeof module != 'undefined' && module.exports)
+    module.exports = definition()
+  else
+    context[name] = definition()
+})('prr', this, function() {
+
+  var setProperty = typeof Object.defineProperty == 'function'
+      ? function (obj, key, options) {
+          Object.defineProperty(obj, key, options)
+          return obj
+        }
+      : function (obj, key, options) { // < es5
+          obj[key] = options.value
+          return obj
+        }
+
+    , makeOptions = function (value, options) {
+        var oo = typeof options == 'object'
+          , os = !oo && typeof options == 'string'
+          , op = function (p) {
+              return oo
+                ? !!options[p]
+                : os
+                  ? options.indexOf(p[0]) > -1
+                  : false
+            }
+
+        return {
+            enumerable   : op('enumerable')
+          , configurable : op('configurable')
+          , writable     : op('writable')
+          , value        : value
+        }
+      }
+
+    , prr = function (obj, key, value, options) {
+        var k
+
+        options = makeOptions(value, options)
+
+        if (typeof key == 'object') {
+          for (k in key) {
+            if (Object.hasOwnProperty.call(key, k)) {
+              options.value = key[k]
+              setProperty(obj, k, options)
+            }
+          }
+          return obj
+        }
+
+        return setProperty(obj, key, options)
+      }
+
+  return prr
+})
+},{}],"n8Zz":[function(require,module,exports) {
+var prr = require('prr')
+
+function init (type, message, cause) {
+  if (!!message && typeof message != 'string') {
+    message = message.message || message.name
+  }
+  prr(this, {
+      type    : type
+    , name    : type
+      // can be passed just a 'cause'
+    , cause   : typeof message != 'string' ? message : cause
+    , message : message
+  }, 'ewr')
+}
+
+// generic prototype, not intended to be actually used - helpful for `instanceof`
+function CustomError (message, cause) {
+  Error.call(this)
+  if (Error.captureStackTrace)
+    Error.captureStackTrace(this, this.constructor)
+  init.call(this, 'CustomError', message, cause)
+}
+
+CustomError.prototype = new Error()
+
+function createError (errno, type, proto) {
+  var err = function (message, cause) {
+    init.call(this, type, message, cause)
+    //TODO: the specificity here is stupid, errno should be available everywhere
+    if (type == 'FilesystemError') {
+      this.code    = this.cause.code
+      this.path    = this.cause.path
+      this.errno   = this.cause.errno
+      this.message =
+        (errno.errno[this.cause.errno]
+          ? errno.errno[this.cause.errno].description
+          : this.cause.message)
+        + (this.cause.path ? ' [' + this.cause.path + ']' : '')
+    }
+    Error.call(this)
+    if (Error.captureStackTrace)
+      Error.captureStackTrace(this, err)
+  }
+  err.prototype = !!proto ? new proto() : new CustomError()
+  return err
+}
+
+module.exports = function (errno) {
+  var ce = function (type, proto) {
+    return createError(errno, type, proto)
+  }
+  return {
+      CustomError     : CustomError
+    , FilesystemError : ce('FilesystemError')
+    , createError     : ce
+  }
+}
+
+},{"prr":"uCcW"}],"9+Ta":[function(require,module,exports) {
+var all = module.exports.all = [
+  {
+    errno: -2,
+    code: 'ENOENT',
+    description: 'no such file or directory'
+  },
+  {
+    errno: -1,
+    code: 'UNKNOWN',
+    description: 'unknown error'
+  },
+  {
+    errno: 0,
+    code: 'OK',
+    description: 'success'
+  },
+  {
+    errno: 1,
+    code: 'EOF',
+    description: 'end of file'
+  },
+  {
+    errno: 2,
+    code: 'EADDRINFO',
+    description: 'getaddrinfo error'
+  },
+  {
+    errno: 3,
+    code: 'EACCES',
+    description: 'permission denied'
+  },
+  {
+    errno: 4,
+    code: 'EAGAIN',
+    description: 'resource temporarily unavailable'
+  },
+  {
+    errno: 5,
+    code: 'EADDRINUSE',
+    description: 'address already in use'
+  },
+  {
+    errno: 6,
+    code: 'EADDRNOTAVAIL',
+    description: 'address not available'
+  },
+  {
+    errno: 7,
+    code: 'EAFNOSUPPORT',
+    description: 'address family not supported'
+  },
+  {
+    errno: 8,
+    code: 'EALREADY',
+    description: 'connection already in progress'
+  },
+  {
+    errno: 9,
+    code: 'EBADF',
+    description: 'bad file descriptor'
+  },
+  {
+    errno: 10,
+    code: 'EBUSY',
+    description: 'resource busy or locked'
+  },
+  {
+    errno: 11,
+    code: 'ECONNABORTED',
+    description: 'software caused connection abort'
+  },
+  {
+    errno: 12,
+    code: 'ECONNREFUSED',
+    description: 'connection refused'
+  },
+  {
+    errno: 13,
+    code: 'ECONNRESET',
+    description: 'connection reset by peer'
+  },
+  {
+    errno: 14,
+    code: 'EDESTADDRREQ',
+    description: 'destination address required'
+  },
+  {
+    errno: 15,
+    code: 'EFAULT',
+    description: 'bad address in system call argument'
+  },
+  {
+    errno: 16,
+    code: 'EHOSTUNREACH',
+    description: 'host is unreachable'
+  },
+  {
+    errno: 17,
+    code: 'EINTR',
+    description: 'interrupted system call'
+  },
+  {
+    errno: 18,
+    code: 'EINVAL',
+    description: 'invalid argument'
+  },
+  {
+    errno: 19,
+    code: 'EISCONN',
+    description: 'socket is already connected'
+  },
+  {
+    errno: 20,
+    code: 'EMFILE',
+    description: 'too many open files'
+  },
+  {
+    errno: 21,
+    code: 'EMSGSIZE',
+    description: 'message too long'
+  },
+  {
+    errno: 22,
+    code: 'ENETDOWN',
+    description: 'network is down'
+  },
+  {
+    errno: 23,
+    code: 'ENETUNREACH',
+    description: 'network is unreachable'
+  },
+  {
+    errno: 24,
+    code: 'ENFILE',
+    description: 'file table overflow'
+  },
+  {
+    errno: 25,
+    code: 'ENOBUFS',
+    description: 'no buffer space available'
+  },
+  {
+    errno: 26,
+    code: 'ENOMEM',
+    description: 'not enough memory'
+  },
+  {
+    errno: 27,
+    code: 'ENOTDIR',
+    description: 'not a directory'
+  },
+  {
+    errno: 28,
+    code: 'EISDIR',
+    description: 'illegal operation on a directory'
+  },
+  {
+    errno: 29,
+    code: 'ENONET',
+    description: 'machine is not on the network'
+  },
+  {
+    errno: 31,
+    code: 'ENOTCONN',
+    description: 'socket is not connected'
+  },
+  {
+    errno: 32,
+    code: 'ENOTSOCK',
+    description: 'socket operation on non-socket'
+  },
+  {
+    errno: 33,
+    code: 'ENOTSUP',
+    description: 'operation not supported on socket'
+  },
+  {
+    errno: 34,
+    code: 'ENOENT',
+    description: 'no such file or directory'
+  },
+  {
+    errno: 35,
+    code: 'ENOSYS',
+    description: 'function not implemented'
+  },
+  {
+    errno: 36,
+    code: 'EPIPE',
+    description: 'broken pipe'
+  },
+  {
+    errno: 37,
+    code: 'EPROTO',
+    description: 'protocol error'
+  },
+  {
+    errno: 38,
+    code: 'EPROTONOSUPPORT',
+    description: 'protocol not supported'
+  },
+  {
+    errno: 39,
+    code: 'EPROTOTYPE',
+    description: 'protocol wrong type for socket'
+  },
+  {
+    errno: 40,
+    code: 'ETIMEDOUT',
+    description: 'connection timed out'
+  },
+  {
+    errno: 41,
+    code: 'ECHARSET',
+    description: 'invalid Unicode character'
+  },
+  {
+    errno: 42,
+    code: 'EAIFAMNOSUPPORT',
+    description: 'address family for hostname not supported'
+  },
+  {
+    errno: 44,
+    code: 'EAISERVICE',
+    description: 'servname not supported for ai_socktype'
+  },
+  {
+    errno: 45,
+    code: 'EAISOCKTYPE',
+    description: 'ai_socktype not supported'
+  },
+  {
+    errno: 46,
+    code: 'ESHUTDOWN',
+    description: 'cannot send after transport endpoint shutdown'
+  },
+  {
+    errno: 47,
+    code: 'EEXIST',
+    description: 'file already exists'
+  },
+  {
+    errno: 48,
+    code: 'ESRCH',
+    description: 'no such process'
+  },
+  {
+    errno: 49,
+    code: 'ENAMETOOLONG',
+    description: 'name too long'
+  },
+  {
+    errno: 50,
+    code: 'EPERM',
+    description: 'operation not permitted'
+  },
+  {
+    errno: 51,
+    code: 'ELOOP',
+    description: 'too many symbolic links encountered'
+  },
+  {
+    errno: 52,
+    code: 'EXDEV',
+    description: 'cross-device link not permitted'
+  },
+  {
+    errno: 53,
+    code: 'ENOTEMPTY',
+    description: 'directory not empty'
+  },
+  {
+    errno: 54,
+    code: 'ENOSPC',
+    description: 'no space left on device'
+  },
+  {
+    errno: 55,
+    code: 'EIO',
+    description: 'i/o error'
+  },
+  {
+    errno: 56,
+    code: 'EROFS',
+    description: 'read-only file system'
+  },
+  {
+    errno: 57,
+    code: 'ENODEV',
+    description: 'no such device'
+  },
+  {
+    errno: 58,
+    code: 'ESPIPE',
+    description: 'invalid seek'
+  },
+  {
+    errno: 59,
+    code: 'ECANCELED',
+    description: 'operation canceled'
+  }
+]
+
+module.exports.errno = {}
+module.exports.code = {}
+
+all.forEach(function (error) {
+  module.exports.errno[error.errno] = error
+  module.exports.code[error.code] = error
+})
+
+module.exports.custom = require('./custom')(module.exports)
+module.exports.create = module.exports.custom.createError
+
+},{"./custom":"n8Zz"}],"vrQx":[function(require,module,exports) {
+var process = require("process");
+'use strict'
+
+const DEFAULT_OPTIONS = {
+          workerOptions               : {}
+        , maxCallsPerWorker           : Infinity
+        , maxConcurrentWorkers        : (require('os').cpus() || { length: 1 }).length
+        , maxConcurrentCallsPerWorker : 10
+        , maxConcurrentCalls          : Infinity
+        , maxCallTime                 : Infinity // exceed this and the whole worker is terminated
+        , maxRetries                  : Infinity
+        , forcedKillTime              : 100
+        , autoStart                   : false
+        , onChild                     : function() {}
+      }
+
+const fork                    = require('./fork')
+    , TimeoutError            = require('errno').create('TimeoutError')
+    , ProcessTerminatedError  = require('errno').create('ProcessTerminatedError')
+    , MaxConcurrentCallsError = require('errno').create('MaxConcurrentCallsError')
+
+
+function Farm (options, path) {
+  this.options     = Object.assign({}, DEFAULT_OPTIONS, options)
+  this.path        = path
+  this.activeCalls = 0
+}
+
+
+// make a handle to pass back in the form of an external API
+Farm.prototype.mkhandle = function (method) {
+  return function () {
+    let args = Array.prototype.slice.call(arguments)
+    if (this.activeCalls + this.callQueue.length >= this.options.maxConcurrentCalls) {
+      let err = new MaxConcurrentCallsError('Too many concurrent calls (active: ' + this.activeCalls + ', queued: ' + this.callQueue.length + ')')
+      if (typeof args[args.length - 1] == 'function')
+        return process.nextTick(args[args.length - 1].bind(null, err))
+      throw err
+    }
+    this.addCall({
+        method   : method
+      , callback : args.pop()
+      , args     : args
+      , retries  : 0
+    })
+  }.bind(this)
+}
+
+
+// a constructor of sorts
+Farm.prototype.setup = function (methods) {
+  let iface
+  if (!methods) { // single-function export
+    iface = this.mkhandle()
+  } else { // multiple functions on the export
+    iface = {}
+    methods.forEach(function (m) {
+      iface[m] = this.mkhandle(m)
+    }.bind(this))
+  }
+
+  this.searchStart    = -1
+  this.childId        = -1
+  this.children       = {}
+  this.activeChildren = 0
+  this.callQueue      = []
+
+  if (this.options.autoStart) {
+    while (this.activeChildren < this.options.maxConcurrentWorkers)
+      this.startChild()
+  }
+
+  return iface
+}
+
+
+// when a child exits, check if there are any outstanding jobs and requeue them
+Farm.prototype.onExit = function (childId) {
+  // delay this to give any sends a chance to finish
+  setTimeout(function () {
+    let doQueue = false
+    if (this.children[childId] && this.children[childId].activeCalls) {
+      this.children[childId].calls.forEach(function (call, i) {
+        if (!call) return
+        else if (call.retries >= this.options.maxRetries) {
+          this.receive({
+              idx   : i
+            , child : childId
+            , args  : [ new ProcessTerminatedError('cancel after ' + call.retries + ' retries!') ]
+          })
+        } else {
+          call.retries++
+          this.callQueue.unshift(call)
+          doQueue = true
+        }
+      }.bind(this))
+    }
+    this.stopChild(childId)
+    doQueue && this.processQueue()
+  }.bind(this), 10)
+}
+
+
+// start a new worker
+Farm.prototype.startChild = function () {
+  this.childId++
+
+  let forked = fork(this.path, this.options.workerOptions)
+    , id     = this.childId
+    , c      = {
+          send        : forked.send
+        , child       : forked.child
+        , calls       : []
+        , activeCalls : 0
+        , exitCode    : null
+      }
+
+  this.options.onChild(forked.child);
+
+  forked.child.on('message', function(data) {
+    if (data.owner !== 'farm') {
+      return;
+    }
+    this.receive(data);
+  }.bind(this))
+  forked.child.once('exit', function (code) {
+    c.exitCode = code
+    this.onExit(id)
+  }.bind(this))
+
+  this.activeChildren++
+  this.children[id] = c
+}
+
+
+// stop a worker, identified by id
+Farm.prototype.stopChild = function (childId) {
+  let child = this.children[childId]
+  if (child) {
+    child.send({owner: 'farm', event: 'die'})
+    setTimeout(function () {
+      if (child.exitCode === null)
+        child.child.kill('SIGKILL')
+    }, this.options.forcedKillTime).unref()
+    ;delete this.children[childId]
+    this.activeChildren--
+  }
+}
+
+
+// called from a child process, the data contains information needed to
+// look up the child and the original call so we can invoke the callback
+Farm.prototype.receive = function (data) {
+  let idx     = data.idx
+    , childId = data.child
+    , args    = data.args
+    , child   = this.children[childId]
+    , call
+
+  if (!child) {
+    return console.error(
+        'Worker Farm: Received message for unknown child. '
+      + 'This is likely as a result of premature child death, '
+      + 'the operation will have been re-queued.'
+    )
+  }
+
+  call = child.calls[idx]
+  if (!call) {
+    return console.error(
+        'Worker Farm: Received message for unknown index for existing child. '
+      + 'This should not happen!'
+    )
+  }
+
+  if (this.options.maxCallTime !== Infinity)
+    clearTimeout(call.timer)
+
+  if (args[0] && args[0].$error == '$error') {
+    let e = args[0]
+    switch (e.type) {
+      case 'TypeError': args[0] = new TypeError(e.message); break
+      case 'RangeError': args[0] = new RangeError(e.message); break
+      case 'EvalError': args[0] = new EvalError(e.message); break
+      case 'ReferenceError': args[0] = new ReferenceError(e.message); break
+      case 'SyntaxError': args[0] = new SyntaxError(e.message); break
+      case 'URIError': args[0] = new URIError(e.message); break
+      default: args[0] = new Error(e.message)
+    }
+    args[0].type = e.type
+    args[0].stack = e.stack
+
+    // Copy any custom properties to pass it on.
+    Object.keys(e).forEach(function(key) {
+      args[0][key] = e[key];
+    });
+  }
+
+  process.nextTick(function () {
+    call.callback.apply(null, args)
+  })
+
+  ;delete child.calls[idx]
+  child.activeCalls--
+  this.activeCalls--
+
+  if (child.calls.length >= this.options.maxCallsPerWorker
+      && !Object.keys(child.calls).length) {
+    // this child has finished its run, kill it
+    this.stopChild(childId)
+  }
+
+  // allow any outstanding calls to be processed
+  this.processQueue()
+}
+
+
+Farm.prototype.childTimeout = function (childId) {
+  let child = this.children[childId]
+    , i
+
+  if (!child)
+    return
+
+  for (i in child.calls) {
+    this.receive({
+        idx   : i
+      , child : childId
+      , args  : [ new TimeoutError('worker call timed out!') ]
+    })
+  }
+  this.stopChild(childId)
+}
+
+
+// send a call to a worker, identified by id
+Farm.prototype.send = function (childId, call) {
+  let child = this.children[childId]
+    , idx   = child.calls.length
+
+  child.calls.push(call)
+  child.activeCalls++
+  this.activeCalls++
+
+  child.send({
+      owner  : 'farm'
+    , idx    : idx
+    , child  : childId
+    , method : call.method
+    , args   : call.args
+  })
+
+  if (this.options.maxCallTime !== Infinity) {
+    call.timer =
+      setTimeout(this.childTimeout.bind(this, childId), this.options.maxCallTime)
+  }
+}
+
+
+// a list of active worker ids, in order, but the starting offset is
+// shifted each time this method is called, so we work our way through
+// all workers when handing out jobs
+Farm.prototype.childKeys = function () {
+  let cka = Object.keys(this.children)
+    , cks
+
+  if (this.searchStart >= cka.length - 1)
+    this.searchStart = 0
+  else
+    this.searchStart++
+
+  cks = cka.splice(0, this.searchStart)
+
+  return cka.concat(cks)
+}
+
+
+// Calls are added to a queue, this processes the queue and is called
+// whenever there might be a chance to send more calls to the workers.
+// The various options all impact on when we're able to send calls,
+// they may need to be kept in a queue until a worker is ready.
+Farm.prototype.processQueue = function () {
+  let cka, i = 0, childId
+
+  if (!this.callQueue.length)
+    return this.ending && this.end()
+
+  if (this.activeChildren < this.options.maxConcurrentWorkers)
+    this.startChild()
+
+  for (cka = this.childKeys(); i < cka.length; i++) {
+    childId = +cka[i]
+    if (this.children[childId].activeCalls < this.options.maxConcurrentCallsPerWorker
+        && this.children[childId].calls.length < this.options.maxCallsPerWorker) {
+
+      this.send(childId, this.callQueue.shift())
+      if (!this.callQueue.length)
+        return this.ending && this.end()
+    } /*else {
+      console.log(
+        , this.children[childId].activeCalls < this.options.maxConcurrentCallsPerWorker
+        , this.children[childId].calls.length < this.options.maxCallsPerWorker
+        , this.children[childId].calls.length , this.options.maxCallsPerWorker)
+    }*/
+  }
+
+  if (this.ending)
+    this.end()
+}
+
+
+// add a new call to the call queue, then trigger a process of the queue
+Farm.prototype.addCall = function (call) {
+  if (this.ending)
+    return this.end() // don't add anything new to the queue
+  this.callQueue.push(call)
+  this.processQueue()
+}
+
+
+// kills child workers when they're all done
+Farm.prototype.end = function (callback) {
+  let complete = true
+  if (this.ending === false)
+    return
+  if (callback)
+    this.ending = callback
+  else if (this.ending == null)
+    this.ending = true
+  Object.keys(this.children).forEach(function (child) {
+    if (!this.children[child])
+      return
+    if (!this.children[child].activeCalls)
+      this.stopChild(child)
+    else
+      complete = false
+  }.bind(this))
+
+  if (complete && typeof this.ending == 'function') {
+    process.nextTick(function () {
+      this.ending()
+      this.ending = false
+    }.bind(this))
+  }
+}
+
+
+module.exports              = Farm
+module.exports.TimeoutError = TimeoutError
+
+},{"os":"zv8z","./fork":"po20","errno":"9+Ta","process":"pBGv"}],"UCX9":[function(require,module,exports) {
+var process = require("process");
+'use strict'
+
+const Farm = require('./farm')
+
+let farms = [] // keep record of farms so we can end() them if required
+
+
+function farm (options, path, methods) {
+  if (typeof options == 'string') {
+    methods = path
+    path = options
+    options = {}
+  }
+
+  let f   = new Farm(options, path)
+    , api = f.setup(methods)
+
+  farms.push({ farm: f, api: api })
+
+  // return the public API
+  return api
+}
+
+
+function end (api, callback) {
+  for (let i = 0; i < farms.length; i++)
+    if (farms[i] && farms[i].api === api)
+      return farms[i].farm.end(callback)
+  process.nextTick(callback.bind(null, new Error('Worker farm not found!')))
+}
+
+
+module.exports     = farm
+module.exports.end = end
+
+},{"./farm":"vrQx","process":"pBGv"}],"IyGM":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.trainParallel = trainParallel;
+exports.unpackTrainOpts = unpackTrainOpts;
+
+var _partition = _interopRequireDefault(require("./utilities/partition"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+var workerFarm = require('worker-farm');
+
+var workers = workerFarm(require.resolve('./parallel-trainer-worker'));
+/**
+ * Ensemble training, via simple parameter averaging.
+ */
+
+function trainParallel(_x, _x2) {
+  return _trainParallel.apply(this, arguments);
+}
+
+function _trainParallel() {
+  _trainParallel = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee(data, net) {
+    var trainOpts,
+        startMs,
+        log,
+        logPeriod,
+        parallel,
+        threadLog,
+        NetCtor,
+        maxEpochs,
+        errorThresh,
+        threads,
+        threadCount,
+        threadTrainOpts,
+        globalWeights,
+        error,
+        epochs,
+        iterations,
+        itemIterations,
+        _trainedNets$,
+        promises,
+        _iteratorNormalCompletion,
+        _didIteratorError,
+        _iteratorError,
+        _iterator,
+        _step,
+        thread,
+        result,
+        results,
+        maxError,
+        minError,
+        trainedNets,
+        t,
+        trained,
+        status,
+        testnet,
+        testResult,
+        endMs,
+        elapsedMs,
+        _args = arguments;
+
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            trainOpts = _args.length > 2 && _args[2] !== undefined ? _args[2] : {};
+            startMs = Date.now();
+
+            log = (trainOpts.log === true ? console.log : trainOpts.log) || function () {};
+
+            logPeriod = trainOpts.logPeriod || 1;
+            parallel = trainOpts.parallel || {};
+            threadLog = parallel.log === true ? console.log : parallel.log || false;
+            NetCtor = Object.getPrototypeOf(net).constructor;
+            maxEpochs = trainOpts.iterations || 1000;
+            errorThresh = trainOpts.errorThresh || NetCtor.trainDefaults.errorThresh;
+            threads = unpackTrainOpts(trainOpts, net, data);
+            threadCount = threads.length;
+            threadTrainOpts = Object.assign({}, trainOpts);
+            delete threadTrainOpts.parallel;
+            delete threadTrainOpts.callback;
+            threadTrainOpts.iterations = parallel.iterationsPerThread || 10;
+            threadTrainOpts.log = threadLog;
+            threadTrainOpts.logPeriod = parallel.logPeriod || 1;
+            threadTrainOpts.timeout = !threadTrainOpts.timeout || threadTrainOpts.timeout === Infinity ? Number.MAX_SAFE_INTEGER : threadTrainOpts.timeout;
+            net.verifyIsInitialized(data);
+            globalWeights = net.toJSON();
+            error = 1;
+            epochs = 0;
+            iterations = 0;
+            itemIterations = 0;
+
+          case 24:
+            if (!(epochs < maxEpochs && error >= errorThresh)) {
+              _context.next = 58;
+              break;
+            }
+
+            promises = [];
+            _iteratorNormalCompletion = true;
+            _didIteratorError = false;
+            _iteratorError = undefined;
+            _context.prev = 29;
+
+            for (_iterator = threads[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              thread = _step.value;
+
+              if (parallel.synchronous === true) {
+                result = runTrainingSync(thread.type, globalWeights, thread.partition, threadTrainOpts);
+                promises.push(Promise.resolve(result));
+              } else {
+                promises.push(runTrainingWorker(thread.type, globalWeights, thread.partition, threadTrainOpts));
+              }
+            }
+
+            _context.next = 37;
+            break;
+
+          case 33:
+            _context.prev = 33;
+            _context.t0 = _context["catch"](29);
+            _didIteratorError = true;
+            _iteratorError = _context.t0;
+
+          case 37:
+            _context.prev = 37;
+            _context.prev = 38;
+
+            if (!_iteratorNormalCompletion && _iterator.return != null) {
+              _iterator.return();
+            }
+
+          case 40:
+            _context.prev = 40;
+
+            if (!_didIteratorError) {
+              _context.next = 43;
+              break;
+            }
+
+            throw _iteratorError;
+
+          case 43:
+            return _context.finish(40);
+
+          case 44:
+            return _context.finish(37);
+
+          case 45:
+            _context.next = 47;
+            return Promise.all(promises);
+
+          case 47:
+            results = _context.sent;
+            maxError = void 0, minError = void 0;
+            trainedNets = [];
+
+            for (t = 0; t < threadCount; t++) {
+              trained = results[t].trained;
+              status = results[t].status;
+              maxError = t === 0 ? status.error : Math.max(maxError, status.error);
+              minError = t === 0 ? status.error : Math.min(minError, status.error);
+              trainedNets.push(trained);
+              iterations += status.iterations;
+              itemIterations += status.iterations * threads[t].partition.length;
+            }
+
+            globalWeights = (_trainedNets$ = trainedNets[0]).avg.apply(_trainedNets$, _toConsumableArray(trainedNets.slice(1))).toJSON();
+            error = maxError;
+
+            if (minError <= errorThresh) {
+              if (parallel.errorMode === 'test') {
+                testnet = new NetCtor();
+                testnet.fromJSON(globalWeights);
+                testResult = testnet.test(data);
+                error = Math.max(error, testResult.error);
+              } else {
+                error = minError;
+              }
+            }
+
+            epochs++;
+
+            if (epochs % logPeriod === 0) {
+              log({
+                threadIterations: iterations,
+                iterations: epochs,
+                itemIterations: itemIterations,
+                trainedNetJSON: globalWeights,
+                error: error,
+                threadCount: threadCount
+              });
+            }
+
+            _context.next = 24;
+            break;
+
+          case 58:
+            net.fromJSON(globalWeights);
+            endMs = Date.now();
+            elapsedMs = endMs - startMs;
+            return _context.abrupt("return", {
+              threadIterations: iterations,
+              iterations: epochs,
+              itemIterations: itemIterations,
+              trainedNetJSON: globalWeights,
+              error: error,
+              threadCount: threadCount,
+              elapsedMs: elapsedMs
+            });
+
+          case 62:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[29, 33, 37, 45], [38,, 40, 44]]);
+  }));
+  return _trainParallel.apply(this, arguments);
+}
+
+function unpackTrainOpts(trainOptions, net, data) {
+  var parallel = trainOptions.parallel || {};
+  var threadsOpts = parallel.threads;
+
+  if (!threadsOpts || Number.isInteger(threadsOpts)) {
+    var netCtorName = Object.getPrototypeOf(net).constructor.name;
+    var threadsOptsObj = {};
+    threadsOptsObj[netCtorName] = threadsOpts || 1;
+    threadsOpts = threadsOptsObj;
+  }
+
+  var dataUsed = 0;
+  var partitioned = 0;
+  var types = [];
+  var totalThreads = 0;
+
+  for (var netName in threadsOpts) {
+    var config = threadsOpts[netName];
+    var threadCount = 1;
+    var partitions = null;
+
+    if (_typeof(config) === "object") {
+      var partitionSize = config.partitionSize;
+      threadCount = config.threads || 1;
+      var trainingDataSize = Math.min(config.trainingDataSize || 0, data.length - dataUsed);
+
+      if (trainingDataSize) {
+        partitioned += threadCount;
+        var trainingData = data.slice(dataUsed, trainingDataSize);
+        partitions = (0, _partition.default)(trainingData, threadCount, partitionSize);
+        dataUsed += trainingDataSize;
+      }
+    } else if (Number.isInteger(config)) {
+      threadCount = config || 1;
+    }
+
+    totalThreads += threadCount;
+    types.push({
+      type: netName,
+      threadCount: threadCount,
+      partitions: partitions
+    });
+  }
+
+  var unpartitioned = totalThreads - partitioned;
+
+  if (unpartitioned) {
+    var remainingData = dataUsed === 0 ? data : data.slice(dataUsed);
+
+    var _partitionSize = parallel.partitionSize || 1;
+
+    var _partitions = (0, _partition.default)(remainingData, unpartitioned, _partitionSize);
+
+    for (var _i = 0, _types = types; _i < _types.length; _i++) {
+      var type = _types[_i];
+
+      if (!type.partitions) {
+        type.partitions = _partitions.splice(0, type.threadCount);
+      }
+    }
+
+    if (_partitions.length > 0) {
+      throw new Error('Too many partitions');
+    }
+  }
+
+  var threads = [];
+
+  for (var _i2 = 0, _types2 = types; _i2 < _types2.length; _i2++) {
+    var _type = _types2[_i2];
+    var _partitions2 = _type.partitions;
+
+    for (var t = 0; t < _type.threadCount; t++) {
+      threads.push({
+        type: _type.type,
+        partition: _partitions2.shift()
+      });
+    }
+  }
+
+  return threads;
+}
+
+function runTrainingSync(netType, netJSON, trainingData, trainOpts) {
+  var brainjs = require('./index').default;
+
+  var ctor = brainjs[netType];
+  var trained = new ctor();
+  trained.fromJSON(netJSON);
+  var status = trained.train(trainingData, trainOpts);
+  return {
+    status: status,
+    trained: trained
+  };
+}
+
+function runTrainingWorker(netType, netJSON, trainingData, trainOpts) {
+  var brainjs = require('./index').default;
+
+  return new Promise(function (resolve, reject) {
+    workers({
+      netType: netType,
+      netJSON: netJSON,
+      trainingData: trainingData,
+      trainOpts: trainOpts
+    }, function (error, results) {
+      if (error) {
+        return reject(error);
+      }
+
+      var trained = new brainjs[netType]();
+      trained.fromJSON(results.trainedNetJSON);
+      resolve({
+        trained: trained,
+        status: results.status
+      });
+    });
+  });
+}
+},{"./utilities/partition":"5E9k","worker-farm":"UCX9","./index":"Focm"}],"SLKQ":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = avgNets;
+
+var _neuralNetwork = _interopRequireDefault(require("../neural-network"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Parameter averaging, supports NeuralNetwork and NeuralNetworkGPU.
+ * @param  {...any} nets 
+ */
+function avgNets() {
+  for (var _len = arguments.length, nets = new Array(_len), _key = 0; _key < _len; _key++) {
+    nets[_key] = arguments[_key];
+  }
+
+  if (!nets || !nets.length) {
+    return;
+  }
+
+  if (nets.length === 1) {
+    return nets[0];
+  }
+
+  var jsons = nets.map(function (net) {
+    return net.toJSON();
+  });
+
+  if (!equalsShallow(jsons.map(function (json) {
+    return json.sizes;
+  }))) {
+    throw new Error('Can\'t merge: mismatching layer sizes.');
+  }
+
+  var refNet = jsons[0];
+  var mLayers = [refNet.layers[0]];
+
+  for (var layerIdx = 1; layerIdx < refNet.layers.length; layerIdx++) {
+    var mLayer = {};
+
+    for (var neuronId in refNet.layers[layerIdx]) {
+      var mNeuron = {
+        bias: 0,
+        weights: {}
+      };
+      var n = 1;
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = jsons[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var net = _step.value;
+          var neuron = net.layers[layerIdx][neuronId];
+
+          if (!neuron) {
+            throw new Error('Can\'t merge: missing neuron [' + layerIdx + '][' + neuronId + ']');
+          }
+
+          mNeuron.bias += (neuron.bias - mNeuron.bias) / n;
+
+          for (var weightId in neuron.weights) {
+            var weight = mNeuron.weights[weightId] || 0;
+            mNeuron.weights[weightId] = weight + (neuron.weights[weightId] - weight) / n;
+          }
+
+          n++;
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      mLayer[neuronId] = mNeuron;
+    }
+
+    mLayers.push(mLayer);
+  }
+
+  refNet.layers = mLayers;
+  var netCtor = Object.getPrototypeOf(nets[0]).constructor;
+  var merged = new netCtor();
+  merged.fromJSON(refNet);
+  return merged;
+}
+
+function equalsShallow() {
+  for (var _len2 = arguments.length, arrays = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+    arrays[_key2] = arguments[_key2];
+  }
+
+  if (!!arrays && arrays.length) {
+    var len = arrays[0].length;
+
+    for (var a = 1; a < arrays.length; a++) {
+      if (arrays[a].length !== len) {
+        return false;
+      }
+    }
+
+    for (var i = 0; i < len; i++) {
+      var item = arrays[0][i];
+
+      for (var _a = 1; _a < arrays.length; _a++) {
+        if (item !== arrays[_a][i]) {
+          return false;
+        }
+      }
+    }
+  }
+
+  return true;
+}
+},{"../neural-network":"8epZ"}],"8epZ":[function(require,module,exports) {
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -37771,6 +46410,12 @@ var LookupTable = require('./utilities/lookup-table');
 
 var _require = require('./utilities/cast'),
     arrayToFloat32Array = _require.arrayToFloat32Array;
+
+var _require2 = require('./parallel-trainer'),
+    trainParallel = _require2.trainParallel;
+
+var _require3 = require('./utilities/avg-nets'),
+    avgNets = _require3.avgNets;
 /**
  * @param {object} options
  * @constructor
@@ -37805,7 +46450,8 @@ function () {
         praxis: null,
         beta1: 0.9,
         beta2: 0.999,
-        epsilon: 1e-8
+        epsilon: 1e-8,
+        parallel: null
       };
     }
   }, {
@@ -38369,6 +47015,7 @@ function () {
       var _this3 = this;
 
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var rawData = data;
       var status, endTime;
 
       var _this$prepTraining2 = this.prepTraining(data, options);
@@ -38376,6 +47023,13 @@ function () {
       data = _this$prepTraining2.data;
       status = _this$prepTraining2.status;
       endTime = _this$prepTraining2.endTime;
+      var trainOpts = this.getTrainOptsJSON();
+
+      if (trainOpts.parallel) {
+        trainOpts.log = this.trainOpts.log;
+        return trainParallel(rawData, this, trainOpts);
+      }
+
       return new Promise(function (resolve, reject) {
         try {
           var thawedTrain = new Thaw(new Array(_this3.trainOpts.iterations), {
@@ -38395,6 +47049,25 @@ function () {
           });
         }
       });
+    }
+    /**
+     * Merge these nets via parameter averaging.
+     * 
+     * @param  {...any} nets other NeuralNetwork or NeuralNetworkGPU nets to average with this one
+     */
+
+  }, {
+    key: "avg",
+    value: function avg() {
+      for (var _len = arguments.length, nets = new Array(_len), _key = 0; _key < _len; _key++) {
+        nets[_key] = arguments[_key];
+      }
+
+      if (!nets || !nets.length) {
+        return this;
+      }
+
+      return avgNets.apply(void 0, _toConsumableArray([this].concat(nets)));
     }
     /**
      *
@@ -39117,7 +47790,7 @@ function getTypedArrayFn(value, table) {
 }
 
 module.exports = NeuralNetwork;
-},{"thaw.js":"8AZL","./lookup":"Q1a6","./train-stream":"vEEq","./utilities/max":"UFcl","./utilities/mse":"YGn7","./utilities/randos":"S8tM","./utilities/range":"YhH7","./utilities/to-array":"HBY8","./utilities/zeros":"M4LY","./utilities/lookup-table":"kAwF","./utilities/cast":"Z8Xv"}],"6trg":[function(require,module,exports) {
+},{"thaw.js":"8AZL","./lookup":"Q1a6","./train-stream":"vEEq","./utilities/max":"UFcl","./utilities/mse":"YGn7","./utilities/randos":"S8tM","./utilities/range":"YhH7","./utilities/to-array":"HBY8","./utilities/zeros":"M4LY","./utilities/lookup-table":"kAwF","./utilities/cast":"Z8Xv","./parallel-trainer":"IyGM","./utilities/avg-nets":"SLKQ"}],"6trg":[function(require,module,exports) {
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -44260,7 +52933,9 @@ function (_RNNTimeStep) {
 
 module.exports = GRUTimeStep;
 },{"./gru":"wLPK","./rnn-time-step":"zri4"}],"UFo7":[function(require,module,exports) {
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -44514,7 +53189,7 @@ function toSVG(net, options) {
     height: 250
   };
 
-  var mergedOptions = _objectSpread({}, defaultOptions, options);
+  var mergedOptions = _objectSpread({}, defaultOptions, {}, options);
 
   var width = mergedOptions.width,
       height = mergedOptions.height,
