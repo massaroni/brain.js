@@ -30,17 +30,13 @@ function aggNetsRnn(aggregatorFactory, ...nets) {
 function aggNetsRnnJson(aggregatorFactory, ...jsons) {
   checkCompatibility(jsons);
 
-  const outputConnector = aggLayer(aggregatorFactory, jsons.map((j) => j.outputConnector));
-  const output = aggLayer(aggregatorFactory, jsons.map((j) => j.output));
   const hiddenLayers = aggHiddenLayers(aggregatorFactory, jsons);
   const options = jsons[0].options; // clone this?
   const type = jsons[0].type;
 
-  const aggregated = { type, options, hiddenLayers, outputConnector, output };
-  if (jsons[0].input) {
-    const input = aggLayer(aggregatorFactory, jsons.map((j) => j.input));
-    aggregated.input = input;
-  }
+  const aggregated = { type, options, hiddenLayers };
+  const aggregatedMatrices = aggAllMatrices(aggregatorFactory, jsons);
+  Object.assign(aggregated, aggregatedMatrices);
 
   return aggregated;
 }
@@ -50,18 +46,37 @@ function aggHiddenLayers(aggregatorFactory, jsons) {
   let hiddenLayersAvg = [];
 
   for (let i = 0; i < layerCount; i++) {
-    const layer = aggHiddenLayer(aggregatorFactory, jsons.map((j) => j.hiddenLayers[i]));
+    const layer = aggAllMatrices(aggregatorFactory, jsons.map((j) => j.hiddenLayers[i]));
     hiddenLayersAvg.push(layer);
   }
 
   return hiddenLayersAvg;
 }
 
-function aggHiddenLayer(aggregatorFactory, layers) {
-  const weight = aggLayer(aggregatorFactory, layers.map((l) => l.weight));
-  const transition = aggLayer(aggregatorFactory, layers.map((l) => l.transition));
-  const bias = aggLayer(aggregatorFactory, layers.map((l) => l.bias));
-  return {weight, transition, bias};
+function findMatrices(layer) {
+  const matrixNames = [];
+  for (let key in layer) {
+    if (isMatrix(layer[key])) {
+      matrixNames.push(key);
+    }
+  }
+  return matrixNames;
+}
+
+function isMatrix(matrix) {
+  return matrix && Number.isInteger(matrix.rows) && Number.isInteger(matrix.columns)
+    && matrix.weights && Number.isFinite(matrix.weights[0])
+    && Number.isFinite(matrix.weights[(matrix.rows * matrix.columns) - 1]);
+}
+
+function aggAllMatrices(aggregatorFactory, layers) {
+  const matrixNames = findMatrices(layers[0]);
+  const aggregated = {};
+  for (let matrixName of matrixNames) {
+    const agg = aggLayer(aggregatorFactory, layers.map(l => l[matrixName]));
+    aggregated[matrixName] = agg;
+  }
+  return aggregated;
 }
 
 function aggLayer(aggregatorFactory, layers) {
