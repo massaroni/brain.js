@@ -46031,12 +46031,6 @@ function aggNetsRnnJson(aggregatorFactory) {
   }
 
   checkCompatibility(jsons);
-  var outputConnector = aggLayer(aggregatorFactory, jsons.map(function (j) {
-    return j.outputConnector;
-  }));
-  var output = aggLayer(aggregatorFactory, jsons.map(function (j) {
-    return j.output;
-  }));
   var hiddenLayers = aggHiddenLayers(aggregatorFactory, jsons);
   var options = jsons[0].options; // clone this?
 
@@ -46044,18 +46038,10 @@ function aggNetsRnnJson(aggregatorFactory) {
   var aggregated = {
     type: type,
     options: options,
-    hiddenLayers: hiddenLayers,
-    outputConnector: outputConnector,
-    output: output
+    hiddenLayers: hiddenLayers
   };
-
-  if (jsons[0].input) {
-    var input = aggLayer(aggregatorFactory, jsons.map(function (j) {
-      return j.input;
-    }));
-    aggregated.input = input;
-  }
-
+  var aggregatedMatrices = aggAllMatrices(aggregatorFactory, jsons);
+  Object.assign(aggregated, aggregatedMatrices);
   return aggregated;
 }
 
@@ -46064,7 +46050,7 @@ function aggHiddenLayers(aggregatorFactory, jsons) {
   var hiddenLayersAvg = [];
 
   var _loop = function _loop(i) {
-    var layer = aggHiddenLayer(aggregatorFactory, jsons.map(function (j) {
+    var layer = aggAllMatrices(aggregatorFactory, jsons.map(function (j) {
       return j.hiddenLayers[i];
     }));
     hiddenLayersAvg.push(layer);
@@ -46077,21 +46063,57 @@ function aggHiddenLayers(aggregatorFactory, jsons) {
   return hiddenLayersAvg;
 }
 
-function aggHiddenLayer(aggregatorFactory, layers) {
-  var weight = aggLayer(aggregatorFactory, layers.map(function (l) {
-    return l.weight;
-  }));
-  var transition = aggLayer(aggregatorFactory, layers.map(function (l) {
-    return l.transition;
-  }));
-  var bias = aggLayer(aggregatorFactory, layers.map(function (l) {
-    return l.bias;
-  }));
-  return {
-    weight: weight,
-    transition: transition,
-    bias: bias
-  };
+function findMatrices(layer) {
+  var matrixNames = [];
+
+  for (var key in layer) {
+    if (isMatrix(layer[key])) {
+      matrixNames.push(key);
+    }
+  }
+
+  return matrixNames;
+}
+
+function isMatrix(matrix) {
+  return matrix && Number.isInteger(matrix.rows) && Number.isInteger(matrix.columns) && matrix.weights && Number.isFinite(matrix.weights[0]) && Number.isFinite(matrix.weights[matrix.rows * matrix.columns - 1]);
+}
+
+function aggAllMatrices(aggregatorFactory, layers) {
+  var matrixNames = findMatrices(layers[0]);
+  var aggregated = {};
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    var _loop2 = function _loop2() {
+      var matrixName = _step.value;
+      var agg = aggLayer(aggregatorFactory, layers.map(function (l) {
+        return l[matrixName];
+      }));
+      aggregated[matrixName] = agg;
+    };
+
+    for (var _iterator = matrixNames[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      _loop2();
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return != null) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+
+  return aggregated;
 }
 
 function aggLayer(aggregatorFactory, layers) {
@@ -46946,8 +46968,7 @@ var _require = require('./utilities/cast'),
 var _require2 = require('./parallel-trainer'),
     trainParallel = _require2.trainParallel;
 
-var _require3 = require('./utilities/avg-nets'),
-    avgNets = _require3.avgNets;
+var avgNets = require('./utilities/avg-nets');
 /**
  * @param {object} options
  * @constructor
@@ -47405,10 +47426,21 @@ function () {
       if (typeof log === 'function') {
         this.trainOpts.log = log;
       } else if (log) {
-        this.trainOpts.log = console.log;
+        this.trainOpts.log = this.logTrainingStatus;
       } else {
         this.trainOpts.log = false;
       }
+    }
+    /**
+     *
+     * @param status
+     * log training status
+     */
+
+  }, {
+    key: "logTrainingStatus",
+    value: function logTrainingStatus(status) {
+      console.log("iterations: ".concat(status.iterations, ", training error: ").concat(status.error));
     }
     /**
      *
@@ -47464,7 +47496,7 @@ function () {
 
       if (log && status.iterations % logPeriod === 0) {
         status.error = this.calculateTrainingError(data);
-        log("iterations: ".concat(status.iterations, ", training error: ").concat(status.error));
+        log(status);
       } else {
         if (status.iterations % this.errorCheckInterval === 0) {
           status.error = this.calculateTrainingError(data);
@@ -53803,10 +53835,14 @@ function wrapSVG(svgBody, width, height) {
   return "<svg\n            xmlns=\"http://www.w3.org/2000/svg\"\n            xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n            version=\"1.1\"\n            width=\"".concat(width, "\"\n            height=\"").concat(height, "\">").concat(svgBody, "</svg>");
 }
 
-function getSizes(object) {
-  return typeof object.inputSize === 'number' && Array.isArray(object.hiddenLayers) && object.hiddenLayers.every(function (l) {
+function getSizes(_ref6) {
+  var sizes = _ref6.sizes,
+      inputSize = _ref6.inputSize,
+      outputSize = _ref6.outputSize,
+      hiddenLayers = _ref6.hiddenLayers;
+  return typeof inputSize === 'number' && Array.isArray(hiddenLayers) && hiddenLayers.every(function (l) {
     return typeof l === 'number';
-  }) && typeof object.outputSize === 'number' ? [object.inputSize].concat(object.hiddenLayers).concat([object.outputSize]) : null;
+  }) && typeof outputSize === 'number' ? [inputSize].concat(hiddenLayers).concat([outputSize]) : sizes;
 }
 
 function toSVG(net, options) {
